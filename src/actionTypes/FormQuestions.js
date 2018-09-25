@@ -1,0 +1,3 @@
+export const STORE_QUESTION = "STORE_QUESTION";
+export const ADD_QUESTION = "ADD_QUESTION";
+export const CLEAR_QUESTION = "CLEAN_QUESTION";
