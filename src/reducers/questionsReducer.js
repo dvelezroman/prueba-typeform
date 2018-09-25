@@ -6,7 +6,7 @@ import {
 
 const initial_state = {
   question: {
-    text: "",
+    description: "",
     speciality: ""
   },
   questions: []
@@ -22,7 +22,7 @@ export default (state = initial_state, action) => {
     case CLEAR_QUESTION:
       return Object.assign({}, state, {
         question: {
-          text: "",
+          description: "",
           speciality: ""
         }
       });

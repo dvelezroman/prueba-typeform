@@ -13,7 +13,7 @@ const styles = theme => ({
 });
 
 function PrimaryButton(props) {
-  const { classes, handleClick } = props;
+  const { classes, handleClick, button } = props;
   return (
     <div>
       <Button
@@ -22,7 +22,7 @@ function PrimaryButton(props) {
         color="primary"
         className={classes.button}
       >
-        Añadir
+        {button}
       </Button>
     </div>
   );

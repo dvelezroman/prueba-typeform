@@ -27,13 +27,16 @@ const styles = theme => ({
 
 class InputText extends React.Component {
   state = {
-    text: "",
+    ref: "Pregunta ",
+    title: "Titulo de Pregunta ",
+    type: "rating",
+    description: "",
     speciality: "Medicina General"
   };
 
   handleChangeText = event => {
     event.preventDefault();
-    this.setState({ text: event.target.value }, () =>
+    this.setState({ description: event.target.value }, () =>
       this.props.storeQuestion(this.state)
     );
   };
@@ -47,9 +50,9 @@ class InputText extends React.Component {
 
   handleClick = event => {
     event.preventDefault();
-    if (this.props.question.text) {
+    if (this.props.question.description) {
       this.props.addQuestion();
-      this.setState({ text: "", speciality: "Medicina General" });
+      this.setState({ description: "", speciality: "Medicina General" });
     }
   };
 
@@ -62,7 +65,7 @@ class InputText extends React.Component {
           required
           onChange={this.handleChangeText}
           id="outlined-required"
-          value={question.text}
+          value={question.description}
           label="Pregunta"
           placeholder="Escriba una pregunta"
           className={classes.textField}
@@ -73,7 +76,7 @@ class InputText extends React.Component {
           speciality={this.state.speciality}
           handleChangeSpeciality={this.handleChangeSpeciality}
         />
-        <PrimaryButton handleClick={this.handleClick} />
+        <PrimaryButton button={"Añadir"} handleClick={this.handleClick} />
       </div>
     );
   }
