@@ -3,7 +3,7 @@ const db = require("./db");
 
 const Client = db.define("client", {
   hcu: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.STRING,
     allowNull: false
   },
   name: {

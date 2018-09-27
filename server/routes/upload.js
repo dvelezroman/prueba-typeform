@@ -4,6 +4,14 @@ const router = express.Router();
 const multer = require("multer");
 const xlstojson = require("xls-to-json-lc");
 const xlsxtojson = require("xlsx-to-json-lc");
+const models = require("../models");
+
+const Client = models.Client;
+const Office = models.Office;
+const Order = models.Order;
+const Doctor = models.Doctor;
+const Group = models.Group;
+const Service = models.Service;
 
 var storage = multer.diskStorage({
   //multers disk storage settings
@@ -72,6 +80,25 @@ const getDataInArrays = rawData => {
   return data;
 };
 
+const storeInDataBase = (
+  pclients,
+  poffices,
+  porders,
+  pdoctors,
+  pgroups,
+  pservices
+) => {
+  Promise.all([
+    ...pclients,
+    ...poffices,
+    ...porders,
+    ...pdoctors,
+    ...pgroups,
+    ...pservices
+  ])
+    .then(() => "Data was stored in the Database")
+    .catch(err => "Error storing the data");
+};
 /** API path that will upload the files */
 router.post("/", function(req, res) {
   let exceltojson; //Initialization
@@ -109,11 +136,23 @@ router.post("/", function(req, res) {
           if (err) {
             return res.json({ error_code: 1, err_desc: err, data: null });
           }
-          res.json({
+          // here we must store in DataBase
+          const dataArray = getDataInArrays(result);
+
+          let promises_clients = dataArray.clients.map(client =>
+            Client.findOrCreate({
+              where: { hcu: client.hcu, name: client.name, email: client.email }
+            })
+          );
+
+          let message = storeInDataBase(promises_clients, [], [], [], [], []);
+
+          const response = {
             error_code: 0,
             err_desc: null,
-            data: getDataInArrays(result)
-          });
+            message: message
+          };
+          res.json(response);
         }
       );
       try {
