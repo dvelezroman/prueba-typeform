@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors"); // allow CORS
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const path = require("path");
@@ -8,6 +9,8 @@ const seed = require("./seed");
 
 const app = express();
 
+app.use(cors());
+app.options("/api/upload", cors());
 app.use(express.static(path.resolve(`${__dirname}/../browser/public`)));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -27,6 +30,6 @@ app.use((err, req, res, next) => {
   res.status(500).send(err);
 });
 
-db.sync({ force: true })
-  .then(() => app.listen(3001, () => console.log("Listening on PORT 3001")))
-  .then(() => seed());
+db.sync({ force: true }).then(() =>
+  app.listen(3001, () => console.log("Listening on PORT 3001"))
+);

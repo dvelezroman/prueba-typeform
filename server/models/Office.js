@@ -7,8 +7,7 @@ const Office = db.define("office", {
     allowNull: false
   },
   code: {
-    type: Sequelize.STRING,
-    allowNull: false
+    type: Sequelize.STRING
   }
 });
 
