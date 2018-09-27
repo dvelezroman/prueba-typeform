@@ -10,7 +10,9 @@ import PrimaryButton from "./PrimaryButton";
 import {
   storeQuestion,
   addQuestion,
-  clearQuestion
+  clearQuestion,
+  storeQuestionInDB,
+  getQuestionsDB
 } from "../actions/questionActions";
 
 import { storeQuestionDB } from "../actions/firebaseActions";
@@ -36,7 +38,7 @@ class InputText extends React.Component {
     description: "",
     speciality: "Medicina General",
     scale: 7,
-    icon: "star"
+    shape: "star"
   };
 
   handleChangeText = event => {
@@ -57,7 +59,7 @@ class InputText extends React.Component {
   handleClick = event => {
     event.preventDefault();
     if (this.props.question.description) {
-      this.props.addQuestion();
+      this.props.addQuestion(this.state);
       //this.props.storeQuestionDB(this.state);
       this.setState({
         ref: "",
@@ -66,6 +68,10 @@ class InputText extends React.Component {
       });
     }
   };
+
+  componentDidMount() {
+    this.props.getQuestionsDB();
+  }
 
   render() {
     const { classes, question } = this.props;
@@ -104,10 +110,11 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   storeQuestion: question => dispatch(storeQuestion(question)),
-  addQuestion: () => {
-    dispatch(addQuestion());
+  addQuestion: question => {
+    dispatch(storeQuestionInDB(question));
     dispatch(clearQuestion());
   },
+  getQuestionsDB: () => dispatch(getQuestionsDB()),
   storeQuestionDB: question => {
     dispatch(storeQuestionDB(question));
     dispatch(clearQuestion());
