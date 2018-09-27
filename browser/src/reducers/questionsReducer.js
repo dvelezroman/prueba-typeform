@@ -1,7 +1,10 @@
 import {
   STORE_QUESTION,
   ADD_QUESTION,
-  CLEAR_QUESTION
+  CLEAR_QUESTION,
+  STORING_QUESTION_DB,
+  PUT_QUESTIONS_STORE,
+  GETTING_QUESTIONS_DB
 } from "../actionTypes/FormQuestions";
 
 const initial_state = {
@@ -9,7 +12,10 @@ const initial_state = {
     description: "",
     speciality: ""
   },
-  questions: []
+  questions: [],
+  filter: "all",
+  storing: false,
+  getting: false
 };
 export default (state = initial_state, action) => {
   switch (action.type) {
@@ -24,8 +30,15 @@ export default (state = initial_state, action) => {
         question: {
           description: "",
           speciality: ""
-        }
+        },
+        storing: false
       });
+    case STORING_QUESTION_DB:
+      return Object.assign({}, state, { storing: action.payload });
+    case PUT_QUESTIONS_STORE:
+      return Object.assign({}, state, { questions: [...action.payload] });
+    case GETTING_QUESTIONS_DB:
+      return Object.assign({}, state, { getting: action.payload });
     default:
       return state;
   }

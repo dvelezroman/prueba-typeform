@@ -23,6 +23,9 @@ const Question = db.define("question", {
   },
   scale: {
     type: Sequelize.INTEGER
+  },
+  speciality: {
+    type: Sequelize.STRING
   }
 });
 

@@ -32,6 +32,11 @@ class InteractiveList extends React.Component {
     secondary: false
   };
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.questions != this.props.questions) return true;
+    return false;
+  }
+
   render() {
     const { classes, questions } = this.props;
     const { dense, secondary } = this.state;
