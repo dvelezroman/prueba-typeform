@@ -8,7 +8,7 @@ const NavBar = () => {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="title" color="inherit">
-            API TypeForm Application
+            APLICACION CON TYPEFORM API
           </Typography>
         </Toolbar>
       </AppBar>

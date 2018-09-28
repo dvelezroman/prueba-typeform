@@ -32,11 +32,6 @@ class InteractiveList extends React.Component {
     secondary: false
   };
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.questions != this.props.questions) return true;
-    return false;
-  }
-
   render() {
     const { classes, questions } = this.props;
     const { dense, secondary } = this.state;
@@ -80,7 +75,7 @@ class InteractiveList extends React.Component {
                   React.cloneElement(
                     <ListItem>
                       <ListItemText
-                        primary={`${question.title} ${i + 1}`}
+                        primary={`${question.title}`}
                         secondary={secondary ? question.description : null}
                       />
                     </ListItem>,

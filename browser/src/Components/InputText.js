@@ -12,10 +12,30 @@ import {
   addQuestion,
   clearQuestion,
   storeQuestionInDB,
-  getQuestionsDB
+  getQuestionsDB,
+  getGroupsDB
 } from "../actions/questionActions";
 
 import { storeQuestionDB } from "../actions/firebaseActions";
+
+const specialities = [
+  {
+    value: "1",
+    label: "Medicina General"
+  },
+  {
+    value: "2",
+    label: "Ginecología"
+  },
+  {
+    value: "3",
+    label: "Traumatología"
+  },
+  {
+    value: "4",
+    label: "Cardiología"
+  }
+];
 
 const styles = theme => ({
   root: {
@@ -33,25 +53,20 @@ const styles = theme => ({
 class InputText extends React.Component {
   state = {
     ref: "",
-    title: "Titulo de la Pregunta ",
+    title: "",
     type: "rating",
     description: "",
     speciality: "Medicina General",
     scale: 7,
-    shape: "star"
+    shape: "star",
+    group: "Consultas Ambulatorias"
   };
 
-  handleChangeText = event => {
-    event.preventDefault();
-    if (!this.state.ref.length) this.setState({ ref: uuid() });
-    this.setState({ description: event.target.value }, () =>
-      this.props.storeQuestion(this.state)
-    );
-  };
-
-  handleChangeSpeciality = event => {
-    event.preventDefault();
-    this.setState({ speciality: event.target.value }, () =>
+  handleChange = label => event => {
+    if (!this.state.ref.length) {
+      this.setState({ ref: uuid() });
+    }
+    this.setState({ [label]: event.target.value }, () =>
       this.props.storeQuestion(this.state)
     );
   };
@@ -59,39 +74,72 @@ class InputText extends React.Component {
   handleClick = event => {
     event.preventDefault();
     if (this.props.question.description) {
-      this.props.addQuestion(this.state);
+      let data = {
+        question: {
+          ref: this.state.ref,
+          title: this.state.title,
+          type: this.state.type,
+          description: this.state.description,
+          speciality: this.state.speciality,
+          scale: this.state.scale,
+          shape: this.state.shape
+        },
+        group: this.state.group
+      };
+      this.props.addQuestion(data);
       //this.props.storeQuestionDB(this.state);
       this.setState({
         ref: "",
+        title: "",
         description: "",
-        speciality: "Medicina General"
+        speciality: "Medicina General",
+        group: "Consultas Ambulatorias"
       });
     }
   };
 
   componentDidMount() {
     this.props.getQuestionsDB();
+    this.props.getGroupsDB();
   }
 
   render() {
-    const { classes, question } = this.props;
-
+    const { classes, question, groups } = this.props;
     return (
       <div className={classes.root}>
         <TextField
           required
-          onChange={this.handleChangeText}
-          id="outlined-required"
-          value={question.description}
-          label="Pregunta"
-          placeholder="Escriba una pregunta"
+          onChange={this.handleChange("title")}
+          id="title-required"
+          value={this.state.title}
+          label="Titulo"
+          placeholder="Escriba un titulo"
+          className={classes.textField}
+          margin="normal"
+          variant="outlined"
+        />
+        <TextField
+          required
+          onChange={this.handleChange("description")}
+          id="desc-required"
+          value={this.state.description}
+          label="Descripción"
+          placeholder="Describa la pregunta"
           className={classes.textField}
           margin="normal"
           variant="outlined"
         />
         <Select
-          speciality={this.state.speciality}
-          handleChangeSpeciality={this.handleChangeSpeciality}
+          label={"speciality"}
+          value={this.state.speciality}
+          array={specialities}
+          handleChange={this.handleChange}
+        />
+        <Select
+          label={"group"}
+          value={this.state.group}
+          array={groups}
+          handleChange={this.handleChange}
         />
         <PrimaryButton button={"Añadir"} handleClick={this.handleClick} />
       </div>
@@ -105,7 +153,7 @@ InputText.propTypes = {
 
 const mapStateToProps = state => ({
   question: state.questionsReducer.question,
-  ...state
+  groups: state.questionsReducer.groups
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -118,7 +166,8 @@ const mapDispatchToProps = dispatch => ({
   storeQuestionDB: question => {
     dispatch(storeQuestionDB(question));
     dispatch(clearQuestion());
-  }
+  },
+  getGroupsDB: () => dispatch(getGroupsDB())
 });
 
 export default connect(

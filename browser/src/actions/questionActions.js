@@ -6,13 +6,21 @@ import {
   CLEAR_QUESTION,
   STORING_QUESTION_DB,
   PUT_QUESTIONS_STORE,
-  GETTING_QUESTIONS_DB
+  GETTING_QUESTIONS_DB,
+  PUT_GROUPS_STORE
 } from "../actionTypes/FormQuestions";
 
 const putQuestionsDB = questions => dispatch => {
   dispatch({
     type: PUT_QUESTIONS_STORE,
     payload: questions
+  });
+};
+
+const putGroupsStore = groups => dispatch => {
+  dispatch({
+    type: PUT_GROUPS_STORE,
+    payload: groups
   });
 };
 
@@ -68,5 +76,18 @@ export const getQuestionsDB = () => dispatch => {
     .then(questions => {
       dispatch(gettingQuestionsDB(false));
       dispatch(putQuestionsDB(questions));
+    });
+};
+
+export const getGroupsDB = () => dispatch => {
+  axios
+    .get("http://localhost:3001/api/groups")
+    .then(res => res.data)
+    .then(data => {
+      let groups = data.map(group => ({
+        value: group.id,
+        label: group.description
+      }));
+      dispatch(putGroupsStore(groups));
     });
 };
