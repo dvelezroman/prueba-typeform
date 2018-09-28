@@ -1,15 +1,7 @@
-FROM node:7.7.2-alpine
-
-RUN mkdir /server
-
-WORKDIR /server
-
-COPY ./package.json package.json
-
-RUN npm install
-
+FROM node:7
+RUN mkdir /prueba-typeform
+ADD . /prueba-typeform
+WORKDIR /prueba-typeform/server
+RUN npm i
 EXPOSE 80
-
-ADD ./server/app.js app.js
-
 CMD ["npm", "start"]
