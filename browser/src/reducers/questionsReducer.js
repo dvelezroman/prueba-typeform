@@ -4,15 +4,19 @@ import {
   CLEAR_QUESTION,
   STORING_QUESTION_DB,
   PUT_QUESTIONS_STORE,
-  GETTING_QUESTIONS_DB
+  GETTING_QUESTIONS_DB,
+  PUT_GROUPS_STORE
 } from "../actionTypes/FormQuestions";
 
 const initial_state = {
   question: {
+    title: "",
     description: "",
-    speciality: ""
+    speciality: "",
+    group: ""
   },
   questions: [],
+  groups: [],
   filter: "all",
   storing: false,
   getting: false
@@ -28,6 +32,7 @@ export default (state = initial_state, action) => {
     case CLEAR_QUESTION:
       return Object.assign({}, state, {
         question: {
+          title: "",
           description: "",
           speciality: ""
         },
@@ -39,6 +44,8 @@ export default (state = initial_state, action) => {
       return Object.assign({}, state, { questions: [...action.payload] });
     case GETTING_QUESTIONS_DB:
       return Object.assign({}, state, { getting: action.payload });
+    case PUT_GROUPS_STORE:
+      return Object.assign({}, state, { groups: [...action.payload] });
     default:
       return state;
   }

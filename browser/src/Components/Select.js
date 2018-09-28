@@ -24,51 +24,30 @@ const styles = theme => ({
   }
 });
 
-const especialidades = [
-  {
-    value: "Medicina General",
-    label: "Medicina General"
-  },
-  {
-    value: "Ginecología",
-    label: "Ginecología"
-  },
-  {
-    value: "Traumatología",
-    label: "Traumatología"
-  },
-  {
-    value: "Cardiología",
-    label: "Cardiología"
-  }
-];
-
 class Select extends React.Component {
   render() {
-    const { classes, question, handleChangeSpeciality } = this.props;
+    const { classes, label, value, handleChange, array } = this.props;
 
     return (
       <TextField
-        id="outlined-select-native"
+        id={`${label}-select`}
         select
-        label="Especialidad"
+        label={label}
         className={classes.textField}
-        value={
-          question.speciality ? question.speciality : especialidades[0].value
-        }
-        onChange={handleChangeSpeciality}
+        value={value ? value : array[0].value}
+        onChange={handleChange(label)}
         SelectProps={{
           native: true,
           MenuProps: {
             className: classes.menu
           }
         }}
-        helperText="Selecciona especialidad médica"
+        helperText="Selecciona"
         margin="normal"
         variant="outlined"
       >
-        {especialidades.map(option => (
-          <option key={option.value} value={option.value}>
+        {array.map(option => (
+          <option key={option.value} value={option.label}>
             {option.label}
           </option>
         ))}

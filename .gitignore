@@ -4,6 +4,9 @@
 browser/node_modules
 server/node_modules
 
+# docker
+*composer*.yml
+
 # testing
 /coverage
 
