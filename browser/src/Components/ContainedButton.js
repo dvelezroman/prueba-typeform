@@ -3,6 +3,8 @@ import axios from "axios";
 import xlsxj from "xls-to-json";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
+import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import Chip from "@material-ui/core/Chip";
 
@@ -12,6 +14,9 @@ const styles = theme => ({
   },
   input: {
     display: "none"
+  },
+  button: {
+    margin: theme.spacing.unit
   },
   chip: {
     margin: theme.spacing.unit
@@ -58,22 +63,34 @@ class ContainedButton extends Component {
     const { classes } = this.props;
     return (
       <div>
-        <div>
+        <Paper className={classes.paper}>
           <Chip
-            label={this.state.file ? this.state.file.name : "No File"}
+            label={
+              this.state.file
+                ? this.state.file.name
+                : "Click en el botón para cargar la información"
+            }
             className={classes.chip}
           />
-        </div>
-        <form onSubmit={this.onFormSubmit}>
-          <input
-            type="file"
-            id="contained-button-file"
-            onChange={this.onChange}
-          />
-
-          <button type="submit">Upload</button>
-        </form>
-
+        </Paper>
+        <Paper className={classes.paper}>
+          <form onSubmit={this.onFormSubmit}>
+            <input
+              type="file"
+              id="contained-button-file"
+              onChange={this.onChange}
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              color="default"
+              className={classes.button}
+            >
+              Cargar Archivo
+              <CloudUploadIcon className={classes.rightIcon} />
+            </Button>
+          </form>
+        </Paper>
         {/* {<input
         accept="image/*"
         className={classes.input}
