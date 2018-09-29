@@ -11,6 +11,7 @@ import InputText from "../Components/InputText";
 import CircularIndeterminated from "../Components/CircularIndeterminated";
 import InteractiveList from "../Components/InteractiveList";
 import ContainedButton from "../Components/ContainedButton";
+import SidebarNav from "../Components/SideBarNav";
 
 const styles = theme => ({
   root: {
@@ -41,7 +42,9 @@ class Main extends Component {
           </Grid>
           <Grid container spacing={16}>
             <Grid item xs={3}>
-              <Paper className={classes.paper} />
+              <Paper className={classes.paper}>
+                <SidebarNav />
+              </Paper>
             </Grid>
             <Grid item xs={9}>
               <Paper className={classes.paper}>
