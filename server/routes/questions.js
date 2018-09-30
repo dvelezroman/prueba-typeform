@@ -17,7 +17,9 @@ router.post("/new", function(req, res, next) {
 });
 
 router.get("/", function(req, res) {
-  Question.findAll({}).then(questions => res.status(200).json(questions));
+  Question.findAll({ include: [Group] }).then(questions =>
+    res.status(200).json(questions)
+  );
 });
 
 module.exports = router;

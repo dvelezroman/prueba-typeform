@@ -27,7 +27,9 @@ const styles = theme => ({
 class Select extends React.Component {
   render() {
     const { classes, label, value, handleChange, array } = this.props;
-
+    let values = array.length
+      ? array
+      : [{ value: 1, label: "No existen categorías" }];
     return (
       <TextField
         id={`${label}-select`}
@@ -46,7 +48,7 @@ class Select extends React.Component {
         margin="normal"
         variant="outlined"
       >
-        {array.map(option => (
+        {values.map(option => (
           <option key={option.value} value={option.label}>
             {option.label}
           </option>

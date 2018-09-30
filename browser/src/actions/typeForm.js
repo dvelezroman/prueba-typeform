@@ -12,11 +12,11 @@ const getForm = form => ({
   payload: form
 });
 
-const creatingForm = () => ({
+export const creatingForm = () => ({
   type: CREATE_FORM
 });
 
-const formCreated = () => ({
+export const formCreated = () => ({
   type: FORM_CREATED
 });
 
@@ -26,15 +26,15 @@ const formCreationFailed = error => ({
 });
 
 export const createForm = data => dispatch => {
-  const token = "CmUqYRx7U454vehALVhSDvBuuX6kpCYwmAVXdrsbbDsD";
+  const token = "Cx7TVARyv64h6iyFJM5syoYJ8r7wAHnrMnvW3UAbkLh3";
   dispatch(creatingForm());
-  axios
+  return axios
     .post("https://api.typeform.com/forms", data, {
       headers: { Authorization: "Bearer " + token }
     })
     .then(res => res.data)
     .then(created => {
-      dispatch(getForm(JSON.stringify(created._links)));
+      dispatch(getForm(created._links));
       dispatch(formCreated());
     })
     .catch(error => dispatch(formCreationFailed(error)));

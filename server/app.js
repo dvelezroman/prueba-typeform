@@ -29,6 +29,6 @@ app.use((err, req, res, next) => {
   res.status(500).send(err);
 });
 
-db.sync({ force: false }).then(() =>
+db.sync({ force: true }).then(() =>
   app.listen(3001, () => console.log("Listening on PORT 3001"))
 );

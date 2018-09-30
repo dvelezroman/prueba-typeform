@@ -9,9 +9,10 @@ import { withStyles } from "@material-ui/core";
 import NavBar from "../Components/NavBar";
 import InputText from "../Components/InputText";
 import CircularIndeterminated from "../Components/CircularIndeterminated";
-import InteractiveList from "../Components/InteractiveList";
+import NestedList from "../Components/NestedList";
+import CreatePoll from "./CreatePoll";
+import ListOfQuestionsWithoutCheck from "../Components/ListOfQuestionsWithoutCheck";
 import ContainedButton from "../Components/ContainedButton";
-import SidebarNav from "../Components/SideBarNav";
 
 const styles = theme => ({
   root: {
@@ -43,7 +44,7 @@ class Main extends Component {
           <Grid container spacing={16}>
             <Grid item xs={3}>
               <Paper className={classes.paper}>
-                <SidebarNav />
+                <NestedList />
               </Paper>
             </Grid>
             <Grid item xs={9}>
@@ -58,29 +59,32 @@ class Main extends Component {
                           <InputText />
                         </Grid>
                         <Grid item xs={12}>
-                          <Paper className={classes.paper}>
-                            {isCreatingForm ? (
-                              <Grid item xs={12}>
-                                <CircularIndeterminated />
-                              </Grid>
-                            ) : (
-                              <Grid item xs={12}>
-                                <InteractiveList />
-                              </Grid>
-                            )}
-                          </Paper>
+                          {isCreatingForm ? (
+                            <Grid item xs={12}>
+                              <CircularIndeterminated />
+                            </Grid>
+                          ) : (
+                            <Grid item xs={12}>
+                              <ListOfQuestionsWithoutCheck />
+                            </Grid>
+                          )}
                         </Grid>
                       </Grid>
                     )}
                   />
                   <Route
                     exact
-                    path="/upload"
+                    path="/polls"
                     render={() => (
-                      <Grid item xs={12}>
-                        <ContainedButton />
+                      <Grid container>
+                        <CreatePoll />
                       </Grid>
                     )}
+                  />
+                  <Route
+                    exact
+                    path="/upload"
+                    render={() => <ContainedButton />}
                   />
                 </Switch>
               </Paper>
@@ -96,7 +100,8 @@ class Main extends Component {
 const mapStateToProps = state => ({
   questions: state.questionsReducer.questions,
   isCreatingForm: state.typeFormReducer.isCreatingForm,
-  message: state.typeFormReducer.message
+  message: state.typeFormReducer.message,
+  groups: state.questionsReducer.groups
 });
 
 const mapDispatchToProps = dispatch => ({});

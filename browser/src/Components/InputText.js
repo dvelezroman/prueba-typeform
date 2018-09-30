@@ -93,7 +93,7 @@ class InputText extends React.Component {
         title: "",
         description: "",
         speciality: "Medicina General",
-        group: "Consultas Ambulatorias"
+        group: "Consultas ambulatorias"
       });
     }
   };
@@ -104,6 +104,7 @@ class InputText extends React.Component {
   }
 
   render() {
+    console.log("STATE : ", this.state);
     const { classes, question, groups } = this.props;
     return (
       <div className={classes.root}>
