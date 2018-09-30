@@ -53,14 +53,20 @@ class ListOfQuestions extends Component {
   }
 
   render() {
-    const { classes, questions, check = true } = this.props;
+    const { classes, questions, filterGroup } = this.props;
+    let filtered_questions = questions.filter(question => {
+      if (question.group && question.group.description === filterGroup) {
+        return true;
+      }
+      return false;
+    });
     return (
       <div className={classes.root}>
         <Paper className={classes.list}>
           <List>
-            {questions.map(value => (
+            {filtered_questions.map((value, i) => (
               <ListItem
-                key={value.id}
+                key={i}
                 role={undefined}
                 dense
                 button
@@ -68,7 +74,6 @@ class ListOfQuestions extends Component {
                 className={classes.listItem}
               >
                 <Checkbox
-                  disabled={check}
                   checked={this.state.checked.indexOf(value) !== -1}
                   tabIndex={-1}
                   disableRipple

@@ -6,7 +6,7 @@ import {
 } from "../actionTypes/TypeForm";
 
 const initial_state = {
-  form: {},
+  form: "",
   isCreatingForm: false,
   message: ""
 };
@@ -17,12 +17,17 @@ export default (state = initial_state, action) => {
       return Object.assign({}, ...state, { form: action.payload });
     }
     case CREATE_FORM: {
-      return Object.assign({}, ...state, { isCreatingForm: true, message: "" });
+      return Object.assign({}, ...state, {
+        isCreatingForm: true,
+        message: "",
+        form: ""
+      });
     }
     case FORM_CREATED: {
       return Object.assign({}, ...state, {
         isCreatingForm: false,
-        message: "El Cuestionario se creó..."
+        message: "El Cuestionario se creó...",
+        form: action.payload
       });
     }
     case FORM_CREATION_FAILED: {

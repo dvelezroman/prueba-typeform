@@ -14,10 +14,15 @@ const styles = theme => ({
 });
 
 function CreatePollButton(props) {
-  const { classes } = props;
+  const { classes, disabled, createPoll } = props;
   return (
     <div>
-      <Button variant="contained" className={classes.button}>
+      <Button
+        disabled={disabled}
+        variant="contained"
+        className={classes.button}
+        onClick={createPoll}
+      >
         Crear Encuesta
       </Button>
     </div>

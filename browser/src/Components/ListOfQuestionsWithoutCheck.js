@@ -25,6 +25,13 @@ const styles = theme => ({
 });
 
 class ListOfQuestionsWithoutCheck extends Component {
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    if (nextProps.questions.length != this.props.questions.length) {
+      return true;
+    }
+    return false;
+  }
+
   componentDidMount() {
     this.props.getQuestionsDB();
   }
