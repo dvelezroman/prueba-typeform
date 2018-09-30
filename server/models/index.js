@@ -7,6 +7,7 @@ const Service = require("./Service");
 const Office = require("./Office");
 const Poll = require("./Poll");
 const Question = require("./Question");
+const File = require("./File");
 
 Order.belongsTo(Client);
 Order.belongsTo(Doctor);
@@ -16,6 +17,7 @@ Order.belongsTo(Office);
 // ------------------------- //
 Poll.belongsTo(Group); // por ahora solo voy a usar esta relacion para guardar cada vez que creo una encuesta
 Question.belongsTo(Group); // esta voy a utilzar para guardar las preguntas que voy creando
+Order.belongsTo(File); // cada orden tiene un fileId que indica a que archivo cargado pertenece
 
 module.exports = {
   Users,
@@ -26,5 +28,6 @@ module.exports = {
   Service,
   Office,
   Poll,
-  Question
+  Question,
+  File
 };

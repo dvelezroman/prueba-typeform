@@ -1,18 +1,16 @@
 const Sequelize = require("sequelize");
 const db = require("./db");
 
-const Poll = db.define("poll", {
+const File = db.define("file", {
   ref: {
     type: Sequelize.STRING,
+    unique: true,
     allowNull: false
   },
-  url: {
+  name: {
     type: Sequelize.STRING,
     allowNull: false
-  },
-  description: {
-    type: Sequelize.STRING
   }
 });
 
-module.exports = Poll;
+module.exports = File;

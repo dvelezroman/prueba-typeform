@@ -8,6 +8,8 @@ import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import Chip from "@material-ui/core/Chip";
 
+import CircularIndeterminated from "./CircularIndeterminated";
+
 const styles = theme => ({
   button: {
     margin: theme.spacing.unit
@@ -27,7 +29,8 @@ class ContainedButton extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      file: null
+      file: null,
+      loading: false
     };
     this.onChange = this.onChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -35,8 +38,10 @@ class ContainedButton extends Component {
 
   onFormSubmit = e => {
     e.preventDefault(); // Stop form submit
+    this.setState({ loading: true });
     console.log("onFormSubmit");
     this.fileUpload(this.state.file).then(response => {
+      this.setState({ loading: false });
       console.log("Se subio el archivo : ", response.data);
     });
   };
@@ -91,32 +96,6 @@ class ContainedButton extends Component {
             </Button>
           </form>
         </Paper>
-        {/* {<input
-        accept="image/*"
-        className={classes.input}
-        id="contained-button-file"
-        multiple
-        type="file"
-      />
-      <label htmlFor="contained-button-file">
-        <Button variant="contained" component="span" className={classes.button}>
-          Upload
-        </Button>
-      </label> */}
-        {/* /* <form
-          id="uploadForm"
-          enctype="multipart/form-data"
-          action="http://localhost:3001/api/upload"
-          method="post"
-        >
-          <input accept="xls/*"
-          className={classes.input}
-          id="contained-button-file"
-          multiple 
-          type="file
-          name="file" />
-          <input type="submit" value="Upload" name="submit" />
-        </form> */}
       </div>
     );
   }

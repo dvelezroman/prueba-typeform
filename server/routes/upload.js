@@ -1,6 +1,7 @@
 const express = require("express");
 var fs = require("fs");
 const router = express.Router();
+const uuid = require("uuid");
 const { upload } = require("./multer");
 const { storeInDataBase, getDataInArrays } = require("./functions");
 const xlstojson = require("xls-to-json-lc");
@@ -13,6 +14,7 @@ const Order = models.Order;
 const Doctor = models.Doctor;
 const Group = models.Group;
 const Service = models.Service;
+const File = models.File;
 
 /** API path that will upload the files */
 router.post("/", function(req, res) {
@@ -54,6 +56,12 @@ router.post("/", function(req, res) {
           // here we must store in DataBase
           const dataArray = getDataInArrays(result);
           // promises to create the data in database
+          let ref = uuid();
+          let fileName = req.file.originalname.split(".")[0];
+          let promises_file = File.findOrCreate({
+            where: { ref: ref, name: fileName }
+          });
+
           let promises_clients = dataArray.clients.map(client =>
             Client.findOrCreate({
               where: { hcu: client.hcu, name: client.name, email: client.email }
@@ -89,13 +97,16 @@ router.post("/", function(req, res) {
                       Office.findOne({
                         where: { description: order.office }
                       }).then(office =>
-                        Order.create(order).then(orderCreated => {
-                          orderCreated.setClient(client);
-                          orderCreated.setDoctor(doctor);
-                          orderCreated.setGroup(group);
-                          orderCreated.setService(service);
-                          orderCreated.setOffice(office);
-                        })
+                        File.findOne({ where: { ref: ref } }).then(file =>
+                          Order.create(order).then(orderCreated => {
+                            orderCreated.setClient(client);
+                            orderCreated.setDoctor(doctor);
+                            orderCreated.setGroup(group);
+                            orderCreated.setService(service);
+                            orderCreated.setOffice(office);
+                            orderCreated.setFile(file);
+                          })
+                        )
                       )
                     )
                 )
@@ -103,7 +114,15 @@ router.post("/", function(req, res) {
             })
           );
           // promises to create the data in database
-          let message = await storeInDataBase(promises_orders);
+          let message = await storeInDataBase(
+            promises_file,
+            promises_clients,
+            promises_doctors,
+            promises_groups,
+            promises_offices,
+            promises_services,
+            promises_orders
+          );
 
           const response = {
             error_code: 0,
