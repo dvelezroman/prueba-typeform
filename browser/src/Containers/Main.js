@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Route, Link, Redirect, Switch } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import PropTypes from "prop-types";
@@ -11,7 +11,6 @@ import InputText from "../Components/InputText";
 import CircularIndeterminated from "../Components/CircularIndeterminated";
 import NestedList from "../Components/NestedList";
 import CreatePoll from "./CreatePoll";
-import ListOfQuestionsWithoutCheck from "../Components/ListOfQuestionsWithoutCheck";
 import ContainedButton from "../Components/ContainedButton";
 
 const styles = theme => ({
@@ -64,9 +63,7 @@ class Main extends Component {
                               <CircularIndeterminated />
                             </Grid>
                           ) : (
-                            <Grid item xs={12}>
-                              <ListOfQuestionsWithoutCheck />
-                            </Grid>
+                            <Grid item xs={12} />
                           )}
                         </Grid>
                       </Grid>

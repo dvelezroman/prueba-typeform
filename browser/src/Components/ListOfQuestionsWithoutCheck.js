@@ -25,33 +25,18 @@ const styles = theme => ({
 });
 
 class ListOfQuestionsWithoutCheck extends Component {
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
-    if (nextProps.questions.length != this.props.questions.length) {
-      return true;
-    }
-    return false;
-  }
-
-  componentDidMount() {
-    this.props.getQuestionsDB();
-  }
-
   render() {
     const { classes, questions } = this.props;
 
     return (
       <List className={classes.root} subheader={<li />}>
         {questions.map(question => (
-          <li>
-            <ul className={classes.ul}>
-              <ListItem key={`${question.id}`}>
-                <ListItemText
-                  primary={`${question.title}`}
-                  secondary={`${question.description}`}
-                />
-              </ListItem>
-            </ul>
-          </li>
+          <ListItem key={question.ref}>
+            <ListItemText
+              primary={question.title}
+              secondary={`${question.description}`}
+            />
+          </ListItem>
         ))}
       </List>
     );
@@ -63,7 +48,7 @@ ListOfQuestionsWithoutCheck.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  questions: state.questionsReducer.questions
+  //questions: state.questionsReducer.questions
 });
 
 const mapDispatchToProps = dispatch => ({

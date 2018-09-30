@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Link, Redirect, Switch } from "react-router-dom";
+import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import ListSubheader from "@material-ui/core/ListSubheader";

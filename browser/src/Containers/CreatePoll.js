@@ -13,13 +13,11 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
-import Paper from "@material-ui/core/Paper";
 import CreatePollButton from "../Components/CreatePollButton";
 import Select from "../Components/Select";
-import { getQuestionsDB, getGroupsDB } from "../actions/questionActions";
+import { getGroupsDB } from "../actions/questionActions";
 import { createForm, creatingForm, formCreated } from "../actions/typeForm";
 import { createDataForm } from "../Forms/formParser";
-import AlerDialogSlide from "../Components/AlertDialogSlide";
 
 import ListOfQuestions from "./ListOfQuestions";
 
@@ -53,7 +51,7 @@ class CreatePoll extends Component {
       title: "",
       group: "Consultas ambulatorias",
       selectedQuestions: [],
-      form: "",
+      urlform: "",
       showAlertDialog: false
     };
   }
@@ -72,9 +70,9 @@ class CreatePoll extends Component {
   handleClose = () => {
     this.setState({
       showAlertDialog: false,
-      form: "",
       ref: "",
       title: "",
+      urlform: "",
       group: "Consultas ambulatorias",
       selectedQuestions: []
     });
@@ -83,9 +81,6 @@ class CreatePoll extends Component {
   createPoll = e => {
     e.preventDefault();
     let data = createDataForm(this.state.title, this.state.selectedQuestions);
-    this.setState({
-      title: ""
-    });
     // prueba
     const token = "Cx7TVARyv64h6iyFJM5syoYJ8r7wAHnrMnvW3UAbkLh3";
     axios
@@ -93,12 +88,21 @@ class CreatePoll extends Component {
         headers: { Authorization: "Bearer " + token }
       })
       .then(res => res.data)
-      .then(created => {
-        this.setState({
-          showAlertDialog: true,
-          urlForm: created._links.display
-        });
-      })
+      .then(created =>
+        axios
+          .post("http://localhost:3001/api/polls/new", {
+            ref: created.id,
+            url: created._links.display,
+            group: this.state.group
+          })
+          .then(res => {
+            this.setState({
+              title: "",
+              urlForm: res.data.url,
+              showAlertDialog: true
+            });
+          })
+      )
       .catch(error => {
         this.setState({
           showAlertDialog: true,
@@ -116,7 +120,7 @@ class CreatePoll extends Component {
   render() {
     // console.log("URL form created: ", this.props.form);
     // console.log("Message : ", this.props.message);
-    const { classes, groups, questions } = this.props;
+    const { classes, groups } = this.props;
     return (
       <div className={classes.root}>
         <Dialog
@@ -133,7 +137,7 @@ class CreatePoll extends Component {
           <DialogContent>
             <DialogContentText id="alert-dialog-slide-description">
               {`El formulario de encuesta puede ser accedido en la URL: ${
-                this.state.form
+                this.state.urlform
               }`}
             </DialogContentText>
           </DialogContent>

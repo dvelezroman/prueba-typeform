@@ -16,9 +16,6 @@ const styles = theme => ({
   input: {
     display: "none"
   },
-  button: {
-    margin: theme.spacing.unit
-  },
   chip: {
     margin: theme.spacing.unit
   }
@@ -29,24 +26,34 @@ class ContainedButton extends Component {
     super(props);
     this.state = {
       file: null,
+      orders: [],
       loading: false
     };
     this.onChange = this.onChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
   }
 
+  getOrders = fileName => {
+    axios
+      .get(`http://localhost:3001/api/orders/${fileName}`)
+      .then(res => res.data)
+      .then(orders => this.setState({ orders: orders, loading: false }));
+  };
+
   onFormSubmit = e => {
     e.preventDefault(); // Stop form submit
-    this.setState({ loading: true });
-    console.log("onFormSubmit");
-    this.fileUpload(this.state.file).then(response => {
-      this.setState({ loading: false });
-      console.log("Se subio el archivo : ", response.data);
-    });
+    if (this.state.file) {
+      let fileName = this.state.file.name.split(".")[0];
+      this.setState({ loading: true });
+      this.fileUpload(this.state.file).then(res => {
+        this.getOrders(fileName);
+      });
+    } else {
+      alert("Debe seleccionar un archivo");
+    }
   };
 
   onChange = e => {
-    console.log("onChange");
     e.preventDefault(); // stops for summit
     this.setState({ file: e.target.files[0] });
   };
@@ -99,7 +106,10 @@ class ContainedButton extends Component {
             </Paper>
           </Grid>
           <Grid item xs={12}>
-            <ShowOrders loading={this.state.loading} />
+            <ShowOrders
+              orders={this.state.orders}
+              loading={this.state.loading}
+            />
           </Grid>
         </Grid>
       </div>
