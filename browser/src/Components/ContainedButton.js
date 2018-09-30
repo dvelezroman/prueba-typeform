@@ -1,14 +1,13 @@
 import React, { Component } from "react";
 import axios from "axios";
-import xlsxj from "xls-to-json";
 import PropTypes from "prop-types";
+import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import Chip from "@material-ui/core/Chip";
-
-import CircularIndeterminated from "./CircularIndeterminated";
+import ShowOrders from "./ShowOrders";
 
 const styles = theme => ({
   button: {
@@ -68,34 +67,41 @@ class ContainedButton extends Component {
     const { classes } = this.props;
     return (
       <div>
-        <Paper className={classes.paper}>
-          <Chip
-            label={
-              this.state.file
-                ? this.state.file.name
-                : "Click en el botón para cargar la información"
-            }
-            className={classes.chip}
-          />
-        </Paper>
-        <Paper className={classes.paper}>
-          <form onSubmit={this.onFormSubmit}>
-            <input
-              type="file"
-              id="contained-button-file"
-              onChange={this.onChange}
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              color="default"
-              className={classes.button}
-            >
-              Cargar Archivo
-              <CloudUploadIcon className={classes.rightIcon} />
-            </Button>
-          </form>
-        </Paper>
+        <Grid container>
+          <Grid item xs={12}>
+            <Paper className={classes.paper}>
+              <Chip
+                label={
+                  this.state.file
+                    ? this.state.file.name
+                    : "Click en el botón para cargar la información"
+                }
+                className={classes.chip}
+              />
+            </Paper>
+            <Paper className={classes.paper}>
+              <form onSubmit={this.onFormSubmit}>
+                <input
+                  type="file"
+                  id="contained-button-file"
+                  onChange={this.onChange}
+                />
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="default"
+                  className={classes.button}
+                >
+                  Cargar Archivo
+                  <CloudUploadIcon className={classes.rightIcon} />
+                </Button>
+              </form>
+            </Paper>
+          </Grid>
+          <Grid item xs={12}>
+            <ShowOrders loading={this.state.loading} />
+          </Grid>
+        </Grid>
       </div>
     );
   }

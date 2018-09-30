@@ -84,7 +84,13 @@ class Main extends Component {
                   <Route
                     exact
                     path="/upload"
-                    render={() => <ContainedButton />}
+                    render={() => (
+                      <Grid container>
+                        <Grid item xs={12}>
+                          <ContainedButton />
+                        </Grid>
+                      </Grid>
+                    )}
                   />
                 </Switch>
               </Paper>
