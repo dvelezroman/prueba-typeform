@@ -69,16 +69,34 @@ class SendPolls extends React.Component {
       .get("http://localhost:3001/api/clients/emails", polls[0]) // hay que arreglar ver como enviar de una a consultar los emails de todos los forms que checkeó
       .then(res => res.data)
       .then(clients => {
-        let emails = clients.map(client => client.email);
+        let emails = clients.map(client => ({
+          client: {
+            email: client.email,
+            name: client.name
+          },
+          url: urlForm
+        }));
         this.sendMails(emails, urlForm);
       });
   };
 
-  sendMails = (emails, urlForm) => {
+  sendMails = (clients, urlForm) => {
     //aqui va la llamada a la API que debe enviar el correo con la data que le paso por body
+    let emails = [
+      {
+        email: "dvelezroman@gmail.com",
+        name: "Dario Velez Roman"
+      },
+      {
+        email: "joffremateo@gmail.com",
+        name: "Joffre Mateo"
+      }
+    ];
+    console.log("Listo para enviar a : ", emails, ", a la url : ", urlForm);
     axios
       .post("http://localhost:3001/api/polls/send", { emails, urlForm })
       .then(res => res.data)
+      .then(msg => alert("La encuesta se envió satisfactoriamente"))
       .catch(err => err);
   };
 
@@ -103,7 +121,7 @@ class SendPolls extends React.Component {
 
   render() {
     const { classes } = this.props;
-    console.log("State : ", this.state);
+    // console.log("State : ", this.state);
     return (
       <div className={classes.root}>
         <Grid container className={classes.root}>
@@ -112,6 +130,7 @@ class SendPolls extends React.Component {
               <Button
                 variant="extendedFab"
                 aria-label="Delete"
+                onClick={this.handleSendPoll}
                 className={classes.button}
               >
                 <NavigationIcon className={classes.extendedIcon} />

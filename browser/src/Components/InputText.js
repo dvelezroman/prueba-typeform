@@ -19,6 +19,25 @@ import {
 import { storeQuestionDB } from "../actions/firebaseActions";
 import ListOfQuestionsWithoutCheck from "./ListOfQuestionsWithoutCheck";
 
+const types = [
+  {
+    label: "Rango",
+    value: "rating"
+  },
+  {
+    label: "Texto Corto",
+    value: "short_text"
+  },
+  {
+    label: "Opción Múltiple",
+    value: "multiple_choice"
+  },
+  {
+    label: "E-mail",
+    value: "email"
+  }
+];
+
 const specialities = [
   {
     value: "1",
@@ -145,6 +164,12 @@ class InputText extends React.Component {
               className={classes.textField}
               margin="normal"
               variant="outlined"
+            />
+            <Select
+              label={"type"}
+              value={this.state.type}
+              array={types}
+              handleChange={this.handleChange}
             />
             <Select
               label={"speciality"}

@@ -10,7 +10,7 @@ const smtpTransport = nodemailer.createTransport({
   service: "Gmail",
   auth: {
     user: "caffeinasw@gmail.com",
-    pass: "mentaleche2304"
+    pass: "telurico1604"
   }
 });
 
@@ -20,22 +20,25 @@ router.get("/test", (req, res) => {
 
 router.post("/send", (req, res, next) => {
   // aqui va la accion de enviar mail con gmail
+  let emails = req.body.emails.map(item => item.email);
+  let names = req.body.emails.map(item => item.name);
+  let url = req.body.urlForm;
   let mail = {
     from: "caffeinasw@gmail.com",
-    to: "dvelezroman@gmail.com",
+    to: emails,
     subject: "Encuesta Prueba TypeForm",
-    html: "name: <br/>TypeForm Prueba de envio de encuesta automatico<br/>email"
+    html: `<br/>TypeForm Prueba de envio de encuesta automatico<br/><a href=${url}>Visite la encuesta</a>`
   };
   smtpTransport.sendMail(mail, (err, response) => {
     if (err) {
       console.log("email sending error");
-      console.log(error);
+      console.log(err);
     } else {
       console.log("Success");
     }
     smtpTransport.close();
   });
-  res.status(201).json(req.params);
+  res.status(201).json({ msg: "OK" });
 });
 
 router.post("/new", function(req, res, next) {
