@@ -7,7 +7,7 @@ const Order = db.define("order", {
     allowNull: false
   },
   attended: {
-    type: Sequelize.DATE
+    type: Sequelize.STRING
   },
   description: {
     type: Sequelize.STRING

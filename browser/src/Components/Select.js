@@ -36,7 +36,7 @@ class Select extends React.Component {
         select
         label={label}
         className={classes.textField}
-        value={value ? value : array[0].value}
+        value={value ? value : values[0].label}
         onChange={handleChange(label)}
         SelectProps={{
           native: true,

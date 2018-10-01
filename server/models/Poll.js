@@ -7,10 +7,13 @@ const Poll = db.define("poll", {
     allowNull: false
   },
   url: {
-    type: Sequelize.TEXT,
+    type: Sequelize.STRING,
     allowNull: false
   },
   description: {
+    type: Sequelize.STRING
+  },
+  name: {
     type: Sequelize.STRING,
     allowNull: false
   }

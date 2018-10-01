@@ -2,6 +2,7 @@ import React from "react";
 import uuid from "uuid";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Select from "./Select";
@@ -9,7 +10,6 @@ import PrimaryButton from "./PrimaryButton";
 
 import {
   storeQuestion,
-  addQuestion,
   clearQuestion,
   storeQuestionInDB,
   getQuestionsDB,
@@ -17,6 +17,26 @@ import {
 } from "../actions/questionActions";
 
 import { storeQuestionDB } from "../actions/firebaseActions";
+import ListOfQuestionsWithoutCheck from "./ListOfQuestionsWithoutCheck";
+
+const types = [
+  {
+    label: "Rango",
+    value: "rating"
+  },
+  {
+    label: "Texto Corto",
+    value: "short_text"
+  },
+  {
+    label: "Opción Múltiple",
+    value: "multiple_choice"
+  },
+  {
+    label: "E-mail",
+    value: "email"
+  }
+];
 
 const specialities = [
   {
@@ -52,48 +72,61 @@ const styles = theme => ({
 
 class InputText extends React.Component {
   state = {
-    ref: "",
-    title: "",
-    type: "rating",
-    description: "",
-    speciality: "Medicina General",
-    scale: 7,
-    shape: "star",
-    group: "Consultas Ambulatorias"
+    question: {
+      ref: "",
+      title: "",
+      type: "rating",
+      description: "",
+      speciality: "Medicina General",
+      scale: 7,
+      shape: "star",
+      group: "Consultas ambulatorias"
+    },
+    questions: []
   };
 
   handleChange = label => event => {
-    if (!this.state.ref.length) {
-      this.setState({ ref: uuid() });
+    let uid = this.state.question.ref;
+    if (this.state.question.ref === "") {
+      uid = uuid();
     }
-    this.setState({ [label]: event.target.value }, () =>
-      this.props.storeQuestion(this.state)
+    this.setState(
+      {
+        question: {
+          ...this.state.question,
+          ref: uid,
+          [label]: event.target.value
+        }
+      },
+      () => this.props.storeQuestion(this.state.question)
     );
   };
 
   handleClick = event => {
     event.preventDefault();
-    if (this.props.question.description) {
+    if (this.props.question.description && this.props.question.title) {
       let data = {
         question: {
-          ref: this.state.ref,
-          title: this.state.title,
-          type: this.state.type,
-          description: this.state.description,
-          speciality: this.state.speciality,
-          scale: this.state.scale,
-          shape: this.state.shape
+          ref: this.state.question.ref,
+          title: this.state.question.title,
+          type: this.state.question.type,
+          description: this.state.question.description,
+          speciality: this.state.question.speciality,
+          scale: this.state.question.scale,
+          shape: this.state.question.shape
         },
-        group: this.state.group
+        group: this.state.question.group
       };
       this.props.addQuestion(data);
-      //this.props.storeQuestionDB(this.state);
       this.setState({
-        ref: "",
-        title: "",
-        description: "",
-        speciality: "Medicina General",
-        group: "Consultas ambulatorias"
+        question: {
+          ref: "",
+          title: "",
+          description: "",
+          speciality: "Medicina General",
+          group: "Consultas ambulatorias"
+        },
+        questions: [data.question, ...this.props.questions]
       });
     }
   };
@@ -101,48 +134,67 @@ class InputText extends React.Component {
   componentDidMount() {
     this.props.getQuestionsDB();
     this.props.getGroupsDB();
+    this.setState({ questions: [...this.props.questions] });
   }
 
   render() {
-    console.log("STATE : ", this.state);
-    const { classes, question, groups } = this.props;
+    const { classes, groups } = this.props;
     return (
       <div className={classes.root}>
-        <TextField
-          required
-          onChange={this.handleChange("title")}
-          id="title-required"
-          value={this.state.title}
-          label="Titulo"
-          placeholder="Escriba un titulo"
-          className={classes.textField}
-          margin="normal"
-          variant="outlined"
-        />
-        <TextField
-          required
-          onChange={this.handleChange("description")}
-          id="desc-required"
-          value={this.state.description}
-          label="Descripción"
-          placeholder="Describa la pregunta"
-          className={classes.textField}
-          margin="normal"
-          variant="outlined"
-        />
-        <Select
-          label={"speciality"}
-          value={this.state.speciality}
-          array={specialities}
-          handleChange={this.handleChange}
-        />
-        <Select
-          label={"group"}
-          value={this.state.group}
-          array={groups}
-          handleChange={this.handleChange}
-        />
-        <PrimaryButton button={"Añadir"} handleClick={this.handleClick} />
+        <Grid container>
+          <Grid item xs={12}>
+            <TextField
+              required
+              onChange={this.handleChange("title")}
+              id="title-required"
+              value={this.state.question.title}
+              label="Titulo"
+              placeholder="Escriba un titulo"
+              className={classes.textField}
+              margin="normal"
+              variant="outlined"
+            />
+            <TextField
+              required
+              onChange={this.handleChange("description")}
+              id="desc-required"
+              value={this.state.question.description}
+              label="Descripción"
+              placeholder="Describa la pregunta"
+              className={classes.textField}
+              margin="normal"
+              variant="outlined"
+            />
+            <Select
+              label={"type"}
+              value={this.state.type}
+              array={types}
+              handleChange={this.handleChange}
+            />
+            <Select
+              label={"speciality"}
+              value={this.state.question.speciality}
+              array={specialities}
+              handleChange={this.handleChange}
+            />
+            <Select
+              label={"group"}
+              value={this.state.question.group}
+              array={groups}
+              handleChange={this.handleChange}
+            />
+            <PrimaryButton button={"Añadir"} handleClick={this.handleClick} />
+          </Grid>
+          <Grid item xs={12}>
+            <ListOfQuestionsWithoutCheck
+              questions={
+                this.state.questions.length
+                  ? this.state.questions
+                  : this.props.questions
+              }
+            />
+          </Grid>
+        </Grid>
       </div>
     );
   }
@@ -154,6 +206,7 @@ InputText.propTypes = {
 
 const mapStateToProps = state => ({
   question: state.questionsReducer.question,
+  questions: state.questionsReducer.questions,
   groups: state.questionsReducer.groups
 });
 
