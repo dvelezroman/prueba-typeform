@@ -29,11 +29,12 @@ const styles = theme => ({
 
 class NestedList extends React.Component {
   state = {
-    open: true
+    openPolls: false,
+    openUpload: false
   };
 
-  handleClick = () => {
-    this.setState(state => ({ open: !state.open }));
+  handleClick = label => e => {
+    this.setState({ [label]: !this.state[label] });
   };
 
   render() {
@@ -61,22 +62,57 @@ class NestedList extends React.Component {
               <ListItemText inset primary="Preguntas" />
             </ListItem>
           </Link>
-          <Link to="/polls">
-            <ListItem button>
-              <ListItemIcon>
-                <Drafts />
-              </ListItemIcon>
-              <ListItemText inset primary="Encuestas" />
-            </ListItem>
-          </Link>
-          <ListItem button onClick={this.handleClick}>
+          <ListItem button onClick={this.handleClick("openPolls")}>
+            <ListItemIcon>
+              <ConfirmationNumber />
+            </ListItemIcon>
+            <ListItemText inset primary="Formularios" />
+            {this.state.open ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse in={this.state.openPolls} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <Link to="/polls/dashboard">
+                <ListItem button className={classes.nested}>
+                  <ListItemIcon>
+                    <StarBorder />
+                  </ListItemIcon>
+                  <ListItemText inset primary="Dashboard" />
+                </ListItem>
+              </Link>
+            </List>
+          </Collapse>
+          <Collapse in={this.state.openPolls} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <Link to="/polls">
+                <ListItem button className={classes.nested}>
+                  <ListItemIcon>
+                    <StarBorder />
+                  </ListItemIcon>
+                  <ListItemText inset primary="Crear Formulario" />
+                </ListItem>
+              </Link>
+            </List>
+          </Collapse>
+          <Collapse in={this.state.openPolls} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <Link to="/polls/send">
+                <ListItem button className={classes.nested}>
+                  <ListItemIcon>
+                    <StarBorder />
+                  </ListItemIcon>
+                  <ListItemText inset primary="Enviar Encuesta" />
+                </ListItem>
+              </Link>
+            </List>
+          </Collapse>
+          <ListItem button onClick={this.handleClick("openUpload")}>
             <ListItemIcon>
               <ConfirmationNumber />
             </ListItemIcon>
             <ListItemText inset primary="Carga" />
-            {this.state.open ? <ExpandLess /> : <ExpandMore />}
+            {this.state.openUpload ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
-          <Collapse in={this.state.open} timeout="auto" unmountOnExit>
+          <Collapse in={this.state.openUpload} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               <Link to="/upload">
                 <ListItem button className={classes.nested}>

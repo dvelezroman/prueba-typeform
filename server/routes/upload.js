@@ -58,8 +58,9 @@ router.post("/", function(req, res) {
           // promises to create the data in database
           let ref = uuid();
           let fileName = req.file.originalname.split(".")[0];
-          let promises_file = File.findOrCreate({
-            where: { ref: ref, name: fileName }
+          let promises_file = File.create({
+            ref: ref,
+            name: fileName
           });
 
           let promises_clients = dataArray.clients.map(client =>
@@ -98,13 +99,21 @@ router.post("/", function(req, res) {
                         where: { description: order.office }
                       }).then(office =>
                         File.findOne({ where: { ref: ref } }).then(file =>
-                          Order.create(order).then(orderCreated => {
-                            orderCreated.setClient(client);
-                            orderCreated.setDoctor(doctor);
-                            orderCreated.setGroup(group);
-                            orderCreated.setService(service);
-                            orderCreated.setOffice(office);
-                            orderCreated.setFile(file);
+                          Order.findOrCreate({
+                            where: {
+                              ref: order.ref,
+                              attended: order.attended,
+                              description: "Atendido"
+                            }
+                          }).then(orderCreated => {
+                            if (orderCreated[1]) {
+                              orderCreated[0].setClient(client);
+                              orderCreated[0].setDoctor(doctor);
+                              orderCreated[0].setGroup(group);
+                              orderCreated[0].setService(service);
+                              orderCreated[0].setOffice(office);
+                              orderCreated[0].setFile(file);
+                            }
                           })
                         )
                       )
@@ -114,7 +123,7 @@ router.post("/", function(req, res) {
             })
           );
           // promises to create the data in database
-          let message = await storeInDataBase(
+          let message = storeInDataBase(
             promises_file,
             promises_clients,
             promises_doctors,
@@ -122,14 +131,23 @@ router.post("/", function(req, res) {
             promises_offices,
             promises_services,
             promises_orders
-          );
-
-          const response = {
-            error_code: 0,
-            err_desc: null,
-            message: message
-          };
-          res.json(response);
+          )
+            .then(() => {
+              const response = {
+                error_code: 0,
+                err_desc: null,
+                message: "OK"
+              };
+              res.json(response);
+            })
+            .catch(err => {
+              const response = {
+                error_code: 1,
+                err_desc: null,
+                message: "Salio mal"
+              };
+              res.json(response);
+            });
         }
       );
       try {

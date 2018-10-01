@@ -12,6 +12,7 @@ import CircularIndeterminated from "../Components/CircularIndeterminated";
 import NestedList from "../Components/NestedList";
 import CreatePoll from "./CreatePoll";
 import ContainedButton from "../Components/ContainedButton";
+import SendPolls from "./SendPolls";
 
 const styles = theme => ({
   root: {
@@ -66,6 +67,15 @@ class Main extends Component {
                             <Grid item xs={12} />
                           )}
                         </Grid>
+                      </Grid>
+                    )}
+                  />
+                  <Route
+                    exact
+                    path="/polls/send"
+                    render={() => (
+                      <Grid container>
+                        <SendPolls />
                       </Grid>
                     )}
                   />

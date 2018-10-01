@@ -12,6 +12,10 @@ const Poll = db.define("poll", {
   },
   description: {
     type: Sequelize.STRING
+  },
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false
   }
 });
 

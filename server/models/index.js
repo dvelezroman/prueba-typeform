@@ -16,6 +16,7 @@ Order.belongsTo(Service);
 Order.belongsTo(Office);
 // ------------------------- //
 Poll.belongsTo(Group); // por ahora solo voy a usar esta relacion para guardar cada vez que creo una encuesta
+Poll.belongsTo(File); // se le coloca una referencia a cada formulario creado, a que archivo cargado pertenecen cuando lo crean
 Question.belongsTo(Group); // esta voy a utilzar para guardar las preguntas que voy creando
 Order.belongsTo(File); // cada orden tiene un fileId que indica a que archivo cargado pertenece
 

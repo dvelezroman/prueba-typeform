@@ -6,7 +6,7 @@ const storeInDataBase = (
   poffices,
   pservices,
   porders
-) => {
+) =>
   Promise.all([
     pfile,
     ...pclients,
@@ -15,10 +15,7 @@ const storeInDataBase = (
     ...poffices,
     ...pservices,
     ...porders
-  ])
-    .then(createdArr => "Todo bien")
-    .catch(err => "Error storing the data");
-};
+  ]);
 
 const getDataInArrays = rawData => {
   let data = {

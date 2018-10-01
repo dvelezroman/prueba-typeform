@@ -9,7 +9,8 @@ const File = db.define("file", {
   },
   name: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
+    unique: true
   }
 });
 

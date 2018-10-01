@@ -5,6 +5,7 @@ import { PropTypes } from "prop-types";
 import uuid from "uuid";
 import { withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -52,7 +53,9 @@ class CreatePoll extends Component {
       group: "Consultas ambulatorias",
       selectedQuestions: [],
       urlform: "",
-      showAlertDialog: false
+      showAlertDialog: false,
+      files: [],
+      fileSelected: ""
     };
   }
 
@@ -74,7 +77,8 @@ class CreatePoll extends Component {
       title: "",
       urlform: "",
       group: "Consultas ambulatorias",
-      selectedQuestions: []
+      selectedQuestions: [],
+      fileSelected: ""
     });
   };
 
@@ -92,8 +96,10 @@ class CreatePoll extends Component {
         axios
           .post("http://localhost:3001/api/polls/new", {
             ref: created.id,
+            name: this.state.title,
             url: created._links.display,
-            group: this.state.group
+            group: this.state.group,
+            file: this.state.fileSelected
           })
           .then(res => {
             this.setState({
@@ -115,6 +121,16 @@ class CreatePoll extends Component {
 
   componentDidMount() {
     this.props.getGroupsDB();
+    axios
+      .get(`http://localhost:3001/api/files`)
+      .then(res => res.data)
+      .then(files => {
+        let arrayFiles = files.map(file => ({
+          value: file.id,
+          label: file.name
+        }));
+        this.setState({ files: arrayFiles, fileSelected: arrayFiles[0].label });
+      });
   }
 
   render() {
@@ -174,6 +190,12 @@ class CreatePoll extends Component {
               label={"group"}
               value={this.state.group}
               array={groups}
+              handleChange={this.handleChange}
+            />
+            <Select
+              label={"fileSelected"}
+              value={this.state.fileSelected}
+              array={this.state.files}
               handleChange={this.handleChange}
             />
           </Grid>
