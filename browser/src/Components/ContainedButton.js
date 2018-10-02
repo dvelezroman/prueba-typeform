@@ -46,7 +46,7 @@ class ContainedButton extends Component {
       let fileName = this.state.file.name.split(".")[0];
       this.setState({ loading: true });
       this.fileUpload(this.state.file).then(res => {
-        this.getOrders(fileName);
+        //this.getOrders(fileName);
       });
     } else {
       alert("Debe seleccionar un archivo");
