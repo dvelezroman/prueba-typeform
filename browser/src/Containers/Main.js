@@ -13,6 +13,7 @@ import NestedList from "../Components/NestedList";
 import CreatePoll from "./CreatePoll";
 import ContainedButton from "../Components/ContainedButton";
 import SendPolls from "./SendPolls";
+import ViewPolls from "../Components/ViewPolls";
 
 const styles = theme => ({
   root: {
@@ -96,6 +97,15 @@ class Main extends Component {
                         <Grid item xs={12}>
                           <ContainedButton />
                         </Grid>
+                      </Grid>
+                    )}
+                  />
+                  <Route
+                    exact
+                    path="/"
+                    render={() => (
+                      <Grid container>
+                        <ViewPolls />
                       </Grid>
                     )}
                   />
