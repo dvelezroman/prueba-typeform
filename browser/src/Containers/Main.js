@@ -14,6 +14,7 @@ import CreatePoll from "./CreatePoll";
 import ContainedButton from "../Components/ContainedButton";
 import SendPolls from "./SendPolls";
 import ViewPolls from "../Components/ViewPolls";
+import PollsResume from "../Components/PollsResume";
 
 const styles = theme => ({
   root: {
@@ -77,6 +78,15 @@ class Main extends Component {
                     render={() => (
                       <Grid container>
                         <SendPolls />
+                      </Grid>
+                    )}
+                  />
+                  <Route
+                    exact
+                    path="/polls/resume"
+                    render={() => (
+                      <Grid container>
+                        <PollsResume />
                       </Grid>
                     )}
                   />
