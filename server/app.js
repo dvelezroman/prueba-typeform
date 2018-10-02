@@ -10,7 +10,7 @@ const app = express();
 
 app.use(cors());
 app.options("/api/upload", cors());
-app.use(express.static(path.join(__dirname, "build")));
+//app.use(express.static(path.join(__dirname, "build")));
 //app.use(express.static(path.resolve(`${__dirname}/../browser/public`)));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -18,12 +18,10 @@ app.use(cookieParser());
 
 app.use("/api", routes);
 
-// app.get("/", function(req, res) {
-//   res.sendFile(path.join(__dirname, "build", "index.html"));
-// });
-
 app.use("/", function(req, res, next) {
-  const indexFilePath = path.resolve(`${__dirname}/build/index.html`);
+  const indexFilePath = path.resolve(
+    `${__dirname}../browser/public/index.html`
+  );
   res.sendFile(indexFilePath);
 });
 
