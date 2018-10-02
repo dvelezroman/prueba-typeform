@@ -10,19 +10,15 @@ export const createDataForm = (
   let fields = questions.map((question, i) => ({
     ref: `${question.ref}`,
     title: `${question.title}`,
-    type: "rating",
+    type: "rating", // aqui se debe permitir cambiar el tipo de pregunta
     properties: {
+      // segun el tipo de pregunta se arma este JSON
       description: question.description,
       steps: 10,
       shape: "star"
     },
     validations: {
       required: false
-    },
-    attachment: {
-      type: "video",
-      href: "https://www.youtube.com/watch?v=Uui3oT-XBxs",
-      scale: 0.8
     }
   }));
 
