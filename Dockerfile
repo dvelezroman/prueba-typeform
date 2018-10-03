@@ -11,3 +11,4 @@ COPY ./server/package-lock.json /app/server/package-lock.json
 RUN npm install --silent
 COPY ./server /app/server
 EXPOSE 3001
+CMD ["npm start"]
