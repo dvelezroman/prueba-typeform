@@ -66,7 +66,7 @@ class SendPolls extends React.Component {
     }));
     let urlForm = this.state.checked[0].url;
     axios
-      .get("http://localhost:3001/api/clients/emails", polls[0]) // hay que arreglar ver como enviar de una a consultar los emails de todos los forms que checkeó
+      .get("/api/clients/emails", polls[0]) // hay que arreglar ver como enviar de una a consultar los emails de todos los forms que checkeó
       .then(res => res.data)
       .then(clients => {
         let emails = clients.map(client => ({
@@ -94,7 +94,7 @@ class SendPolls extends React.Component {
     ];
     console.log("Listo para enviar a : ", emails, ", a la url : ", urlForm);
     axios
-      .post("http://localhost:3001/api/polls/send", { emails, urlForm })
+      .post("/api/polls/send", { emails, urlForm })
       .then(res => res.data)
       .then(msg => alert("La encuesta se envió satisfactoriamente"))
       .catch(err => err);
@@ -102,7 +102,7 @@ class SendPolls extends React.Component {
 
   componentDidMount() {
     axios
-      .get("http://localhost:3001/api/polls")
+      .get("/api/polls")
       .then(res => res.data)
       .then(array => {
         let forms = array.map(item => ({

@@ -25,7 +25,7 @@ const types = [
     value: "rating"
   },
   {
-    label: "Texto Corto",
+    label: "Si o No",
     value: "short_text"
   },
   {
@@ -169,12 +169,6 @@ class InputText extends React.Component {
               label={"type"}
               value={this.state.type}
               array={types}
-              handleChange={this.handleChange}
-            />
-            <Select
-              label={"speciality"}
-              value={this.state.question.speciality}
-              array={specialities}
               handleChange={this.handleChange}
             />
             <Select

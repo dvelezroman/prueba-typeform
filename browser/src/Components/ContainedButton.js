@@ -35,7 +35,7 @@ class ContainedButton extends Component {
 
   getOrders = fileName => {
     axios
-      .get(`http://localhost:3001/api/orders/${fileName}`)
+      .get(`/api/orders/${fileName}`)
       .then(res => res.data)
       .then(orders => this.setState({ orders: orders, loading: false }));
   };
@@ -59,7 +59,7 @@ class ContainedButton extends Component {
   };
 
   fileUpload = file => {
-    const url = "http://localhost:3001/api/upload";
+    const url = "/api/upload";
     const formData = new FormData();
     formData.append("file", file);
     const config = {

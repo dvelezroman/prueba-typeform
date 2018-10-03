@@ -23,7 +23,8 @@ const styles = theme => ({
   },
   nested: {
     paddingLeft: theme.spacing.unit * 4
-  }
+  },
+  button: {}
 });
 
 class NestedList extends React.Component {
