@@ -3,11 +3,11 @@ services:
     image: dvelezroman/prueba-typeform
     ports:
       - 3001:3001
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; npm start'
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; npm run server'
     depends_on:
-      - localhost
+      - db
     environment:
-      - DATABASE_URL=postgres://postgres@localhost:5432/typeform
+      - DATABASE_URL=postgres://postgres@db:5432/typeform
       - PORT=3001
   db:
     image: postgres
