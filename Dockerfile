@@ -1,4 +1,6 @@
 FROM node:alpine
+RUN mkdir /app
+RUN mkdir /app/browser
 RUN mkdir /app/browser/build
 WORKDIR /app/browser/
 COPY ./browser/build /app/browser/build
