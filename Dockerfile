@@ -1,10 +1,9 @@
 FROM node:9.6.1
-RUN mkdir /app
-RUN mkdir /app/server
-WORKDIR /app/server
-COPY ./server/package.json /app/server/package.json
-COPY ./server/package-lock.json /app/server/package-lock.json
-COPY ./server /app/server
-RUN npm install --silent
+WORKDIR /usr/app
+COPY ./server/package.json .
+RUN npm install --quiet
+COPY ./server .
+RUN mkdir /server
 EXPOSE 3001
+WORKDIR /usr/app/server
 CMD ["npm start"]
