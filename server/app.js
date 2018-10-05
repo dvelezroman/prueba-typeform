@@ -10,8 +10,8 @@ const app = express();
 
 app.use(cors());
 app.options("/api/upload", cors());
-//app.use(express.static(path.join(__dirname, "build")));
-//app.use(express.static(path.resolve(`${__dirname}/../browser/public`)));
+app.use(express.static(path.join(__dirname, "/../browser/build")));
+app.use(express.static(path.resolve(`${__dirname}/../browser/public`)));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
