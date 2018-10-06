@@ -19,41 +19,52 @@ import {
 import { storeQuestionDB } from "../actions/firebaseActions";
 import ListOfQuestionsWithoutCheck from "./ListOfQuestionsWithoutCheck";
 
+const shapes = [
+  { label: "Circulo", value: "circle" },
+  { label: "Nube", value: "cloud" },
+  { label: "Corona", value: "crown" },
+  { label: "Corazón", value: "heart" },
+  { label: "Estrella", value: "star" }
+];
+
+const scale = [
+  { label: 5, value: 5 },
+  { label: 6, value: 6 },
+  { label: 7, value: 7 },
+  { label: 8, value: 8 },
+  { label: 9, value: 9 },
+  { label: 10, value: 10 },
+  { label: 11, value: 11 }
+];
+
 const types = [
   {
     label: "Rango",
-    value: "rating"
+    value: "rating",
+    steps: 5,
+    shape: "star"
   },
   {
     label: "Si o No",
-    value: "short_text"
+    value: "yes_no"
   },
   {
-    label: "Opción Múltiple",
-    value: "multiple_choice"
-  },
-  {
-    label: "E-mail",
+    label: "Correo Electrónico",
     value: "email"
-  }
-];
-
-const specialities = [
-  {
-    value: "1",
-    label: "Medicina General"
   },
   {
-    value: "2",
-    label: "Ginecología"
+    label: "Texto",
+    value: "long_text"
   },
   {
-    value: "3",
-    label: "Traumatología"
+    label: "Selección",
+    value: "multiple_choice",
+    choices: [], // [{ label: "opcion 1"}, { label: "opcion 2"}]
+    allow_multiple_selection: false
   },
   {
-    value: "4",
-    label: "Cardiología"
+    label: "Número",
+    value: "number"
   }
 ];
 
@@ -61,9 +72,14 @@ const styles = theme => ({
   root: {
     flexGrow: 1
   },
+  container: {
+    display: "flex",
+    flexWrap: "wrap"
+  },
   textField: {
     marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit
+    marginRight: theme.spacing.unit,
+    width: 200
   },
   dense: {
     marginTop: 16
@@ -71,21 +87,28 @@ const styles = theme => ({
 });
 
 class InputText extends React.Component {
-  state = {
-    question: {
-      ref: "",
-      title: "",
-      type: "rating",
-      description: "",
-      speciality: "Medicina General",
-      scale: 7,
-      shape: "star",
-      group: "Consultas ambulatorias"
-    },
-    questions: []
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      question: {
+        ref: "",
+        title: "",
+        type: "rating",
+        description: "",
+        speciality: "Medicina General",
+        scale: "5",
+        shape: "star",
+        choices: "",
+        allow_multiple_selection: false,
+        group: "Consultas ambulatorias"
+      },
+      questions: []
+    };
+    this.handleChange = this.handleChange.bind(this);
+  }
 
   handleChange = label => event => {
+    console.log("Label", label, ", event.target: ", event.target);
     let uid = this.state.question.ref;
     if (this.state.question.ref === "") {
       uid = uuid();
@@ -138,58 +161,99 @@ class InputText extends React.Component {
   }
 
   render() {
+    console.log("State: ", this.state.question);
     const { classes, groups } = this.props;
     return (
-      <div className={classes.root}>
-        <Grid container>
-          <Grid item xs={12}>
-            <TextField
-              required
-              onChange={this.handleChange("title")}
-              id="title-required"
-              value={this.state.question.title}
-              label="Titulo"
-              placeholder="Escriba un titulo"
-              className={classes.textField}
-              margin="normal"
-              variant="outlined"
-            />
-            <TextField
-              required
-              onChange={this.handleChange("description")}
-              id="desc-required"
-              value={this.state.question.description}
-              label="Descripción"
-              placeholder="Describa la pregunta"
-              className={classes.textField}
-              margin="normal"
-              variant="outlined"
-            />
-            <Select
-              label={"type"}
-              value={this.state.type}
-              array={types}
-              handleChange={this.handleChange}
-            />
-            <Select
-              label={"group"}
-              value={this.state.question.group}
-              array={groups}
-              handleChange={this.handleChange}
-            />
-            <PrimaryButton button={"Añadir"} handleClick={this.handleClick} />
-          </Grid>
-          <Grid item xs={12}>
-            <ListOfQuestionsWithoutCheck
-              questions={
-                this.state.questions.length
-                  ? this.state.questions
-                  : this.props.questions
-              }
-            />
-          </Grid>
+      <Grid container className={classes.container}>
+        <Grid item xs={12}>
+          <TextField
+            required
+            onChange={this.handleChange("title")}
+            id="title-required"
+            value={this.state.question.title}
+            label="Titulo"
+            placeholder="Escriba un titulo"
+            className={classes.textField}
+            margin="normal"
+            variant="outlined"
+          />
+          <TextField
+            required
+            onChange={this.handleChange("description")}
+            id="desc-required"
+            value={this.state.question.description}
+            label="Descripción"
+            placeholder="Describa la pregunta"
+            className={classes.textField}
+            margin="normal"
+            variant="outlined"
+          />
+          <Select
+            label={"type"}
+            value={this.state.question.type}
+            array={types}
+            handleChange={this.handleChange}
+          />
+          <Select
+            label={"group"}
+            value={this.state.question.group}
+            array={groups}
+            handleChange={this.handleChange}
+          />
+          {this.state.question.type === "rating" ? (
+            <div>
+              <Select
+                label={"shape"}
+                value={this.state.question.shape}
+                array={shapes}
+                handleChange={this.handleChange}
+              />
+              <Select
+                label={"scale"}
+                value={this.state.question.scale}
+                array={scale}
+                handleChange={this.handleChange}
+              />
+            </div>
+          ) : this.state.question.type === "multiple_choice" ? (
+            <div>
+              <TextField
+                label={"choices"}
+                style={{ margin: 8 }}
+                value={this.state.question.choices}
+                onChange={this.handleChange("choices")}
+                placeholder="Ingrese las opciones separadas por comas"
+                helperText="Separe las opciones por comas asi: Opcion 1, Opcion 2,..."
+                fullWidth
+                margin="normal"
+                variant="outlined"
+              />
+              <Select
+                label={"allow_multiple_selection"}
+                value={this.state.question.allow_multiple_selection}
+                array={[
+                  { label: "Selección Multiple", value: true },
+                  { label: "Solo una opción", value: false }
+                ]}
+                handleChange={this.handleChange}
+              />
+            </div>
+          ) : (
+            <div />
+          )}
+
+          <PrimaryButton button={"Añadir"} handleClick={this.handleClick} />
         </Grid>
-      </div>
+        <Grid item xs={12}>
+          <ListOfQuestionsWithoutCheck
+            questions={
+              this.state.questions.length
+                ? this.state.questions
+                : this.props.questions
+            }
+          />
+        </Grid>
+      </Grid>
     );
   }
 }

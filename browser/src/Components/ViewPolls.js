@@ -8,11 +8,9 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
-import Checkbox from "@material-ui/core/Checkbox";
+
 import IconButton from "@material-ui/core/IconButton";
 import CommentIcon from "@material-ui/icons/Comment";
-import Button from "@material-ui/core/Button";
-import NavigationIcon from "@material-ui/icons/Navigation";
 
 const styles = theme => ({
   root: {

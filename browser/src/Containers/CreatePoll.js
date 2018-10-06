@@ -5,7 +5,6 @@ import { PropTypes } from "prop-types";
 import uuid from "uuid";
 import { withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
