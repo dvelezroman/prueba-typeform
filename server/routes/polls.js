@@ -2,6 +2,7 @@ const express = require("express");
 const nodemailer = require("nodemailer");
 const router = express.Router();
 const models = require("../models");
+var createBody = require("gmail-api-create-message-body"); // aqui seguir
 const Group = models.Group;
 const Poll = models.Poll;
 const File = models.File;
@@ -26,8 +27,8 @@ router.post("/send", (req, res, next) => {
   let mail = {
     from: "caffeinasw@gmail.com",
     to: emails,
-    subject: "Encuesta Prueba TypeForm",
-    html: `<br/>TypeForm Prueba de envio de encuesta automatico<br/><a href=${url}>Visite la encuesta</a>`
+    subject: "Encuesta Prueba Medicin",
+    html: `<br/>Encuesta de prueba automatico<br/><a href=${url}>Visite la encuesta</a>`
   };
   smtpTransport.sendMail(mail, (err, response) => {
     if (err) {
@@ -42,7 +43,7 @@ router.post("/send", (req, res, next) => {
 });
 
 router.post("/new", function(req, res, next) {
-  Group.findOne({ where: { description: req.body.group } }).then(group =>
+  Group.findOne({ where: { id: req.body.group } }).then(group =>
     File.findOne({ where: { name: req.body.file } }).then(file =>
       Poll.create({
         ref: req.body.ref,
