@@ -94,7 +94,7 @@ class CreatePoll extends Component {
       .then(res => res.data)
       .then(created =>
         axios
-          .post("http://localhost:3001/api/polls/new", {
+          .post("/api/polls/new", {
             ref: created.id,
             name: this.state.title,
             url: created._links.display,
@@ -122,7 +122,7 @@ class CreatePoll extends Component {
   componentDidMount() {
     this.props.getGroupsDB();
     axios
-      .get(`http://localhost:3001/api/files`)
+      .get(`/api/files`)
       .then(res => res.data)
       .then(files => {
         let arrayFiles = files.map(file => ({

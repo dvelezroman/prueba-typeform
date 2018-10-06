@@ -10,6 +10,7 @@ const app = express();
 
 app.use(cors());
 app.options("/api/upload", cors());
+
 app.use(express.static(path.join(__dirname, "/../browser/build")));
 app.use(express.static(path.resolve(`${__dirname}/../browser/public`)));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -30,6 +31,6 @@ app.use((err, req, res, next) => {
   res.status(500).send(err);
 });
 
-db.sync({ force: true }).then(() =>
+db.sync({ force: false }).then(() =>
   app.listen(3001, () => console.log("Listening on PORT 3001"))
 );

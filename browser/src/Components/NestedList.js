@@ -18,13 +18,13 @@ import StarBorder from "@material-ui/icons/StarBorder";
 
 const styles = theme => ({
   root: {
-    width: "100%",
-    maxWidth: 360,
+    flex: 1,
     backgroundColor: theme.palette.background.paper
   },
   nested: {
     paddingLeft: theme.spacing.unit * 4
-  }
+  },
+  button: {}
 });
 
 class NestedList extends React.Component {
@@ -71,7 +71,7 @@ class NestedList extends React.Component {
           </ListItem>
           <Collapse in={this.state.openPolls} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <Link to="/polls/dashboard">
+              <Link to="/polls/resume">
                 <ListItem button className={classes.nested}>
                   <ListItemIcon>
                     <StarBorder />
