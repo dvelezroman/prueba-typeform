@@ -39,6 +39,11 @@ const scale = [
 
 const types = [
   {
+    label: "Escala",
+    value: "opinion_scale",
+    steps: 5
+  },
+  {
     label: "Rango",
     value: "rating",
     steps: 5,
@@ -58,9 +63,7 @@ const types = [
   },
   {
     label: "Selección",
-    value: "multiple_choice",
-    choices: [], // [{ label: "opcion 1"}, { label: "opcion 2"}]
-    allow_multiple_selection: false
+    value: "multiple_choice"
   },
   {
     label: "Número",
@@ -108,7 +111,6 @@ class InputText extends React.Component {
   }
 
   handleChange = label => event => {
-    console.log("Label", label, ", event.target: ", event.target);
     let uid = this.state.question.ref;
     if (this.state.question.ref === "") {
       uid = uuid();
@@ -125,7 +127,7 @@ class InputText extends React.Component {
     );
   };
 
-  handleClick = event => {
+  handleSubmit = event => {
     event.preventDefault();
     if (this.props.question.description && this.props.question.title) {
       let data = {
@@ -136,7 +138,9 @@ class InputText extends React.Component {
           description: this.state.question.description,
           speciality: this.state.question.speciality,
           scale: this.state.question.scale,
-          shape: this.state.question.shape
+          shape: this.state.question.shape,
+          choices: this.state.question.choices,
+          allow_multiple_selection: this.state.question.allow_multiple_selection
         },
         group: this.state.question.group
       };
@@ -161,7 +165,7 @@ class InputText extends React.Component {
   }
 
   render() {
-    console.log("State: ", this.state.question);
+    //console.log("State: ", this.state.question);
     const { classes, groups } = this.props;
     return (
       <Grid container className={classes.container}>
@@ -242,7 +246,7 @@ class InputText extends React.Component {
             <div />
           )}
 
-          <PrimaryButton button={"Añadir"} handleClick={this.handleClick} />
+          <PrimaryButton button={"Añadir"} handleClick={this.handleSubmit} />
         </Grid>
         <Grid item xs={12}>
           <ListOfQuestionsWithoutCheck

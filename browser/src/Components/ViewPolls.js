@@ -108,7 +108,7 @@ class SendPolls extends React.Component {
           ref: item.ref,
           name: item.name,
           url: item.url,
-          group: item.group.description,
+          group: item.group ? item.group.description : "Nada",
           file: item.file.name,
           fileId: item.fileId,
           groupId: item.groupId
@@ -133,7 +133,7 @@ class SendPolls extends React.Component {
               <List className={classes.list}>
                 {this.state.forms.map(value => (
                   <ListItem
-                    key={value}
+                    key={value.ref}
                     role={undefined}
                     dense
                     button

@@ -2,10 +2,10 @@ const express = require("express");
 const nodemailer = require("nodemailer");
 const router = express.Router();
 const models = require("../models");
-var createBody = require("gmail-api-create-message-body"); // aqui seguir
 const Group = models.Group;
 const Poll = models.Poll;
 const File = models.File;
+const html = require("./email");
 
 const smtpTransport = nodemailer.createTransport({
   service: "Gmail",
@@ -28,7 +28,7 @@ router.post("/send", (req, res, next) => {
     from: "caffeinasw@gmail.com",
     to: emails,
     subject: "Encuesta Prueba Medicin",
-    html: `<br/>Encuesta de prueba automatico<br/><a href=${url}>Visite la encuesta</a>`
+    html: html
   };
   smtpTransport.sendMail(mail, (err, response) => {
     if (err) {

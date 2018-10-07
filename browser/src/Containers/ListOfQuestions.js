@@ -55,7 +55,7 @@ class ListOfQuestions extends Component {
   render() {
     const { classes, questions, filterGroup } = this.props;
     let filtered_questions = questions.filter(question => {
-      if (question.group && question.group.description === filterGroup) {
+      if (question.group && question.groupId === Number(filterGroup)) {
         return true;
       }
       return false;

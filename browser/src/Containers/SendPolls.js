@@ -64,20 +64,29 @@ class SendPolls extends React.Component {
       fileId: item.fileId,
       groupId: item.groupId
     }));
-    let urlForm = this.state.checked[0].url;
-    axios
-      .get("/api/clients/emails", polls[0]) // hay que arreglar ver como enviar de una a consultar los emails de todos los forms que checkeó
-      .then(res => res.data)
-      .then(clients => {
-        let emails = clients.map(client => ({
-          client: {
-            email: client.email,
-            name: client.name
-          },
-          url: urlForm
-        }));
-        this.sendMails(emails, urlForm);
-      });
+    let urlForm = this.state.checked[0].url; // revisar luego para enviar varios formularios a la vez
+    // hacer un arreglo de promesas por cada encuesta seleccionada
+    let promises_of_emails = polls.map(poll =>
+      axios.post("/api/clients/emails", poll)
+    );
+    Promise.all([...promises_of_emails]).then(arrays => console.log(arrays));
+    // axios
+    //   .post("/api/clients/emails", polls[0]) // hay que arreglar ver como enviar de una a consultar los emails de todos los forms que checkeó
+    //   .then(res => res.data)
+    //   .then(clients => {
+    //     // devuelve todos los clientes relacionados con el archivo y grupo
+    //     // por cada arreglo de correos hacer un mapeo con la url del formulario que corresponde y entregar
+    //     // un solo arreglo de objetos, cada objeto carga un arreglo de correos y un urlForm de la encuesta
+    //     let emails = clients.map(client => ({
+    //       client: {
+    //         email: client.client.email,
+    //         name: client.client.name
+    //       },
+    //       url: urlForm
+    //     }));
+    //     console.log("Emails : ", emails);
+    //     //this.sendMails(emails, urlForm);
+    //   });
   };
 
   sendMails = (clients, urlForm) => {
@@ -86,10 +95,6 @@ class SendPolls extends React.Component {
       {
         email: "dvelezroman@gmail.com",
         name: "Dario Velez Roman"
-      },
-      {
-        email: "joffremateo@gmail.com",
-        name: "Joffre Mateo"
       }
     ];
     console.log("Listo para enviar a : ", emails, ", a la url : ", urlForm);
@@ -110,7 +115,7 @@ class SendPolls extends React.Component {
           ref: item.ref,
           name: item.name,
           url: item.url,
-          group: item.group.description,
+          group: item.group ? item.group.description : "nada",
           file: item.file.name,
           fileId: item.fileId,
           groupId: item.groupId
@@ -146,9 +151,9 @@ class SendPolls extends React.Component {
           <Grid item xs={12}>
             <Paper className={classes.paper}>
               <List className={classes.list}>
-                {this.state.forms.map(value => (
+                {this.state.forms.map((value, i) => (
                   <ListItem
-                    key={value}
+                    key={i}
                     role={undefined}
                     dense
                     button
