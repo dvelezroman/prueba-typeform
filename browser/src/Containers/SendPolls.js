@@ -85,7 +85,6 @@ class SendPolls extends React.Component {
 
         arrays.push({ clients: array, urlForm: urlForm[i].url });
       });
-      console.log("Arrays : ", arrays);
       let promises_for_sending_emails = [];
       arrays.forEach(array => {
         if (array.clients.length > 0) {
@@ -95,43 +94,10 @@ class SendPolls extends React.Component {
         }
       });
       Promise.all([...promises_for_sending_emails]).then(res => {
-        console.log("Resultado de las promesas de correos : ", res);
+        if (res.length > 1) alert("Las encuestas se enviaron exitosamente");
+        else alert("Las encuesta se envió exitosamente");
       });
-      console.log(promises_for_sending_emails);
     });
-    // axios
-    //   .post("/api/clients/emails", polls[0]) // hay que arreglar ver como enviar de una a consultar los emails de todos los forms que checkeó
-    //   .then(res => res.data)
-    //   .then(clients => {
-    //     // devuelve todos los clientes relacionados con el archivo y grupo
-    //     // por cada arreglo de correos hacer un mapeo con la url del formulario que corresponde y entregar
-    //     // un solo arreglo de objetos, cada objeto carga un arreglo de correos y un urlForm de la encuesta
-    //     let emails = clients.map(client => ({
-    //       client: {
-    //         email: client.client.email,
-    //         name: client.client.name
-    //       },
-    //       url: urlForm
-    //     }));
-    //     console.log("Emails : ", emails);
-    //     //this.sendMails(emails, urlForm);
-    //   });
-  };
-
-  sendMails = (clients, urlForm) => {
-    //aqui va la llamada a la API que debe enviar el correo con la data que le paso por body
-    let emails = [
-      {
-        email: "dvelezroman@gmail.com",
-        name: "Dario Velez Roman"
-      }
-    ];
-    console.log("Listo para enviar a : ", emails, ", a la url : ", urlForm);
-    axios
-      .post("/api/polls/send", { emails, urlForm })
-      .then(res => res.data)
-      .then(msg => alert("La encuesta se envió satisfactoriamente"))
-      .catch(err => err);
   };
 
   componentDidMount() {
