@@ -86,10 +86,16 @@ class SendPolls extends React.Component {
         arrays.push({ clients: array, urlForm: urlForm[i].url });
       });
       console.log("Arrays : ", arrays);
-      let promises_for_sending_emails = arrays.map(array => {
+      let promises_for_sending_emails = [];
+      arrays.forEach(array => {
         if (array.clients.length > 0) {
-          return axios.post("/api/clients/emails", array);
+          promises_for_sending_emails.push(
+            axios.post("/api/polls/send", array)
+          );
         }
+      });
+      Promise.all([...promises_for_sending_emails]).then(res => {
+        console.log("Resultado de las promesas de correos : ", res);
       });
       console.log(promises_for_sending_emails);
     });
