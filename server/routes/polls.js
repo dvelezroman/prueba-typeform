@@ -4,6 +4,7 @@ const router = express.Router();
 const models = require("../models");
 const Group = models.Group;
 const Poll = models.Poll;
+const PollsSend = models.PollsSend;
 const File = models.File;
 const html = require("./email");
 
@@ -27,7 +28,7 @@ router.post("/send", (req, res, next) => {
   let mail = {
     from: "caffeinasw@gmail.com",
     to: emails,
-    subject: "Encuesta Prueba Medicin",
+    subject: "MEDILINK ENCUESTA",
     html: html
   };
   smtpTransport.sendMail(mail, (err, response) => {
@@ -36,6 +37,13 @@ router.post("/send", (req, res, next) => {
       console.log(err);
       res.status(400).json({ msg: "error" });
     } else {
+      Polls.findOne({ where: { url: url } }).then(poll => {
+        if (poll) {
+          PollsSend.create({ clients: 0, answers: 0 }).then(send => {
+            send.setPoll(poll);
+          });
+        }
+      });
       console.log("Success");
     }
     smtpTransport.close();

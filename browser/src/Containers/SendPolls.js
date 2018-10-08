@@ -94,6 +94,7 @@ class SendPolls extends React.Component {
         }
       });
       Promise.all([...promises_for_sending_emails]).then(res => {
+        // enviar a guardar a la base de datos las encuestas enviadas
         if (res.length > 1) alert("Las encuestas se enviaron exitosamente");
         else alert("Las encuesta se envió exitosamente");
       });
