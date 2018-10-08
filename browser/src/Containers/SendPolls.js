@@ -64,14 +64,14 @@ class SendPolls extends React.Component {
       fileId: item.fileId,
       groupId: item.groupId
     }));
-    let urlForm = this.state.checked[0].url; // revisar luego para enviar varios formularios a la vez
+    let urlForm = this.state.checked; // revisar luego para enviar varios formularios a la vez
     // hacer un arreglo de promesas por cada encuesta seleccionada
     let promises_of_emails = polls.map(poll =>
       axios.post("/api/clients/emails", poll)
     );
     Promise.all([...promises_of_emails]).then(res => {
       let arrays = [];
-      res.forEach(item => {
+      res.forEach((item, i) => {
         let hash_trie = {};
         let array = [];
         item.data.forEach(client => {
@@ -83,8 +83,15 @@ class SendPolls extends React.Component {
           }
         });
 
-        arrays.push(array);
+        arrays.push({ clients: array, urlForm: urlForm[i].url });
       });
+      console.log("Arrays : ", arrays);
+      let promises_for_sending_emails = arrays.map(array => {
+        if (array.clients.length > 0) {
+          return axios.post("/api/clients/emails", array);
+        }
+      });
+      console.log(promises_for_sending_emails);
     });
     // axios
     //   .post("/api/clients/emails", polls[0]) // hay que arreglar ver como enviar de una a consultar los emails de todos los forms que checkeó

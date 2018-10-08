@@ -21,8 +21,8 @@ router.get("/test", (req, res) => {
 
 router.post("/send", (req, res, next) => {
   // aqui va la accion de enviar mail con gmail
-  let emails = req.body.emails.map(item => item.email);
-  let names = req.body.emails.map(item => item.name);
+  let emails = req.body.clients.map(item => item.email);
+  let names = req.body.clients.map(item => item.name);
   let url = req.body.urlForm;
   let mail = {
     from: "caffeinasw@gmail.com",
@@ -34,12 +34,13 @@ router.post("/send", (req, res, next) => {
     if (err) {
       console.log("email sending error");
       console.log(err);
+      res.status(400).json({ msg: "error" });
     } else {
       console.log("Success");
     }
     smtpTransport.close();
   });
-  res.status(201).json({ msg: "OK" });
+  res.status(201).json({ msg: "ok" });
 });
 
 router.post("/new", function(req, res, next) {
