@@ -69,7 +69,23 @@ class SendPolls extends React.Component {
     let promises_of_emails = polls.map(poll =>
       axios.post("/api/clients/emails", poll)
     );
-    Promise.all([...promises_of_emails]).then(arrays => console.log(arrays));
+    Promise.all([...promises_of_emails]).then(res => {
+      let arrays = [];
+      res.forEach(item => {
+        let hash_trie = {};
+        let array = [];
+        item.data.forEach(client => {
+          let email = client.client.email;
+          let name = client.client.name;
+          if (!hash_trie[email]) {
+            hash_trie[email] = true;
+            array.push({ email: email, name: name });
+          }
+        });
+
+        arrays.push(array);
+      });
+    });
     // axios
     //   .post("/api/clients/emails", polls[0]) // hay que arreglar ver como enviar de una a consultar los emails de todos los forms que checkeó
     //   .then(res => res.data)
