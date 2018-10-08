@@ -5,7 +5,6 @@ import { PropTypes } from "prop-types";
 import uuid from "uuid";
 import { withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -57,6 +56,7 @@ class CreatePoll extends Component {
       files: [],
       fileSelected: ""
     };
+    this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange = label => event => {
@@ -76,7 +76,7 @@ class CreatePoll extends Component {
       ref: "",
       title: "",
       urlform: "",
-      group: "Consultas ambulatorias",
+      group: "",
       selectedQuestions: [],
       fileSelected: ""
     });
@@ -86,6 +86,7 @@ class CreatePoll extends Component {
     e.preventDefault();
     let data = createDataForm(this.state.title, this.state.selectedQuestions);
     // prueba
+    console.log("Data para crear Form : ", JSON.stringify(data));
     const token = "Cx7TVARyv64h6iyFJM5syoYJ8r7wAHnrMnvW3UAbkLh3";
     axios
       .post("https://api.typeform.com/forms", data, {
@@ -129,13 +130,17 @@ class CreatePoll extends Component {
           value: file.id,
           label: file.name
         }));
-        this.setState({ files: arrayFiles, fileSelected: arrayFiles[0].label });
+        let fileSelected = arrayFiles.length ? arrayFiles[0].label : "";
+        this.setState({
+          files: arrayFiles,
+          fileSelected: fileSelected
+        });
       });
   }
 
   render() {
     // console.log("URL form created: ", this.props.form);
-    // console.log("Message : ", this.props.message);
+    console.log("State : ", this.state);
     const { classes, groups } = this.props;
     return (
       <div className={classes.root}>
@@ -189,7 +194,7 @@ class CreatePoll extends Component {
             <Select
               label={"group"}
               value={this.state.group}
-              array={groups}
+              array={[{ value: "0", label: "Elija Grupo" }, ...groups]}
               handleChange={this.handleChange}
             />
             <Select

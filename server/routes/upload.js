@@ -143,7 +143,7 @@ router.post("/", function(req, res) {
             .catch(err => {
               const response = {
                 error_code: 1,
-                err_desc: null,
+                err_desc: err,
                 message: "Salio mal"
               };
               res.json(response);

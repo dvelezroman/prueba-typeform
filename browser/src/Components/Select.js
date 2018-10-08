@@ -49,7 +49,7 @@ class Select extends React.Component {
         variant="outlined"
       >
         {values.map(option => (
-          <option key={option.value} value={option.label}>
+          <option key={option.value} value={option.value}>
             {option.label}
           </option>
         ))}

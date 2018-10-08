@@ -1,4 +1,5 @@
-import React from "react";
+import React, { Component } from "react";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -21,50 +22,52 @@ const styles = theme => ({
   }
 });
 
-function ShowOrders(props) {
-  const { classes, loading, orders } = props;
-  if (loading) {
-    return <CircularIndeterminated />;
-  } else {
-    return (
-      <Paper className={classes.root}>
-        <Table className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Registros: {orders.length}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Orden</TableCell>
-              <TableCell>HCU</TableCell>
-              <TableCell>Cliente</TableCell>
-              <TableCell>email</TableCell>
-              <TableCell>Médico</TableCell>
-              <TableCell>Grupo</TableCell>
-              <TableCell>Sucursal</TableCell>
-              <TableCell>Fecha atención</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {orders.map(order => {
-              return (
-                <TableRow key={order.id}>
-                  <TableCell component="th" scope="row">
-                    {order.ref}
-                  </TableCell>
-                  <TableCell>{order.client.hcu}</TableCell>
-                  <TableCell>{order.client.name}</TableCell>
-                  <TableCell>{order.client.email}</TableCell>
-                  <TableCell>{order.doctor.name}</TableCell>
-                  <TableCell>{order.group.description}</TableCell>
-                  <TableCell>{order.office.description}</TableCell>
-                  <TableCell>{order.attended}</TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </Paper>
-    );
+class ShowOrders extends Component {
+  render() {
+    const { classes, loading, orders } = this.props;
+    if (loading) {
+      return <CircularIndeterminated />;
+    } else {
+      return (
+        <Paper className={classes.root}>
+          <Table className={classes.table}>
+            <TableHead>
+              <TableRow>
+                <TableCell>Registros: {orders.length}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Orden</TableCell>
+                <TableCell>HCU</TableCell>
+                <TableCell>Cliente</TableCell>
+                <TableCell>email</TableCell>
+                <TableCell>Médico</TableCell>
+                <TableCell>Grupo</TableCell>
+                <TableCell>Sucursal</TableCell>
+                <TableCell>Fecha atención</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {orders.map(order => {
+                return (
+                  <TableRow key={order.id}>
+                    <TableCell component="th" scope="row">
+                      {order.ref}
+                    </TableCell>
+                    <TableCell>{order.client.hcu}</TableCell>
+                    <TableCell>{order.client.name}</TableCell>
+                    <TableCell>{order.client.email}</TableCell>
+                    <TableCell>{order.doctor.name}</TableCell>
+                    <TableCell>{order.group.description}</TableCell>
+                    <TableCell>{order.office.description}</TableCell>
+                    <TableCell>{order.attended}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </Paper>
+      );
+    }
   }
 }
 
@@ -72,4 +75,9 @@ ShowOrders.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(ShowOrders);
+const mapStateToProps = state => ({
+  orders: [...state.uploadReducer.orders],
+  loading: state.uploadReducer.loading
+});
+
+export default connect(mapStateToProps)(withStyles(styles)(ShowOrders));

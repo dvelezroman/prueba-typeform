@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const Sequelize = require("sequelize");
 const models = require("../models");
 
 const Client = models.Client;
@@ -9,7 +10,7 @@ router.get("/test", (req, res) => {
   res.status(200).json("OK");
 });
 
-router.get("/emails", function(req, res) {
+router.post("/emails", function(req, res) {
   Order.findAll({
     where: { fileId: req.body.fileId, groupId: req.body.groupId },
     include: [Client]

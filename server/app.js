@@ -10,6 +10,10 @@ const app = express();
 
 app.use(cors());
 app.options("/api/upload", cors());
+
+require("./config/config"); // config.js
+
+app.use(express.static(path.join(__dirname, "/build")));
 app.use(express.static(path.resolve(`${__dirname}/build`)));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

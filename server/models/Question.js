@@ -24,6 +24,13 @@ const Question = db.define("question", {
   scale: {
     type: Sequelize.INTEGER
   },
+  choices: {
+    type: Sequelize.STRING
+  },
+  allow_multiple_selection: {
+    type: Sequelize.BOOLEAN,
+    default: false
+  },
   speciality: {
     type: Sequelize.STRING
   }

@@ -8,11 +8,9 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
-import Checkbox from "@material-ui/core/Checkbox";
+
 import IconButton from "@material-ui/core/IconButton";
 import CommentIcon from "@material-ui/icons/Comment";
-import Button from "@material-ui/core/Button";
-import NavigationIcon from "@material-ui/icons/Navigation";
 
 const styles = theme => ({
   root: {
@@ -110,7 +108,7 @@ class SendPolls extends React.Component {
           ref: item.ref,
           name: item.name,
           url: item.url,
-          group: item.group.description,
+          group: item.group ? item.group.description : "Nada",
           file: item.file.name,
           fileId: item.fileId,
           groupId: item.groupId
@@ -135,7 +133,7 @@ class SendPolls extends React.Component {
               <List className={classes.list}>
                 {this.state.forms.map(value => (
                   <ListItem
-                    key={value}
+                    key={value.ref}
                     role={undefined}
                     dense
                     button

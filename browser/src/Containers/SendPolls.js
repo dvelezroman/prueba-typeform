@@ -64,40 +64,41 @@ class SendPolls extends React.Component {
       fileId: item.fileId,
       groupId: item.groupId
     }));
-    let urlForm = this.state.checked[0].url;
-    axios
-      .get("/api/clients/emails", polls[0]) // hay que arreglar ver como enviar de una a consultar los emails de todos los forms que checkeó
-      .then(res => res.data)
-      .then(clients => {
-        let emails = clients.map(client => ({
-          client: {
-            email: client.email,
-            name: client.name
-          },
-          url: urlForm
-        }));
-        this.sendMails(emails, urlForm);
-      });
-  };
+    let urlForm = this.state.checked; // revisar luego para enviar varios formularios a la vez
+    // hacer un arreglo de promesas por cada encuesta seleccionada
+    let promises_of_emails = polls.map(poll =>
+      axios.post("/api/clients/emails", poll)
+    );
+    Promise.all([...promises_of_emails]).then(res => {
+      let arrays = [];
+      res.forEach((item, i) => {
+        let hash_trie = {};
+        let array = [];
+        item.data.forEach(client => {
+          let email = client.client.email;
+          let name = client.client.name;
+          if (!hash_trie[email]) {
+            hash_trie[email] = true;
+            array.push({ email: email, name: name });
+          }
+        });
 
-  sendMails = (clients, urlForm) => {
-    //aqui va la llamada a la API que debe enviar el correo con la data que le paso por body
-    let emails = [
-      {
-        email: "dvelezroman@gmail.com",
-        name: "Dario Velez Roman"
-      },
-      {
-        email: "joffremateo@gmail.com",
-        name: "Joffre Mateo"
-      }
-    ];
-    console.log("Listo para enviar a : ", emails, ", a la url : ", urlForm);
-    axios
-      .post("/api/polls/send", { emails, urlForm })
-      .then(res => res.data)
-      .then(msg => alert("La encuesta se envió satisfactoriamente"))
-      .catch(err => err);
+        arrays.push({ clients: array, urlForm: urlForm[i].url });
+      });
+      let promises_for_sending_emails = [];
+      arrays.forEach(array => {
+        if (array.clients.length > 0) {
+          promises_for_sending_emails.push(
+            axios.post("/api/polls/send", array)
+          );
+        }
+      });
+      Promise.all([...promises_for_sending_emails]).then(res => {
+        // enviar a guardar a la base de datos las encuestas enviadas
+        if (res.length > 1) alert("Las encuestas se enviaron exitosamente");
+        else alert("Las encuesta se envió exitosamente");
+      });
+    });
   };
 
   componentDidMount() {
@@ -110,7 +111,7 @@ class SendPolls extends React.Component {
           ref: item.ref,
           name: item.name,
           url: item.url,
-          group: item.group.description,
+          group: item.group ? item.group.description : "nada",
           file: item.file.name,
           fileId: item.fileId,
           groupId: item.groupId
@@ -146,9 +147,9 @@ class SendPolls extends React.Component {
           <Grid item xs={12}>
             <Paper className={classes.paper}>
               <List className={classes.list}>
-                {this.state.forms.map(value => (
+                {this.state.forms.map((value, i) => (
                   <ListItem
-                    key={value}
+                    key={i}
                     role={undefined}
                     dense
                     button

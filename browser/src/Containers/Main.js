@@ -15,6 +15,7 @@ import ContainedButton from "../Components/ContainedButton";
 import SendPolls from "./SendPolls";
 import ViewPolls from "../Components/ViewPolls";
 import PollsResume from "../Components/PollsResume";
+import LoginForm from "./LoginForm";
 
 const styles = theme => ({
   root: {
@@ -52,6 +53,15 @@ class Main extends Component {
             <Grid item xs={9}>
               <Paper className={classes.paper}>
                 <Switch>
+                  <Route
+                    exact
+                    path="/login"
+                    render={() => (
+                      <Grid container>
+                        <LoginForm />
+                      </Grid>
+                    )}
+                  />
                   <Route
                     exact
                     path="/questions"
