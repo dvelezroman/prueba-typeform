@@ -1,4 +1,4 @@
-const Users = require("./Users");
+const User = require("./User");
 const Client = require("./Client");
 const Order = require("./Order");
 const Doctor = require("./Doctor");
@@ -23,7 +23,7 @@ Question.belongsTo(Group); // esta voy a utilzar para guardar las preguntas que 
 Order.belongsTo(File); // cada orden tiene un fileId que indica a que archivo cargado pertenece
 
 module.exports = {
-  Users,
+  User,
   Client,
   Order,
   Doctor,
