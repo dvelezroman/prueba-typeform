@@ -3,6 +3,9 @@
     "version": "1.0.0",
     "description": "Alto server",
     "main": "app.js",
+    "engines": {
+        "node": "v8.10.0"
+    },
     "scripts": {
         "dev": "concurrently \"npm start\" \"cd ../browser && npm start\"",
         "build": "cd ../browser && npm run build",
