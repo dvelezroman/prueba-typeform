@@ -9,7 +9,7 @@
     "scripts": {
         "dev": "concurrently \"npm start\" \"cd ../browser && npm start\"",
         "build": "cd ../browser && npm run build",
-        "start": "nodemon app.js",
+        "start": "node app.js",
         "browser": "\"cd ../browser npm start\"",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
