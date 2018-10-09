@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
 require("../config/config"); // config.js
 
-const db = new Sequelize("postgres://postgres:password@db:5432/typeform", {
+const db = new Sequelize(process.env.URI_DB, {
   logging: false
 });
 
