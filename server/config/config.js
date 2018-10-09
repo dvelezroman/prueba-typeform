@@ -26,4 +26,4 @@ let uriDB =
     ? "postgres://postgres@localhost:5432/typeform"
     : process.env.POSTGRES_URI; // heroku environment variable
 
-process.env.URI_DB = uriDB;
+process.env.DATABASE_URL = uriDB;
