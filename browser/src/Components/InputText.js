@@ -166,8 +166,12 @@ class InputText extends React.Component {
 
   render() {
     //console.log("State: ", this.state.question);
-    const { classes, groups } = this.props;
-    return (
+    const { classes, groups, loggedUser } = this.props;
+    return !loggedUser.logged ? (
+      <div className={classes.root}>
+        <h1>Necesitas loggearte para ver esta informacion</h1>
+      </div>
+    ) : (
       <Grid container className={classes.container}>
         <Grid item xs={12}>
           <TextField
@@ -267,6 +271,7 @@ InputText.propTypes = {
 };
 
 const mapStateToProps = state => ({
+  loggedUser: state.userReducer,
   question: state.questionsReducer.question,
   questions: state.questionsReducer.questions,
   groups: state.questionsReducer.groups

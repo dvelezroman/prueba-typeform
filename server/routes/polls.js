@@ -25,11 +25,12 @@ router.post("/send", (req, res, next) => {
   let emails = req.body.clients.map(item => item.email);
   let names = req.body.clients.map(item => item.name);
   let url = req.body.urlForm;
+  let body = html(url);
   let mail = {
     from: "caffeinasw@gmail.com",
     to: emails,
     subject: "MEDILINK ENCUESTA",
-    html: html
+    html: body
   };
   smtpTransport.sendMail(mail, (err, response) => {
     if (err) {

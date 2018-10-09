@@ -1,4 +1,5 @@
-const html = `
+const html = url => {
+  return `
 <!doctype html>
 <html>
 
@@ -233,7 +234,7 @@ const html = `
                                                                     <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse: separate; width: 100%; border-spacing: 0px;" align="center" border="0" width="100%">
                                                                         <tbody>
                                                                             <tr>
-                                                                                <td style="border:none;border-bottom:1px solid #e4ba3f;border-left:1px solid #e4ba3f;border-radius:3px 0px 0px 3px;border-top:1px solid #e4ba3f;color:#e4ba3f;cursor:auto;padding:0px;" align="center" valign="middle" bgcolor="#fdfbf5"><a href="https://caffeinasw.typeform.com/to/iQt0pC?prefilled_answer=0" style="text-decoration:none;background:#fdfbf5;color:#e4ba3f;font-family:Font, 'Karla', Helvetica, Arial;font-size:15px;font-weight:normal;line-height:4;text-transform:none;margin:0;padding:0;display:block;"
+                                                                                <td style="border:none;border-bottom:1px solid #e4ba3f;border-left:1px solid #e4ba3f;border-radius:3px 0px 0px 3px;border-top:1px solid #e4ba3f;color:#e4ba3f;cursor:auto;padding:0px;" align="center" valign="middle" bgcolor="#fdfbf5"><a href=${url} style="text-decoration:none;background:#fdfbf5;color:#e4ba3f;font-family:Font, 'Karla', Helvetica, Arial;font-size:15px;font-weight:normal;line-height:4;text-transform:none;margin:0;padding:0;display:block;"
                                                                                         target="_blank">0</a></td>
                                                                             </tr>
                                                                         </tbody>
@@ -252,7 +253,7 @@ const html = `
                                                                     <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse: separate; width: 100%; border-spacing: 0px;" align="center" border="0" width="100%">
                                                                         <tbody>
                                                                             <tr>
-                                                                                <td style="border:none;border-bottom:1px solid #e4ba3f;border-left:1px solid #e4ba3f;border-radius:0px;border-top:1px solid #e4ba3f;color:#e4ba3f;cursor:auto;padding:0px;" align="center" valign="middle" bgcolor="#fdfbf5"><a href="https://caffeinasw.typeform.com/to/iQt0pC?prefilled_answer=1" style="text-decoration:none;background:#fdfbf5;color:#e4ba3f;font-family:Font, 'Karla', Helvetica, Arial;font-size:15px;font-weight:normal;line-height:4;text-transform:none;margin:0;padding:0;display:block;"
+                                                                                <td style="border:none;border-bottom:1px solid #e4ba3f;border-left:1px solid #e4ba3f;border-radius:0px;border-top:1px solid #e4ba3f;color:#e4ba3f;cursor:auto;padding:0px;" align="center" valign="middle" bgcolor="#fdfbf5"><a href=${url} style="text-decoration:none;background:#fdfbf5;color:#e4ba3f;font-family:Font, 'Karla', Helvetica, Arial;font-size:15px;font-weight:normal;line-height:4;text-transform:none;margin:0;padding:0;display:block;"
                                                                                         target="_blank">1</a></td>
                                                                             </tr>
                                                                         </tbody>
@@ -271,7 +272,7 @@ const html = `
                                                                     <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse: separate; width: 100%; border-spacing: 0px;" align="center" border="0" width="100%">
                                                                         <tbody>
                                                                             <tr>
-                                                                                <td style="border:none;border-bottom:1px solid #e4ba3f;border-left:1px solid #e4ba3f;border-radius:0px;border-top:1px solid #e4ba3f;color:#e4ba3f;cursor:auto;padding:0px;" align="center" valign="middle" bgcolor="#fdfbf5"><a href="https://caffeinasw.typeform.com/to/iQt0pC?prefilled_answer=2" style="text-decoration:none;background:#fdfbf5;color:#e4ba3f;font-family:Font, 'Karla', Helvetica, Arial;font-size:15px;font-weight:normal;line-height:4;text-transform:none;margin:0;padding:0;display:block;"
+                                                                                <td style="border:none;border-bottom:1px solid #e4ba3f;border-left:1px solid #e4ba3f;border-radius:0px;border-top:1px solid #e4ba3f;color:#e4ba3f;cursor:auto;padding:0px;" align="center" valign="middle" bgcolor="#fdfbf5"><a href=${url} style="text-decoration:none;background:#fdfbf5;color:#e4ba3f;font-family:Font, 'Karla', Helvetica, Arial;font-size:15px;font-weight:normal;line-height:4;text-transform:none;margin:0;padding:0;display:block;"
                                                                                         target="_blank">2</a></td>
                                                                             </tr>
                                                                         </tbody>
@@ -290,7 +291,7 @@ const html = `
                                                                     <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse: separate; width: 100%; border-spacing: 0px;" align="center" border="0" width="100%">
                                                                         <tbody>
                                                                             <tr>
-                                                                                <td style="border:none;border-bottom:1px solid #e4ba3f;border-left:1px solid #e4ba3f;border-radius:0px;border-top:1px solid #e4ba3f;color:#e4ba3f;cursor:auto;padding:0px;" align="center" valign="middle" bgcolor="#fdfbf5"><a href="https://caffeinasw.typeform.com/to/iQt0pC?prefilled_answer=3" style="text-decoration:none;background:#fdfbf5;color:#e4ba3f;font-family:Font, 'Karla', Helvetica, Arial;font-size:15px;font-weight:normal;line-height:4;text-transform:none;margin:0;padding:0;display:block;"
+                                                                                <td style="border:none;border-bottom:1px solid #e4ba3f;border-left:1px solid #e4ba3f;border-radius:0px;border-top:1px solid #e4ba3f;color:#e4ba3f;cursor:auto;padding:0px;" align="center" valign="middle" bgcolor="#fdfbf5"><a href=${url} style="text-decoration:none;background:#fdfbf5;color:#e4ba3f;font-family:Font, 'Karla', Helvetica, Arial;font-size:15px;font-weight:normal;line-height:4;text-transform:none;margin:0;padding:0;display:block;"
                                                                                         target="_blank">3</a></td>
                                                                             </tr>
                                                                         </tbody>
@@ -309,7 +310,7 @@ const html = `
                                                                     <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse: separate; width: 100%; border-spacing: 0px;" align="center" border="0" width="100%">
                                                                         <tbody>
                                                                             <tr>
-                                                                                <td style="border:none;border-bottom:1px solid #e4ba3f;border-left:1px solid #e4ba3f;border-radius:0px 3px 3px 0px;border-right:1px solid #e4ba3f;border-top:1px solid #e4ba3f;color:#e4ba3f;cursor:auto;padding:0px;" align="center" valign="middle" bgcolor="#fdfbf5"><a href="https://caffeinasw.typeform.com/to/iQt0pC?prefilled_answer=4" style="text-decoration:none;background:#fdfbf5;color:#e4ba3f;font-family:Font, 'Karla', Helvetica, Arial;font-size:15px;font-weight:normal;line-height:4;text-transform:none;margin:0;padding:0;display:block;"
+                                                                                <td style="border:none;border-bottom:1px solid #e4ba3f;border-left:1px solid #e4ba3f;border-radius:0px 3px 3px 0px;border-right:1px solid #e4ba3f;border-top:1px solid #e4ba3f;color:#e4ba3f;cursor:auto;padding:0px;" align="center" valign="middle" bgcolor="#fdfbf5"><a href=${url} style="text-decoration:none;background:#fdfbf5;color:#e4ba3f;font-family:Font, 'Karla', Helvetica, Arial;font-size:15px;font-weight:normal;line-height:4;text-transform:none;margin:0;padding:0;display:block;"
                                                                                         target="_blank">4</a></td>
                                                                             </tr>
                                                                         </tbody>
@@ -404,7 +405,7 @@ const html = `
                     <tr>
                         <td style="text-align:center;vertical-align:top;direction:ltr;font-size:0px;padding:0px 0px 20px 0px;">
                             <!--[if mso | IE]> <table role="presentation" border="0" cellpadding="0" cellspacing="0"> <tr> <td style="vertical-align:undefined;width:300px;"> <![endif]-->
-                            <div style="cursor:auto;color:#000000;font-family:Helvetica, Arial;font-size:12px;font-weight:normal;line-height:22px;text-align:center;"><a href="https://admin.typeform.com/signup?utm_campaign=iQt0pC&utm_source=typeform.com-12619728-Basic&utm_medium=typeform&utm_content=typeform-embed-email&utm_term=EN" target="_blank" style="color: #b89837; text-decoration: none;"> Powered by <strong>Typeform</strong> </a></div>
+                            <div style="cursor:auto;color:#000000;font-family:Helvetica, Arial;font-size:12px;font-weight:normal;line-height:22px;text-align:center;"><a href="https://admin.typeform.com/signup?utm_campaign=iQt0pC&utm_source=typeform.com-12619728-Basic&utm_medium=typeform&utm_content=typeform-embed-email&utm_term=EN" target="_blank" style="color: #b89837; text-decoration: none;"> Encuestas <strong>Medilink</strong> </a></div>
                             <!--[if mso | IE]> </td><td style="vertical-align:undefined;width:1px;"> <![endif]-->
                             <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse: collapse; border-spacing: 0px;" align="center" border="0">
                                 <tbody>
@@ -425,5 +426,6 @@ const html = `
 </body>
 
 </html>`;
+};
 
 module.exports = html;

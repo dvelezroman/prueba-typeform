@@ -18,7 +18,10 @@ export default (state = initialState, action) => {
         logged: true
       });
     case UNLOGIN:
-      return Object.assign({}, ...initialState);
+      return Object.assign({}, ...state, {
+        user: { id: null, name: "", email: "" },
+        logged: false
+      });
     default:
       return state;
   }

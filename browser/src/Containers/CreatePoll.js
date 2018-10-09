@@ -139,10 +139,12 @@ class CreatePoll extends Component {
   }
 
   render() {
-    // console.log("URL form created: ", this.props.form);
-    console.log("State : ", this.state);
-    const { classes, groups } = this.props;
-    return (
+    const { classes, groups, loggedUser } = this.props;
+    return !loggedUser.logged ? (
+      <div className={classes.root}>
+        <h1>Necesitas loggearte para ver esta informacion</h1>
+      </div>
+    ) : (
       <div className={classes.root}>
         <Dialog
           open={this.state.showAlertDialog}
@@ -218,6 +220,7 @@ class CreatePoll extends Component {
 }
 
 const mapStateToProps = state => ({
+  loggedUser: state.userReducer,
   groups: state.questionsReducer.groups,
   form: state.typeFormReducer.form,
   isCreatingForm: state.typeFormReducer.isCreatingForm,

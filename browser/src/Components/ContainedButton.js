@@ -45,8 +45,12 @@ class ContainedButton extends Component {
   };
 
   render() {
-    const { classes } = this.props;
-    return (
+    const { classes, loggedUser } = this.props;
+    return !loggedUser.logged ? (
+      <div className={classes.root}>
+        <h1>Necesitas loggearte para ver esta informacion</h1>
+      </div>
+    ) : (
       <div>
         <Grid container>
           <Grid item xs={12}>
@@ -93,6 +97,7 @@ ContainedButton.propTypes = {
 };
 
 const mapStateToProps = state => ({
+  loggedUser: state.userReducer,
   orders: state.uploadReducer.orders,
   loading: state.uploadReducer.loading
 });

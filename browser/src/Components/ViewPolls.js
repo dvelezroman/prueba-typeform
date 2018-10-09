@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
@@ -118,9 +119,13 @@ class SendPolls extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
-    // console.log("State : ", this.state);
-    return (
+    const { classes, loggedUser } = this.props;
+
+    return !loggedUser.logged ? (
+      <div className={classes.root}>
+        <h1>Necesitas loggearte para ver esta informacion</h1>
+      </div>
+    ) : (
       <div className={classes.root}>
         <Grid container className={classes.root}>
           <Grid item xs={12}>
@@ -166,4 +171,7 @@ SendPolls.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(SendPolls);
+const mapStateToProps = state => ({
+  loggedUser: state.userReducer
+});
+export default connect(mapStateToProps)(withStyles(styles)(SendPolls));

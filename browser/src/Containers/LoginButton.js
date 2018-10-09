@@ -3,6 +3,7 @@ import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
+import { clearUser } from "../actions/UserActions";
 
 import Avatar from "@material-ui/core/Avatar";
 
@@ -29,25 +30,35 @@ const styles = {
   }
 };
 
-const mapStateToProps = ({ users }) => ({
-  //loggedUser: users.loggedUser
+const mapStateToProps = state => ({
+  loggedUser: state.userReducer
 });
 
 const mapDispatchToProps = dispatch => ({
-  //unlogUser: () => dispatch(unlogUser())
+  clearUser: () => dispatch(clearUser())
 });
 
 class LoginBtn extends React.Component {
+  constructor() {
+    super();
+    this.state = {};
+    this.unlogUser = this.unlogUser.bind(this);
+  }
+
+  unlogUser() {
+    this.props.clearUser();
+  }
+
   render() {
-    const { classes, loggedUser, unlogUser } = this.props;
+    const { classes, loggedUser } = this.props;
     //var isLogged = Object.keys(loggedUser).length;
     return (
       <div>
-        {false ? (
+        {loggedUser.logged ? (
           <div className={classes.comboLogin}>
             <Button
               className={classes.buttonLogin}
-              onClick={unlogUser}
+              onClick={this.unlogUser}
               size="medium"
             >
               Logout

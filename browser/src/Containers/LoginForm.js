@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router";
@@ -8,7 +8,7 @@ import { Grid, Typography } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
 import { connect } from "react-redux";
-import { loginUser } from "../actions/UserActions";
+import { loginUser, storeUser, clearUser } from "../actions/UserActions";
 
 const styles = theme => ({
   container: {
@@ -48,107 +48,83 @@ const styles = theme => ({
   }
 });
 
-const mapStateToProps = () => ({});
+const mapStateToProps = state => ({
+  loggedUser: state.userReducer
+});
 
 const mapDispatchToProps = dispatch => ({
-  loginUser: userInfo => dispatch(loginUser(userInfo))
+  loginUser: userInfo => dispatch(loginUser(userInfo)),
+  storeUser: user => dispatch(storeUser(user)),
+  clearUser: () => dispatch(clearUser())
 });
 
 class TextFields extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      mail: "",
+      email: "",
       password: "",
-      emailCheck: true,
-      passCheck: true,
-      gralCheck: false,
-      errormsg: ""
+      redirect: false
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  validateEmail(email) {
-    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(email);
-  }
-
   handleChange = name => event => {
-    const aux = this.state;
-    aux[name] = event.target.value;
-    var echeck = aux.emailCheck;
-    if (name === "mail") {
-      echeck = this.validateEmail(event.target.value);
-    }
-    var check = aux.mail.length && aux.password.length && echeck ? true : false;
     this.setState({
-      [name]: event.target.value,
-      gralCheck: check,
-      emailCheck: echeck,
-      passCheck: true,
-      errormsg: ""
+      [name]: event.target.value
     });
   };
 
   handleSubmit(evt) {
     evt.preventDefault();
     const userInfo = {
-      username: this.state.mail.toLowerCase(),
+      email: this.state.email,
       password: this.state.password
     };
-    axios
-      .post("/api/login", userInfo) // modificar aqui para pedir login a la ruta del API
+    this.props
+      .loginUser(userInfo)
       .then(res => res.data)
-      .then(data => {
-        if (data.success) {
-          this.props.logUser(data.user.id);
-          this.props.history.goBack();
-          return data;
+      .then(user => {
+        if (user.success) {
+          this.props.storeUser(user.data);
+          this.setState({ redirect: true });
+        } else {
+          alert("Usuario o contraseña erronea");
+          this.props.clearUser();
         }
-        this.setState(data.info);
-      })
-      .then(data => this.props.itemsInCart(data.user.id))
-      .catch(err => err);
+      });
   }
 
   render() {
+    //console.log("User Logged", this.props.loggedUser);
     const { classes } = this.props;
-    const {
-      mail,
-      password,
-      emailCheck,
-      passCheck,
-      gralCheck,
-      errormsg
-    } = this.state;
-
-    return (
+    const { email, password, redirect } = this.state;
+    return redirect ? (
       <div>
-        {" "}
+        <Redirect to="/" />
+      </div>
+    ) : (
+      <div>
         <h1 className={classes.title}>Login</h1>
         <Grid container spacing={16} justify="center">
           <Grid item md={5}>
             <div>
               <form className={classes.container} autoComplete="off">
                 <TextField
-                  error={!emailCheck}
                   required
                   fullWidth={true}
-                  id="mail"
+                  id="email"
                   label="E-Mail"
-                  helperText={!emailCheck ? errormsg : ""}
-                  value={mail}
+                  value={email}
                   type="email"
-                  onChange={this.handleChange("mail")}
+                  onChange={this.handleChange("email")}
                   margin="normal"
                 />
                 <TextField
-                  error={!passCheck}
                   required
                   fullWidth={true}
                   id="password-input"
                   label="Password"
-                  helperText={!passCheck ? errormsg : ""}
                   value={password}
                   type="password"
                   onChange={this.handleChange("password")}
@@ -160,17 +136,10 @@ class TextFields extends React.Component {
                   size="small"
                   className={classes.button}
                   onClick={this.handleSubmit}
-                  disabled={!gralCheck}
                 >
                   Iniciar Sesión
                 </Button>
               </form>
-            </div>
-            <div className={classes.newUser}>
-              No estás registrado?{" "}
-              <Link to="/accounts/new" action="replace">
-                Click aquí!
-              </Link>
             </div>
           </Grid>
         </Grid>
