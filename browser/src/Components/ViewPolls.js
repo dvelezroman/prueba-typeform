@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
@@ -8,11 +9,9 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
-import Checkbox from "@material-ui/core/Checkbox";
+
 import IconButton from "@material-ui/core/IconButton";
 import CommentIcon from "@material-ui/icons/Comment";
-import Button from "@material-ui/core/Button";
-import NavigationIcon from "@material-ui/icons/Navigation";
 
 const styles = theme => ({
   root: {
@@ -110,7 +109,7 @@ class SendPolls extends React.Component {
           ref: item.ref,
           name: item.name,
           url: item.url,
-          group: item.group.description,
+          group: item.group ? item.group.description : "Nada",
           file: item.file.name,
           fileId: item.fileId,
           groupId: item.groupId
@@ -120,9 +119,13 @@ class SendPolls extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
-    // console.log("State : ", this.state);
-    return (
+    const { classes, loggedUser } = this.props;
+
+    return !loggedUser.logged ? (
+      <div className={classes.root}>
+        <h1>Necesitas loggearte para ver esta informacion</h1>
+      </div>
+    ) : (
       <div className={classes.root}>
         <Grid container className={classes.root}>
           <Grid item xs={12}>
@@ -135,7 +138,7 @@ class SendPolls extends React.Component {
               <List className={classes.list}>
                 {this.state.forms.map(value => (
                   <ListItem
-                    key={value}
+                    key={value.ref}
                     role={undefined}
                     dense
                     button
@@ -168,4 +171,7 @@ SendPolls.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(SendPolls);
+const mapStateToProps = state => ({
+  loggedUser: state.userReducer
+});
+export default connect(mapStateToProps)(withStyles(styles)(SendPolls));

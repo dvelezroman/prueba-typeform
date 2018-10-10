@@ -10,12 +10,10 @@ import {
   PUT_GROUPS_STORE
 } from "../actionTypes/FormQuestions";
 
-const putQuestionsDB = questions => dispatch => {
-  dispatch({
-    type: PUT_QUESTIONS_STORE,
-    payload: questions
-  });
-};
+const putQuestionsDB = questions => ({
+  type: PUT_QUESTIONS_STORE,
+  payload: questions
+});
 
 const putGroupsStore = groups => dispatch => {
   dispatch({
@@ -61,7 +59,7 @@ export const clearQuestion = () => dispatch => {
 export const storeQuestionInDB = question => dispatch => {
   dispatch(storingQuestionDB(true));
   axios
-    .post("http://localhost:3001/api/questions/new", question)
+    .post("/api/questions/new", question)
     .then(res => res.data)
     .then(() => {
       dispatch(storingQuestionDB(false));
@@ -71,7 +69,7 @@ export const storeQuestionInDB = question => dispatch => {
 export const getQuestionsDB = () => dispatch => {
   dispatch(gettingQuestionsDB(true));
   axios
-    .get("http://localhost:3001/api/questions")
+    .get("/api/questions")
     .then(res => res.data)
     .then(questions => {
       dispatch(gettingQuestionsDB(false));
@@ -81,7 +79,7 @@ export const getQuestionsDB = () => dispatch => {
 
 export const getGroupsDB = () => dispatch => {
   axios
-    .get("http://localhost:3001/api/groups")
+    .get("/api/groups")
     .then(res => res.data)
     .then(data => {
       let groups = data.map(group => ({

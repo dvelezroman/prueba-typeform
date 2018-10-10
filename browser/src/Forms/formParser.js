@@ -7,32 +7,69 @@ export const createDataForm = (
   themeId = theme,
   workspaceId = workspace
 ) => {
-  let fields = questions.map((question, i) => ({
-    ref: `${question.ref}`,
-    title: `${question.title}`,
-    type: "rating", // aqui se debe permitir cambiar el tipo de pregunta
-    properties: {
-      // segun el tipo de pregunta se arma este JSON
-      description: question.description,
-      steps: 10,
-      shape: "star"
-    },
-    validations: {
-      required: false
+  let fields = questions.map((question, i) => {
+    let field = {
+      ref: `${question.ref}`,
+      title: `${question.title}`,
+      type: `${question.type}` // aqui se debe permitir cambiar el tipo de pregunta
+    };
+    if (question.type === "rating") {
+      // segun el tipo de pregunta se arma esta parte del field
+      field = {
+        ref: `${question.ref}`,
+        title: `${question.title}`,
+        type: `${question.type}`,
+        properties: {
+          description: question.description,
+          steps: question.scale,
+          shape: question.shape
+        }
+      };
+    } else if (question.type === "multiple_choice") {
+      let choices = question.choices.split(",").map(choice => ({
+        label: choice,
+        ref: `${choice}_ref`
+      }));
+      field = {
+        ref: `${question.ref}`,
+        title: `${question.title}`,
+        type: `${question.type}`,
+        properties: {
+          description: question.description,
+          choices: choices,
+          allow_multiple_selection: question.allow_indexing
+        }
+      };
+    } else if (question.type === "opinion_scale") {
+      field = {
+        ref: `${question.ref}`,
+        title: `${question.title}`,
+        type: `${question.type}`,
+        properties: {
+          description: question.description,
+          steps: question.scale
+        }
+      };
+    } else {
+      field = {
+        ref: `${question.ref}`,
+        title: `${question.title}`,
+        type: `${question.type}`
+      };
     }
-  }));
+    return field;
+  });
 
   const data = {
     title: title,
     settings: {
       language: "en",
-      is_public: false,
+      is_public: true,
       progress_bar: "percentage",
       show_progress_bar: true,
       show_typeform_branding: true,
       meta: {
-        allow_indexing: true,
-        description: "Cool meta description"
+        allow_indexing: true
       }
     },
     theme: {
@@ -46,22 +83,10 @@ export const createDataForm = (
         ref: "nice-readable-welcome-ref",
         title: "Bienvenido",
         properties: {
-          description: "Descripción de bienvenida",
+          description:
+            "Por favor ayudenos respondiendo las siguientes preguntas",
           show_button: true,
-          button_text: "empezar"
-        }
-      }
-    ],
-    thankyou_screens: [
-      {
-        ref: "nice-readable-thank-you-ref",
-        title: "Muchas Gracias",
-        properties: {
-          show_button: true,
-          button_text: "iniciar",
-          button_mode: "redirect",
-          redirect_url: "https://www.typeform.com",
-          share_icons: false
+          button_text: "Empezar"
         }
       }
     ],

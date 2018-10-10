@@ -1,61 +1,76 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcrypt");
+const _ = require("underscore");
 const models = require("../models");
-const Users = models.Users;
+const User = models.User;
+const { tokenVerify, adminVerify } = require("../middlewares/authentication");
 
-module.exports = router;
-
-router.post("/new", function(req, res, next) {
-  Users.findOrCreate({
-    where: { mail: req.body.mail },
-    defaults: req.body
-  }).then(data => res.status(201).json(data));
+router.get("/test", (req, res, next) => {
+  res.status(200).json("Todo OK..");
 });
 
-router.put("/adminupdate", isLoggedIn, (req, res) => {
-  Users.update(
-    {
-      admin: req.body.admin
-    },
-    {
-      where: { id: req.body.userId }
-    }
-  ).then(data => res.status(200).json(data));
+router.get("/:id", [tokenVerify], (req, res, next) => {
+  let id = req.params.id;
+  User.findById(id)
+    .then(userFound => res.status(200).json({ error: false, msg: userFound }))
+    .catch(err =>
+      res.status(400).json({
+        error: true,
+        msg: err
+      })
+    );
 });
 
-router.delete("/delete/:id", isLoggedIn, (req, res) => {
-  Users.destroy({ where: req.params }).then(data => res.status(200).json(data));
+router.post("/new", [tokenVerify, adminVerify], (req, res, next) => {
+  let body = req.body;
+  let user = {
+    name: body.name,
+    email: body.email,
+    password: bcrypt.hashSync(body.password, 10),
+    role: body.role
+  };
+  User.create(user)
+    .then(userCreated =>
+      res.status(201).json({ error: false, msg: userCreated })
+    )
+    .catch(err =>
+      res.status(400).json({
+        error: true,
+        msg: err
+      })
+    );
 });
 
-router.get("/search/:input", isLoggedIn, function(req, res) {
-  Users.findOne({
-    where: {
-      mail: {
-        $iLike: "%" + req.params.input + "%"
-      }
-    }
-  }).then(user => res.json(user));
-});
-
-router.get("/:id", function(req, res) {
-  Users.findOne({
-    where: { id: req.params.id }
-  }).then(user =>
-    res.json({
-      id: user.id,
-      nombre: user.nombre,
-      apellido: user.apellido,
-      mail: user.mail,
-      edad: user.edad,
-      admin: user.admin
-    })
+router.put("/:id", [tokenVerify, adminVerify], (req, res, next) => {
+  let id = req.params.id;
+  let body = _.pick(req.body, ["name", "email", "role"]);
+  User.findById(id).then(userFound =>
+    userFound
+      .update({
+        name: body.name,
+        email: body.email,
+        role: body.role
+      })
+      .then(userUpdated =>
+        res.status(201).json({
+          error: false,
+          msg: userUpdated
+        })
+      )
+      .catch(err =>
+        res.status(401).json({
+          error: true,
+          msg: err
+        })
+      )
   );
 });
 
-function isLoggedIn(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  } else {
-    res.json({ status: "no está loggeado" });
-  }
-}
+router.get("/", [tokenVerify], function(req, res) {
+  User.findAll({}).then(users =>
+    res.status(200).json({ error: false, msg: users })
+  );
+});
+
+module.exports = router;
