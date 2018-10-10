@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const path = require("path");
 const routes = require("./routes");
 const db = require("./models/db");
+const seed = require("./seed");
 
 const app = express();
 
@@ -33,8 +34,10 @@ app.use((err, req, res, next) => {
   res.status(500).send(err);
 });
 
-db.sync({ force: false }).then(() =>
-  app.listen(process.env.SERVER_PORT, () =>
-    console.log(`Listening on PORT ${process.env.SERVER_PORT}`)
+db.sync({ force: false })
+  .then(() =>
+    app.listen(process.env.SERVER_PORT, () =>
+      console.log(`Listening on PORT ${process.env.SERVER_PORT}`)
+    )
   )
-);
+  .then(() => seed());
