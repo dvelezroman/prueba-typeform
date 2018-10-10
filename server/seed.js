@@ -1,4 +1,5 @@
-const { Group, Question } = require("./models/index");
+const bcrypt = require("bcrypt");
+const { Group, Question, User } = require("./models/index");
 
 const groups = [
   {
@@ -63,11 +64,17 @@ const questions = [
   }
 ];
 
+const admin = {
+  name: "Medilink",
+  email: "administrador@medilink.com",
+  password: bcrypt.hashSync("medilink", 10),
+  role: "ADMIN_ROLE"
+};
+
 function seed() {
-  Group.bulkCreate([...groups]).then(() => {
-    // Notice: There are no arguments here, as of right now you'll have to...
-    Question.bulkCreate([...questions]).then(() => console.log("DB seeded..."));
-  });
+  User.create(admin)
+    .then(userCreated => console.log("Admin User Created", userCreated))
+    .catch(err => err);
 }
 
 module.exports = seed;
