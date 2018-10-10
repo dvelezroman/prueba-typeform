@@ -22,7 +22,7 @@ router.get("/:id", [tokenVerify], (req, res, next) => {
     );
 });
 
-router.post("/new", [tokenVerify, adminVerify], (req, res, next) => {
+router.post("/new", (req, res, next) => {
   let body = req.body;
   let user = {
     name: body.name,

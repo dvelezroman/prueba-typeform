@@ -7,6 +7,9 @@ server/node_modules
 # docker
 docker-compose.yml
 
+# environmental
+.env
+
 # testing
 /coverage
 
