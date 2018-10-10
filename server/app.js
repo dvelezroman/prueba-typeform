@@ -11,8 +11,10 @@ const app = express();
 app.use(cors());
 app.options("/api/upload", cors());
 
-app.use(express.static(path.join(__dirname, "/../browser/build")));
-app.use(express.static(path.resolve(`${__dirname}/../browser/public`)));
+require("./config/config"); // config.js
+
+app.use(express.static(path.join(__dirname, "../browser/build")));
+app.use(express.static(path.resolve(`${__dirname}../browser/build`)));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -32,5 +34,7 @@ app.use((err, req, res, next) => {
 });
 
 db.sync({ force: false }).then(() =>
-  app.listen(3001, () => console.log("Listening on PORT 3001"))
+  app.listen(process.env.SERVER_PORT, () =>
+    console.log(`Listening on PORT ${process.env.SERVER_PORT}`)
+  )
 );

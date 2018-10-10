@@ -4,7 +4,9 @@ const router = express.Router();
 const models = require("../models");
 const Group = models.Group;
 const Poll = models.Poll;
+const PollsSend = models.PollsSend;
 const File = models.File;
+const html = require("./email");
 
 const smtpTransport = nodemailer.createTransport({
   service: "Gmail",
@@ -20,29 +22,38 @@ router.get("/test", (req, res) => {
 
 router.post("/send", (req, res, next) => {
   // aqui va la accion de enviar mail con gmail
-  let emails = req.body.emails.map(item => item.email);
-  let names = req.body.emails.map(item => item.name);
+  let emails = req.body.clients.map(item => item.email);
+  let names = req.body.clients.map(item => item.name);
   let url = req.body.urlForm;
+  let body = html(url);
   let mail = {
     from: "caffeinasw@gmail.com",
     to: emails,
-    subject: "Encuesta Prueba TypeForm",
-    html: `<br/>TypeForm Prueba de envio de encuesta automatico<br/><a href=${url}>Visite la encuesta</a>`
+    subject: "MEDILINK ENCUESTA",
+    html: body
   };
   smtpTransport.sendMail(mail, (err, response) => {
     if (err) {
       console.log("email sending error");
       console.log(err);
+      res.status(400).json({ msg: "error" });
     } else {
+      Polls.findOne({ where: { url: url } }).then(poll => {
+        if (poll) {
+          PollsSend.create({ clients: 0, answers: 0 }).then(send => {
+            send.setPoll(poll);
+          });
+        }
+      });
       console.log("Success");
     }
     smtpTransport.close();
   });
-  res.status(201).json({ msg: "OK" });
+  res.status(201).json({ msg: "ok" });
 });
 
 router.post("/new", function(req, res, next) {
-  Group.findOne({ where: { description: req.body.group } }).then(group =>
+  Group.findOne({ where: { id: req.body.group } }).then(group =>
     File.findOne({ where: { name: req.body.file } }).then(file =>
       Poll.create({
         ref: req.body.ref,

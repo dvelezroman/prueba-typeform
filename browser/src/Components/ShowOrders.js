@@ -9,7 +9,6 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import CircularIndeterminated from "./CircularIndeterminated";
-import { clearRegs, uploadFile } from "../actions/uploadFileActions";
 
 const styles = theme => ({
   root: {

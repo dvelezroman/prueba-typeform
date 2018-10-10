@@ -1,9 +1,8 @@
 const Sequelize = require("sequelize");
+require("../config/config"); // config.js
 
-const db = new Sequelize("postgres://postgres@localhost:5432/typeform", {
+const db = new Sequelize(process.env.URI_DB, {
   logging: false
 });
 
 module.exports = db;
-
-// postgres://todoapp@postgres/todos

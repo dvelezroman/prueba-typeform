@@ -1,6 +1,7 @@
 const router = require("express").Router();
 
 router.use("/questions", require("./questions"));
+router.use("/login", require("./login"));
 router.use("/users", require("./users"));
 router.use("/polls", require("./polls"));
 router.use("/groups", require("./groups"));
