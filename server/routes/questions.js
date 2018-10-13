@@ -8,7 +8,7 @@ router.get("/test", (req, res, next) => {
   res.status(200).json("Todo OK..");
 });
 router.post("/new", function(req, res, next) {
-  Group.findOne({ where: { description: req.body.group } }).then(group => {
+  Group.findOne({ where: { id: req.body.group } }).then(group => {
     Question.create(req.body.question).then(question => {
       question.setGroup(group);
       res.status(201).json(question);
