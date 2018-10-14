@@ -103,7 +103,7 @@ class InputText extends React.Component {
         shape: "star",
         choices: "",
         allow_multiple_selection: false,
-        group: "Consultas ambulatorias"
+        group: 1
       },
       questions: []
     };
@@ -115,6 +115,7 @@ class InputText extends React.Component {
     if (this.state.question.ref === "") {
       uid = uuid();
     }
+    console.log("Lo que viene : ", event.target.value);
     this.setState(
       {
         question: {

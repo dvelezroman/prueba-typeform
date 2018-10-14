@@ -24,7 +24,7 @@ process.env.TOKEN_SEED = process.env.TOKEN_SEED || "develop";
 let uriDB =
   process.env.NODE_ENV === "dev"
     ? "postgres://postgres@localhost:5432/typeform"
-    : process.env.DATABASE_URL; // heroku environment variable
+    : process.env.DATABASE_URL;
 
 process.env.URI_DB = uriDB;
 
