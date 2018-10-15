@@ -5,7 +5,7 @@ browser/node_modules
 server/node_modules
 
 # docker
-docker-compose.yml
+.tar
 
 # environmental
 .env
