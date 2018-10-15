@@ -11,7 +11,7 @@ experiencia del servicio en la atención, y otras consultas que varía según el
 en ambas carpetas /server y /browser ejecutar:
 ```npm start```
 
-server escucha en el puerto 3000 y server en el puerto 3001
+app escucha en el puerto 3000 y api en el puerto 3001
 
 # PRODUCCION
 en la carpeta browser ejecutar ```npm run build```, luego en la carpeta server ejecutar ```npm start```, ingresar en el navegador http://localhost:3001 para navegar en la aplicación. 
