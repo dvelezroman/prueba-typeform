@@ -13,6 +13,9 @@ en ambas carpetas /server y /browser ejecutar:
 
 server escucha en el puerto 3000 y server en el puerto 3001
 
+# PRODUCCION
+en la carpeta browser ejecutar ```npm run build```, luego en la carpeta server ejecutar npm start, ingresar en el navegador http://localhost:3001 para navegar en la aplicación. 
+
 ## Docker
-puede ejecutar dockerizado, ejecutando en cada carpeta browser y server:
+puede ejecutar dockerizado, ejecutando en la raiz del proyecto:
 ```docker-compose up```
