@@ -1,8 +1,7 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
 # dependencies
-browser/node_modules
-server/node_modules
+node_modules
 
 # docker
 .tar
@@ -14,7 +13,7 @@ server/node_modules
 /coverage
 
 # production
-/build
+build/
 
 # misc
 .DS_Store
