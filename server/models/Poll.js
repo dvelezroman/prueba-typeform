@@ -16,6 +16,10 @@ const Poll = db.define("poll", {
   name: {
     type: Sequelize.STRING,
     allowNull: false
+  },
+  send: {
+    type: Sequelize.BOOLEAN,
+    default: false
   }
 });
 

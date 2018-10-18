@@ -123,7 +123,8 @@ router.post("/", function(req, res) {
             })
           );
           // promises to create the data in database
-          let message = storeInDataBase(
+
+          storeInDataBase(
             promises_file,
             promises_clients,
             promises_doctors,

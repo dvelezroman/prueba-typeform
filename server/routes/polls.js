@@ -27,9 +27,9 @@ router.post("/send", (req, res, next) => {
   let url = req.body.urlForm;
   let body = html(url);
   let mail = {
-    from: "caffeinasw@gmail.com",
+    from: "caffeinasw@gmail.com", // aqui cambiar el correo del remitente
     to: emails,
-    subject: "MEDILINK ENCUESTA",
+    subject: "Encuesta de Satisfacción - MEDILINK S.A.",
     html: body
   };
   smtpTransport.sendMail(mail, (err, response) => {
@@ -38,10 +38,10 @@ router.post("/send", (req, res, next) => {
       console.log(err);
       res.status(400).json({ msg: "error" });
     } else {
-      Polls.findOne({ where: { url: url } }).then(poll => {
-        if (poll) {
+      Poll.update({ send: true }, { where: url }).then(pollUpdated => {
+        if (pollUpdated) {
           PollsSend.create({ clients: 0, answers: 0 }).then(send => {
-            send.setPoll(poll);
+            send.setPoll(pollUpdated);
           });
         }
       });

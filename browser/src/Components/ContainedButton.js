@@ -8,6 +8,7 @@ import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import Chip from "@material-ui/core/Chip";
 import ShowOrders from "./ShowOrders";
+import CircularIndeterminated from "./CircularIndeterminated";
 import { clearRegs, uploadFile } from "../actions/uploadFileActions";
 
 const styles = theme => ({
@@ -45,7 +46,7 @@ class ContainedButton extends Component {
   };
 
   render() {
-    const { classes, loggedUser } = this.props;
+    const { classes, loggedUser, loading } = this.props;
     return !loggedUser.logged ? (
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta informacion</h1>
@@ -84,7 +85,7 @@ class ContainedButton extends Component {
             </Paper>
           </Grid>
           <Grid item xs={12}>
-            <ShowOrders />
+            {loading ? <CircularIndeterminated /> : <ShowOrders />}
           </Grid>
         </Grid>
       </div>
