@@ -203,12 +203,12 @@ class InputText extends React.Component {
             array={types}
             handleChange={this.handleChange}
           />
-          <Select
+          {/* <Select
             label={"group"}
             value={this.state.question.group}
             array={groups}
             handleChange={this.handleChange}
-          />
+          /> */}
           {this.state.question.type === "rating" ? (
             <div>
               <Select

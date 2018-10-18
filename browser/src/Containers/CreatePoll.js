@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import axios from "axios";
 import { PropTypes } from "prop-types";
@@ -49,7 +50,7 @@ class CreatePoll extends Component {
     this.state = {
       ref: "",
       title: "",
-      group: "Consultas ambulatorias",
+      group: 1,
       selectedQuestions: [],
       urlform: "",
       showAlertDialog: false,
@@ -80,13 +81,14 @@ class CreatePoll extends Component {
       selectedQuestions: [],
       fileSelected: ""
     });
+    this.props.history.push("/polls/send");
   };
 
   createPoll = e => {
     e.preventDefault();
     let data = createDataForm(this.state.title, this.state.selectedQuestions);
     // prueba
-    console.log("Data para crear Form : ", JSON.stringify(data));
+    //console.log("Data para crear Form : ", JSON.stringify(data));
     const token = "Cx7TVARyv64h6iyFJM5syoYJ8r7wAHnrMnvW3UAbkLh3";
     axios
       .post("https://api.typeform.com/forms", data, {
@@ -121,6 +123,7 @@ class CreatePoll extends Component {
   };
 
   componentDidMount() {
+    //console.log("Props", this.props);
     this.props.getGroupsDB();
     axios
       .get(`/api/files`)
@@ -159,9 +162,7 @@ class CreatePoll extends Component {
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-slide-description">
-              {`El formulario de encuesta puede ser accedido en la URL: ${
-                this.state.urlform
-              }`}
+              {`El formulario de encuesta se creó satisfactoriamente y puede ser enviado`}
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -193,12 +194,12 @@ class CreatePoll extends Component {
               margin="normal"
               variant="outlined"
             />
-            <Select
+            {/* <Select
               label={"group"}
               value={this.state.group}
               array={[{ value: "0", label: "Elija Grupo" }, ...groups]}
               handleChange={this.handleChange}
-            />
+            /> */}
             <Select
               label={"fileSelected"}
               value={this.state.fileSelected}
@@ -241,4 +242,4 @@ CreatePoll.propTypes = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(CreatePoll));
+)(withStyles(styles)(withRouter(CreatePoll)));

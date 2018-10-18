@@ -46,7 +46,7 @@ class NestedList extends React.Component {
           component="nav"
           subheader={<ListSubheader component="div">Menu</ListSubheader>}
         >
-          <Link to="/">
+          <Link to="/polls/resume">
             <ListItem button>
               <ListItemIcon>
                 <Home />
@@ -71,12 +71,12 @@ class NestedList extends React.Component {
           </ListItem>
           <Collapse in={this.state.openPolls} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <Link to="/polls/resume">
+              <Link to="/">
                 <ListItem button className={classes.nested}>
                   <ListItemIcon>
                     <StarBorder />
                   </ListItemIcon>
-                  <ListItemText inset primary="Dashboard" />
+                  <ListItemText inset primary="Fromularios Creados" />
                 </ListItem>
               </Link>
             </List>
@@ -105,25 +105,14 @@ class NestedList extends React.Component {
               </Link>
             </List>
           </Collapse>
-          <ListItem button onClick={this.handleClick("openUpload")}>
-            <ListItemIcon>
-              <ConfirmationNumber />
-            </ListItemIcon>
-            <ListItemText inset primary="Carga" />
-            {this.state.openUpload ? <ExpandLess /> : <ExpandMore />}
-          </ListItem>
-          <Collapse in={this.state.openUpload} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <Link to="/upload">
-                <ListItem button className={classes.nested}>
-                  <ListItemIcon>
-                    <StarBorder />
-                  </ListItemIcon>
-                  <ListItemText inset primary="Cargar Archivo" />
-                </ListItem>
-              </Link>
-            </List>
-          </Collapse>
+          <Link to="/upload">
+            <ListItem button>
+              <ListItemIcon>
+                <StarBorder />
+              </ListItemIcon>
+              <ListItemText inset primary="Cargar Archivo" />
+            </ListItem>
+          </Link>
         </List>
       </div>
     );

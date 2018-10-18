@@ -73,7 +73,7 @@ const admin = {
 
 function seed() {
   User.create(admin)
-    .then(userCreated => console.log("Admin User Created", userCreated))
+    .then(userCreated => console.log("Admin User Created"))
     .catch(err => err);
 }
 

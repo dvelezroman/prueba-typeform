@@ -54,12 +54,13 @@ class ListOfQuestions extends Component {
 
   render() {
     const { classes, questions, filterGroup } = this.props;
-    let filtered_questions = questions.filter(question => {
-      if (question.group && question.groupId === Number(filterGroup)) {
-        return true;
-      }
-      return false;
-    });
+    let filtered_questions = questions;
+    // let filtered_questions = questions.filter(question => {
+    //   if (question.group && question.groupId === Number(filterGroup)) {
+    //     return true;
+    //   }
+    //   return false;
+    // });
     return (
       <div className={classes.root}>
         <Paper className={classes.list}>
@@ -78,12 +79,15 @@ class ListOfQuestions extends Component {
                   tabIndex={-1}
                   disableRipple
                 />
-                <ListItemText primary={`${value.title}`} />
-                <ListItemSecondaryAction>
+                <ListItemText
+                  primary={`${value.title}`}
+                  secondary={value.description ? value.description : null}
+                />
+                {/* <ListItemSecondaryAction>
                   <IconButton aria-label="Comments">
                     <CommentIcon />
                   </IconButton>
-                </ListItemSecondaryAction>
+                </ListItemSecondaryAction> */}
               </ListItem>
             ))}
           </List>

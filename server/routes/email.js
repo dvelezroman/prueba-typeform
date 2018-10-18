@@ -166,7 +166,7 @@ const html = url => {
                                                         <tbody>
                                                             <tr class="titleText">
                                                                 <td style="word-wrap:break-word;font-size:0px;padding:0px;" align="left">
-                                                                    <div style="cursor:auto;color:#b89837;font-family:Font, 'Karla', Helvetica, Arial;font-size:22px;line-height:1.4;text-align:left;">Pregunta 1</div>
+                                                                    <div style="cursor:auto;color:#b89837;font-family:Font, 'Karla', Helvetica, Arial;font-size:22px;line-height:1.4;text-align:left;">Pregunta</div>
                                                                 </td>
                                                             </tr>
                                                         </tbody>
