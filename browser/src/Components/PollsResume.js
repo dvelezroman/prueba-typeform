@@ -10,7 +10,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
-import { getPollAnswers } from '../actions/typeForm';
+import { getPollAnswers, getSendPolls } from '../actions/typeForm';
 
 const CustomTableCell = withStyles(theme => ({
   head: {
@@ -76,32 +76,22 @@ class PollsResume extends Component {
         name: sendpoll.poll.name,
         group: sendpoll.poll.group.description
       }));
-      console.log('pollsend ; ', polls);
       for (let i = 0; i < polls.length; i++) {
         this.props.getPollAnswers(polls[i].ref).then(answers => {
           let data = {
             ref: polls[0].ref,
             answers: answers.items.length
           };
-          axios.post('/api/polls/sendpolls', data).then(() => console.log('Todo bien'));
+          axios.post('/api/polls/sendpolls', data).then(() => this.props.getSendPolls());
         })
         
       }
     });
-    // .then(polls => {
-    //   console.log(`Las encuestas enviadas : ${polls}`);
-      // traer las respuestas de cada encuesta enviada
-      // for (let i = 0; i < polls.length; i++) {
-      //   let this.props.getPollAnswers(polls[i]).then(answers => {
-      //     // aqui enviar a actualizar el valor de answer de la encuesta enviada y ponerlo en el store para que actualice automaticamente
-      //   }).catch(err => err);
-      // };
-   // })
   };
 
   render() {
-    console.log('Hola render');
-    const { classes, loggedUser, sendpolls } = this.props;
+    const { classes, loggedUser, sendPolls } = this.props;
+    // console.log('SendPolls : ', sendPolls);
     return !loggedUser.logged ? (
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta informacion</h1>
@@ -117,23 +107,25 @@ class PollsResume extends Component {
               <TableHead>
                 <TableRow>
                   <CustomTableCell>Formulario</CustomTableCell>
+                  <CustomTableCell>Grupo</CustomTableCell>
+                  <CustomTableCell>Archivo</CustomTableCell>
                   <CustomTableCell numeric>Clientes Enviados</CustomTableCell>
                   <CustomTableCell numeric>Contestados</CustomTableCell>
                   <CustomTableCell numeric>Por Contestar</CustomTableCell>
-                  <CustomTableCell numeric>No Constestados</CustomTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map(row => {
+                {sendPolls.map(row => {
                   return (
                     <TableRow className={classes.row} key={row.id}>
                       <CustomTableCell component="th" scope="row">
                         {row.name}
                       </CustomTableCell>
-                      <CustomTableCell numeric>{row.calories}</CustomTableCell>
-                      <CustomTableCell numeric>{row.fat}</CustomTableCell>
-                      <CustomTableCell numeric>{row.carbs}</CustomTableCell>
-                      <CustomTableCell numeric>{row.protein}</CustomTableCell>
+                      <CustomTableCell>{row.group}</CustomTableCell>
+                      <CustomTableCell>{row.file}</CustomTableCell>
+                      <CustomTableCell numeric>{row.clients}</CustomTableCell>
+                      <CustomTableCell numeric>{row.answers}</CustomTableCell>
+                      <CustomTableCell numeric>{row.answers - row.clients}</CustomTableCell>
                     </TableRow>
                   );
                 })}
@@ -151,11 +143,13 @@ PollsResume.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  loggedUser: state.userReducer
+  loggedUser: state.userReducer,
+  sendPolls: state.typeFormReducer.sendPolls
 });
 
 const mapDispatchToProps = dispatch => ({
-  getPollAnswers: ref => dispatch(getPollAnswers(ref))
+  getPollAnswers: ref => dispatch(getPollAnswers(ref)),
+  getSendPolls: () => dispatch(getSendPolls())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(PollsResume));

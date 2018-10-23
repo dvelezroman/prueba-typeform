@@ -2,13 +2,15 @@ import {
   GET_FORM,
   CREATE_FORM,
   FORM_CREATED,
-  FORM_CREATION_FAILED
+  FORM_CREATION_FAILED,
+  STORE_SENDPOLLS
 } from "../actionTypes/TypeForm";
 
 const initial_state = {
   form: "",
   isCreatingForm: false,
-  message: ""
+  message: "",
+  sendPolls: []
 };
 
 export default (state = initial_state, action) => {
@@ -35,6 +37,9 @@ export default (state = initial_state, action) => {
         isCreatingForm: false,
         message: `${action.payload}`
       });
+    }
+    case STORE_SENDPOLLS: {
+      return Object.assign({}, ...state, { sendPolls: [...action.payload] });
     }
     default:
       return state;

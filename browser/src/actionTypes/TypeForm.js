@@ -2,3 +2,4 @@ export const GET_FORM = "GET_FORM";
 export const CREATE_FORM = "CREATE_FORM";
 export const FORM_CREATED = "FORM_CREATED";
 export const FORM_CREATION_FAILED = "FORM_CREATION_FAILED";
+export const STORE_SENDPOLLS = "STORE_SENDPOLLS";
