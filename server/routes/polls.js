@@ -41,11 +41,12 @@ router.post("/send", (req, res, next) => {
   let emails = req.body.clients.map(item => item.email);
   let names = req.body.clients.map(item => item.name);
   let url = req.body.urlForm;
-  let body = html(url);
+  //let body = html(url);
+  let body = req.body.body ? req.body.body : html(url);
   let mail = {
     from: "caffeinasw@gmail.com", // aqui cambiar el correo del remitente
-    to: emails,
-    subject: "Encuesta de Satisfacción - MEDILINK S.A.",
+    to: emails, // esto lo vamos a abrir con for o map y poder personalizarlo con el nombre
+    subject: `Encuesta de Satisfacción - MEDILINK S.A.`,
     html: body
   };
   smtpTransport.sendMail(mail, (err, response) => {

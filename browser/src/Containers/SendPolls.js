@@ -3,6 +3,7 @@ import axios from "axios";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
+import TextField from "@material-ui/core/TextField";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Grid from "@material-ui/core/Grid";
@@ -34,13 +35,29 @@ const styles = theme => ({
   list: {
     overflow: "auto",
     maxHeight: 300
+  },
+  textField: {
+    width: "100%",
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit
+  },
+  group: {
+    margin: `${theme.spacing.unit}px 0`,
+  },
+  formControl: {
+    margin: theme.spacing.unit * 3,
   }
 });
 
 class SendPolls extends React.Component {
   state = {
     checked: [],
-    forms: []
+    forms: [],
+    body: ""
+  };
+
+  handleChange = label => event => {
+    this.setState({ [label]: event.target.value });
   };
 
   handleToggle = value => () => {
@@ -53,10 +70,16 @@ class SendPolls extends React.Component {
     } else {
       newChecked.splice(currentIndex, 1);
     }
-
-    this.setState({
-      checked: newChecked
-    });
+    if (this.state.checked.length === 1) {
+      this.setState({
+        checked: newChecked,
+        body: ""
+      });
+    } else {
+      this.setState({
+        checked: newChecked
+      });
+    }
   };
 
   handleSendPoll = e => {
@@ -84,7 +107,7 @@ class SendPolls extends React.Component {
           }
         });
 
-        arrays.push({ clients: array, urlForm: urlForm[i].url });
+        arrays.push({ clients: array, urlForm: urlForm[i].url, body: this.state.body });
       });
       let promises_for_sending_emails = [];
       arrays.forEach(array => {
@@ -123,6 +146,7 @@ class SendPolls extends React.Component {
 
   render() {
     const { classes, loggedUser } = this.props;
+    //console.log('State : ', this.state)
     return !loggedUser.logged ? (
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta informacion</h1>
@@ -143,44 +167,72 @@ class SendPolls extends React.Component {
               </Button>
             </Paper>
           </Grid>
-          <Grid item xs={12}>
-            <Paper className={classes.paper}>
-              Selecciona los formularios que deseas enviar
-            </Paper>
-          </Grid>
-          <Grid item xs={12}>
-            <Paper className={classes.paper}>
-              <List className={classes.list}>
-                {this.state.forms.map((value, i) => (
-                  <ListItem
-                    key={i}
-                    role={undefined}
-                    dense
-                    button
-                    onClick={this.handleToggle(value)}
-                    className={classes.listItem}
-                  >
-                    <Checkbox
-                      checked={this.state.checked.indexOf(value) !== -1}
-                      tabIndex={-1}
-                      disableRipple
-                    />
-                    <ListItemText
-                      primary={`${value.name} -- URL: ${value.url}`}
-                      secondary={`GRUPO: ${value.group} -- ARCHIVO: ${
-                        value.file
-                      }`}
-                    />
-                    <ListItemSecondaryAction>
-                      <IconButton aria-label="Comments">
-                        <CommentIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                ))}
-              </List>
-            </Paper>
-          </Grid>
+          <Grid item xs={6}>
+            <Grid item xs={12}>
+              <Paper className={classes.paper}>
+                Selecciona los formularios que deseas enviar
+              </Paper>
+            </Grid>
+            <Grid item xs={12}>
+              <Paper className={classes.paper}>
+                <List className={classes.list}>
+                  {this.state.forms.map((value, i) => (
+                    <ListItem
+                      key={i}
+                      role={undefined}
+                      dense
+                      button
+                      onClick={this.handleToggle(value)}
+                      className={classes.listItem}
+                    >
+                      <Checkbox
+                        checked={this.state.checked.indexOf(value) !== -1}
+                        tabIndex={-1}
+                        disableRipple
+                      />
+                      <ListItemText
+                        primary={`${value.name} -- URL: ${value.url}`}
+                        secondary={`GRUPO: ${value.group} -- ARCHIVO: ${
+                          value.file
+                        }`}
+                      />
+                      <ListItemSecondaryAction>
+                        <IconButton aria-label="Comments">
+                          <CommentIcon />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  ))}
+                </List>
+              </Paper>
+            </Grid>
+          </Grid>  
+          <Grid item xs={6}>
+            <Grid item xs={12}>
+              <Paper className={classes.paper}>
+                Pega aquí el HTML del formulario, para enviarlo como bodo del correo
+                Debes ir a buscar esto a tu cuenta en TypeForm.
+              </Paper>
+            </Grid>
+            <Grid item xs={12}>
+              <Paper className={classes.paper}>
+                <TextField
+                  disabled={this.state.checked.length === 1 ? false : true}
+                  multiline
+                  rowsMax="15"
+                  onChange={this.handleChange("body")}
+                  id="body"
+                  value={this.state.body}
+                  label="HTML para enviar la encuesta por correo"
+                  placeholder="Pega aqui el HTML que esta en tu cuenta de TypeForm, que permite embeber el código de la encuesta en un correo"
+                  helperText="Para habilitar esta opción solo debes de seleccionar una encuesta"
+                  className={classes.textField}
+                  margin="normal"
+                  variant="outlined"
+                />
+              </Paper>
+            </Grid>
+          </Grid>        
         </Grid>
       </div>
     );

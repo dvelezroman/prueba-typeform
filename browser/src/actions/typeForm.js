@@ -60,7 +60,8 @@ export const getSendPolls = () => dispatch => {
       id: sendpoll.id,
       file: sendpoll.poll.file.name,
       name: sendpoll.poll.name,
-      group: sendpoll.poll.group.description
+      group: sendpoll.poll.group.description,
+      date: sendpoll.updatedAt.split("T")[0]
     }));
     dispatch(storeSendPolls(polls));
   });

@@ -5,8 +5,6 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { clearUser } from "../actions/UserActions";
 
-import Avatar from "@material-ui/core/Avatar";
-
 const styles = {
   buttonLogin: {
     backgroundColor: "#6eb4ea",

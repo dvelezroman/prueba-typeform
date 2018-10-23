@@ -5,11 +5,8 @@ import { withStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Paper from "@material-ui/core/Paper";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
 import Checkbox from "@material-ui/core/Checkbox";
-import IconButton from "@material-ui/core/IconButton";
-import CommentIcon from "@material-ui/icons/Comment";
 import { getQuestionsDB } from "../actions/questionActions";
 
 const styles = theme => ({
@@ -53,7 +50,7 @@ class ListOfQuestions extends Component {
   }
 
   render() {
-    const { classes, questions, filterGroup } = this.props;
+    const { classes, questions } = this.props;
     let filtered_questions = questions;
     // let filtered_questions = questions.filter(question => {
     //   if (question.group && question.groupId === Number(filterGroup)) {

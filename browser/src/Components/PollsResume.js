@@ -38,27 +38,9 @@ const styles = theme => ({
   }
 });
 
-let id = 0;
-function createData(name, calories, fat, carbs, protein) {
-  id += 1;
-  return { id, name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData(
-    "Encuesta de Satifacción Consultas Ambulatorias",
-    200,
-    145,
-    40,
-    15
-  ),
-  createData("Encuesta de Atención en Rayos X", 100, 60, 30, 10),
-  createData("Encuesta de Satisfaccion en Procedimientos", 50, 20, 25, 5)
-];
-
 class PollsResume extends Component {
   constructor(props) {
-    super(props),
+    super(props)
     this.state = {
       sendpolls: []
     }
@@ -109,6 +91,7 @@ class PollsResume extends Component {
                   <CustomTableCell>Formulario</CustomTableCell>
                   <CustomTableCell>Grupo</CustomTableCell>
                   <CustomTableCell>Archivo</CustomTableCell>
+                  <CustomTableCell>Enviado</CustomTableCell>
                   <CustomTableCell numeric>Clientes Enviados</CustomTableCell>
                   <CustomTableCell numeric>Contestados</CustomTableCell>
                   <CustomTableCell numeric>Por Contestar</CustomTableCell>
@@ -123,6 +106,7 @@ class PollsResume extends Component {
                       </CustomTableCell>
                       <CustomTableCell>{row.group}</CustomTableCell>
                       <CustomTableCell>{row.file}</CustomTableCell>
+                      <CustomTableCell>{row.date}</CustomTableCell>
                       <CustomTableCell numeric>{row.clients}</CustomTableCell>
                       <CustomTableCell numeric>{row.answers}</CustomTableCell>
                       <CustomTableCell numeric>{row.answers - row.clients}</CustomTableCell>

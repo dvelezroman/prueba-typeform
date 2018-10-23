@@ -1,12 +1,11 @@
 import React from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router";
 import TextField from "@material-ui/core/TextField";
-import { Grid, Typography } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-import axios from "axios";
 import { connect } from "react-redux";
 import { loginUser, storeUser, clearUser } from "../actions/UserActions";
 
