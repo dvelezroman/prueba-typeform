@@ -1,11 +1,12 @@
 import axios from "axios";
-
 import {
   GET_FORM,
   CREATE_FORM,
   FORM_CREATED,
   FORM_CREATION_FAILED
 } from "../actionTypes/TypeForm";
+
+const token = "Cx7TVARyv64h6iyFJM5syoYJ8r7wAHnrMnvW3UAbkLh3";
 
 const getForm = form => ({
   type: GET_FORM,
@@ -26,7 +27,6 @@ const formCreationFailed = error => ({
 });
 
 export const createForm = data => dispatch => {
-  const token = "Cx7TVARyv64h6iyFJM5syoYJ8r7wAHnrMnvW3UAbkLh3";
   dispatch(creatingForm());
   return axios
     .post("https://api.typeform.com/forms", data, {
@@ -38,4 +38,9 @@ export const createForm = data => dispatch => {
       dispatch(formCreated());
     })
     .catch(error => dispatch(formCreationFailed(error)));
+};
+
+export const getPollAnswers = ref => dispatch => {
+  return axios
+    .get(`https://api.typeform.com/forms/${ref}/responses`, { headers: { Authorization: "Bearer " + token }}).then(res => res.data);
 };

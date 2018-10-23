@@ -20,6 +20,22 @@ router.get("/test", (req, res) => {
   res.status(200).json("OK");
 });
 
+router.get("/sendpolls", (req, res, next) => {
+  // obtiene las encuestas que han sido enviadas a  correos
+  PollsSend.findAll({ include: [{model: Poll, include: [ Group, File ]}] })
+    .then(polls => res.status(200).json(polls))
+    .catch(err => res.status(404).json(err));
+})
+
+router.post("/sendpolls", (req, res, next) => {
+  // actualiza el numero de answers para una encuesta
+  let answers = req.body.answers; // recibe el numero de respuestas para una encuesta
+  let ref = req.body.ref; // recibe el ref de la encuesta para poder buscarla y actualizarle el numero de respuestas
+  Poll.findOne({ where: { ref: ref }})
+  .then(poll => PollsSend.update({ answers: answers }, { where: { pollId: poll.id } }))
+  .then(() => res.status(201).json({ error: false, msg: 'updated' }));
+});
+
 router.post("/send", (req, res, next) => {
   // aqui va la accion de enviar mail con gmail
   let emails = req.body.clients.map(item => item.email);
@@ -38,10 +54,10 @@ router.post("/send", (req, res, next) => {
       console.log(err);
       res.status(400).json({ msg: "error" });
     } else {
-      Poll.update({ send: true }, { where: url }).then(pollUpdated => {
-        if (pollUpdated) {
-          PollsSend.create({ clients: 0, answers: 0 }).then(send => {
-            send.setPoll(pollUpdated);
+      Poll.update({ send: true }, { returning: true, where: { url: url } }).then(([ rowsUpdate, [updatedPoll] ]) => {
+        if (updatedPoll) {
+          PollsSend.create({ clients: emails.length, answers: 0 }).then(sendPoll => {
+            sendPoll.setPoll(updatedPoll);
           });
         }
       });
@@ -49,7 +65,7 @@ router.post("/send", (req, res, next) => {
     }
     smtpTransport.close();
   });
-  res.status(201).json({ msg: "ok" });
+  res.status(201).json({ msg: "Formulario Enviado" });
 });
 
 router.post("/new", function(req, res, next) {
