@@ -78,18 +78,6 @@ export const createDataForm = (
     workspace: {
       href: `https://api.typeform.com/workspaces/${workspace}`
     },
-    welcome_screens: [
-      {
-        ref: "nice-readable-welcome-ref",
-        title: "Bienvenido",
-        properties: {
-          description:
-            "Por favor ayudenos respondiendo las siguientes preguntas",
-          show_button: true,
-          button_text: "Empezar"
-        }
-      }
-    ],
     fields
   };
   return data;

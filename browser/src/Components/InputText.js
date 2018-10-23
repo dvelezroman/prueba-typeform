@@ -167,7 +167,7 @@ class InputText extends React.Component {
 
   render() {
     //console.log("State: ", this.state.question);
-    const { classes, groups, loggedUser } = this.props;
+    const { classes, loggedUser } = this.props;
     return !loggedUser.logged ? (
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta informacion</h1>

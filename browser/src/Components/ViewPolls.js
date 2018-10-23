@@ -174,4 +174,5 @@ SendPolls.propTypes = {
 const mapStateToProps = state => ({
   loggedUser: state.userReducer
 });
+
 export default connect(mapStateToProps)(withStyles(styles)(SendPolls));

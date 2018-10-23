@@ -142,7 +142,7 @@ class CreatePoll extends Component {
   }
 
   render() {
-    const { classes, groups, loggedUser } = this.props;
+    const { classes, loggedUser } = this.props;
     return !loggedUser.logged ? (
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta informacion</h1>
