@@ -19,6 +19,8 @@ router.get("/test", (req, res, next) => {
   res.status(200).json("Todo Bien...");
 });
 
+
+
 router.put("/password/recover", (req, res, next) => {
   let body = req.body;
   User.findOne({
@@ -136,5 +138,26 @@ router.post("/", (req, res) => {
 router.get("/logout", function(req, res) {
   res.status(200).send({ auth: false, token: null });
 });
+
+router.get("/", ( req, res, next) => {
+  User.findAll()
+  .then(users => {
+    if (users) {
+      return res.status(200).json({
+        error: true,
+        data: "Hay usuarios activos",
+        token: "",
+        success: true,
+      })
+    }else {
+      return res.status(200).json({
+        error: true,
+        data: "No existen usuarios activos",
+        token: "",
+        success: false
+      })
+    }
+  })
+})
 
 module.exports = router;

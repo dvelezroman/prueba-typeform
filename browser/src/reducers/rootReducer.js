@@ -4,11 +4,13 @@ import questionsReducer from "./questionsReducer";
 import typeFormReducer from "./typeFormReducer";
 import uploadReducer from "./uploadReducer";
 import userReducer from "./userReducer";
+import adminReducer from "./adminReducer";
 
 export default combineReducers({
   simpleReducer,
   userReducer,
   questionsReducer,
   typeFormReducer,
-  uploadReducer
+  uploadReducer,
+  adminReducer
 });
