@@ -167,7 +167,7 @@ class SendPolls extends React.Component {
               </Button>
             </Paper>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12}>
             <Grid item xs={12}>
               <Paper className={classes.paper}>
                 Selecciona los formularios que deseas enviar
@@ -207,7 +207,7 @@ class SendPolls extends React.Component {
               </Paper>
             </Grid>
           </Grid>  
-          <Grid item xs={6}>
+          {/* <Grid item xs={6}>
             <Grid item xs={12}>
               <Paper className={classes.paper}>
                 Pega aquí el HTML del formulario, para enviarlo como bodo del correo
@@ -232,7 +232,7 @@ class SendPolls extends React.Component {
                 />
               </Paper>
             </Grid>
-          </Grid>        
+          </Grid>         */}
         </Grid>
       </div>
     );
