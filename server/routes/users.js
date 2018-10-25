@@ -22,7 +22,7 @@ router.get("/:id", [tokenVerify], (req, res, next) => {
     );
 });
 
-router.post("/new", [tokenVerify, adminVerify], (req, res, next) => {
+router.post("/new", (req, res, next) => {
   let body = req.body;
   let user = {
     name: body.name,
@@ -35,7 +35,7 @@ router.post("/new", [tokenVerify, adminVerify], (req, res, next) => {
       res.status(201).json({ error: false, msg: userCreated })
     )
     .catch(err =>
-      res.status(400).json({
+      res.status(201).json({
         error: true,
         msg: err
       })
@@ -67,7 +67,7 @@ router.put("/:id", [tokenVerify, adminVerify], (req, res, next) => {
   );
 });
 
-router.get("/", [tokenVerify], function(req, res) {
+router.get("/", function(req, res) {
   User.findAll({}).then(users =>
     res.status(200).json({ error: false, msg: users })
   );
