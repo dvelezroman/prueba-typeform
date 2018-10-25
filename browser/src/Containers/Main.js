@@ -16,6 +16,8 @@ import SendPolls from "./SendPolls";
 import ViewPolls from "../Components/ViewPolls";
 import PollsResume from "../Components/PollsResume";
 import LoginForm from "./LoginForm";
+import ChangePassword from "./ChangePassword";
+import RecoverPassword from "./RecoverPassword";
 
 const styles = theme => ({
   root: {
@@ -53,6 +55,24 @@ class Main extends Component {
             <Grid item xs={9}>
               <Paper className={classes.paper}>
                 <Switch>
+                <Route
+                    exact
+                    path="/login/password/recover"
+                    render={() => (
+                      <Grid container>
+                        <RecoverPassword />
+                      </Grid>
+                    )}
+                  />
+                <Route
+                    exact
+                    path="/login/password/change"
+                    render={() => (
+                      <Grid container>
+                        <ChangePassword />
+                      </Grid>
+                    )}
+                  />
                   <Route
                     exact
                     path="/login"

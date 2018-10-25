@@ -167,7 +167,7 @@ class InputText extends React.Component {
 
   render() {
     //console.log("State: ", this.state.question);
-    const { classes, loggedUser } = this.props;
+    const { classes, loggedUser, groups } = this.props;
     return !loggedUser.logged ? (
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta informacion</h1>
@@ -203,12 +203,12 @@ class InputText extends React.Component {
             array={types}
             handleChange={this.handleChange}
           />
-          {/* <Select
+          <Select
             label={"group"}
             value={this.state.question.group}
             array={groups}
             handleChange={this.handleChange}
-          /> */}
+          />
           {this.state.question.type === "rating" ? (
             <div>
               <Select
