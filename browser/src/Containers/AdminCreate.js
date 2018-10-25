@@ -145,7 +145,7 @@ class AdminCreate extends React.Component {
                   required
                   fullWidth={true}
                   id="password-input"
-                  label="Password"
+                  label="Ingrese una Contraseña"
                   value={password}
                   type="password"
                   onChange={this.handleChange("password")}
@@ -155,7 +155,7 @@ class AdminCreate extends React.Component {
                   required
                   fullWidth={true}
                   id="password-input2"
-                  label="Password2"
+                  label="Vuelva a ingresar la misma Contraseña"
                   value={password2}
                   type="password"
                   onChange={this.handleChange("password2")}
