@@ -1,7 +1,7 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
+import axios from 'axios';
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router";
 import TextField from "@material-ui/core/TextField";
@@ -33,13 +33,6 @@ const styles = theme => ({
       color: "white"
     }
   },
-  button2: {
-    backgroundColor: "red",
-    color: "white",
-    "&:hover": {
-      color: "white"
-    }
-  },
   title: {
     textAlign: "center",
     typography: {
@@ -65,12 +58,11 @@ const mapDispatchToProps = dispatch => ({
   clearUser: () => dispatch(clearUser())
 });
 
-class TextFields extends React.Component {
+class RecoverPassword extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       email: "",
-      password: "",
       redirect: false
     };
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -84,22 +76,19 @@ class TextFields extends React.Component {
 
   handleSubmit(evt) {
     evt.preventDefault();
-    const userInfo = {
-      email: this.state.email,
-      password: this.state.password
+    const info = {
+      email: this.state.email
     };
-    this.props
-      .loginUser(userInfo)
-      .then(res => res.data)
-      .then(user => {
-        if (user.success) {
-          this.props.storeUser(user.data);
-          this.setState({ redirect: true });
-        } else {
-          alert("Usuario o contraseña erronea");
-          this.props.clearUser();
+    axios.put('/api/login/password/recover', info)
+    .then(res => res.data)
+    .then(data => {
+        if (data.success) {
+            alert("Se envió correo con la nueva contraseña");
+            this.setState({ redirect: true });
+        }else {
+            alert("El correo ingresado no está registrado");
         }
-      });
+    })
   }
 
   render() {
@@ -108,11 +97,11 @@ class TextFields extends React.Component {
     const { email, password, redirect } = this.state;
     return redirect ? (
       <div>
-        <Redirect to="/" />
+        <Redirect to="/login" />
       </div>
     ) : (
       <div>
-        <h1 className={classes.title}>Login</h1>
+        <h1 className={classes.title}>Recuperar Contraseña</h1>
         <Grid container spacing={16} justify="center">
           <Grid item md={5}>
             <div>
@@ -127,33 +116,13 @@ class TextFields extends React.Component {
                   onChange={this.handleChange("email")}
                   margin="normal"
                 />
-                <TextField
-                  required
-                  fullWidth={true}
-                  id="password-input"
-                  label="Password"
-                  value={password}
-                  type="password"
-                  onChange={this.handleChange("password")}
-                  autoComplete="current-password"
-                  margin="normal"
-                />
                 <Button
                   variant="contained"
                   size="small"
                   className={classes.button}
                   onClick={this.handleSubmit}
                 >
-                  Iniciar Sesión
-                </Button>
-                <Button
-                  variant="contained"
-                  size="small"
-                  className={classes.button2}
-                  component={Link}
-                  to={"/login/password/recover"}
-                >
-                  Recuperar Contraseña
+                  Recuperar
                 </Button>
               </form>
             </div>
@@ -164,11 +133,11 @@ class TextFields extends React.Component {
   }
 }
 
-TextFields.propTypes = {
+RecoverPassword.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(withRouter(TextFields)));
+)(withStyles(styles)(withRouter(RecoverPassword)));
