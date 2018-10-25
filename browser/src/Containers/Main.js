@@ -52,7 +52,7 @@ class Main extends Component {
   render() {
     const { classes, isCreatingForm, existAdmin } = this.props;
     if (!existAdmin) {
-      console.log('No hay usuario', existAdmin);
+      //console.log('No hay usuario', existAdmin);
       return (
         <div className={classes.root}>
         <CssBaseline />
@@ -64,7 +64,7 @@ class Main extends Component {
         </div>
       )
     }else {
-      console.log('hay usuario');
+      //console.log('hay usuario');
       return (
         <div className={classes.root}>
           <CssBaseline />

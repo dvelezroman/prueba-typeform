@@ -37,23 +37,26 @@ router.post("/sendpolls", (req, res, next) => {
 });
 
 router.post("/send", (req, res, next) => {
+  console.log('Hola');
   // aqui va la accion de enviar mail con gmail
   let emails = req.body.clients.map(item => item.email);
   let names = req.body.clients.map(item => item.name);
   let url = req.body.urlForm;
+  let subject = req.body.subject;
+  let html = `<html><body><h2>Por favor complete la siguiente encuesta : <a href=${url}>Visite la encuesta</a></h2></body></html>`
   //let body = html(url);
-  let body = req.body.body ? req.body.body : html(url);
+  let body = req.body.body ? req.body.body : html;
   let mail = {
     from: "caffeinasw@gmail.com", // aqui cambiar el correo del remitente
     to: emails, // esto lo vamos a abrir con for o map y poder personalizarlo con el nombre
-    subject: `Encuesta de Satisfacción - MEDILINK S.A.`,
+    subject: `${subject} - MEDILINK S.A.`,
     html: body
   };
   smtpTransport.sendMail(mail, (err, response) => {
     if (err) {
       console.log("email sending error");
       console.log(err);
-      res.status(400).json({ msg: "error" });
+      res.status(200).json({ msg: "error" });
     } else {
       Poll.update({ send: true }, { returning: true, where: { url: url } }).then(([ rowsUpdate, [updatedPoll] ]) => {
         if (updatedPoll) {

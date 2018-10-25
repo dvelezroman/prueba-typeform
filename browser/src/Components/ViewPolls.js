@@ -109,8 +109,8 @@ class SendPolls extends React.Component {
           ref: item.ref,
           name: item.name,
           url: item.url,
-          group: item.group ? item.group.description : "Nada",
-          file: item.file.name,
+          group: item.group ? item.group.description : "",
+          file: item.file ? item.file.name : "",
           fileId: item.fileId,
           groupId: item.groupId
         }));
