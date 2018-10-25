@@ -79,7 +79,7 @@ class CreatePoll extends Component {
       urlform: "",
       group: "",
       selectedQuestions: [],
-      fileSelected: ""
+      fileSelected: 1
     });
     this.props.history.push("/polls/send");
   };
@@ -123,7 +123,7 @@ class CreatePoll extends Component {
   };
 
   componentDidMount() {
-    //console.log("Props", this.props);
+    
     this.props.getGroupsDB();
     axios
       .get(`/api/files`)
@@ -142,6 +142,7 @@ class CreatePoll extends Component {
   }
 
   render() {
+    //console.log("State", this.state);
     const { classes, loggedUser } = this.props;
     return !loggedUser.logged ? (
       <div className={classes.root}>

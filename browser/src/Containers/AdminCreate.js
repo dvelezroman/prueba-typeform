@@ -2,7 +2,6 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 import axios from 'axios';
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router";
 import TextField from "@material-ui/core/TextField";
@@ -96,11 +95,10 @@ class AdminCreate extends React.Component {
         .then(res => res.data)
         .then(data => {
             if (!data.error) {
-                alert('El usuario administrador se creó con éxito');
+              this.setState({ redirect: true }, () => alert('El usuario administrador se creó con éxito'));
             }else {
                 alert('El usuario administrador no se creó');
             };
-            this.setState({ redirect: true });
         })
     }else {
         alert('Faltan datos para crear usuario');

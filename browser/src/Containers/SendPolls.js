@@ -107,7 +107,7 @@ class SendPolls extends React.Component {
           }
         });
 
-        arrays.push({ clients: array, urlForm: urlForm[i].url, body: this.state.body });
+        arrays.push({ clients: array, subject: urlForm[i].name, urlForm: urlForm[i].url, body: this.state.body });
       });
       let promises_for_sending_emails = [];
       arrays.forEach(array => {
@@ -135,8 +135,8 @@ class SendPolls extends React.Component {
           ref: item.ref,
           name: item.name,
           url: item.url,
-          group: item.group ? item.group.description : "nada",
-          file: item.file.name,
+          group: item.group ? item.group.description : "",
+          file: item.file ? item.file.name : "",
           fileId: item.fileId,
           groupId: item.groupId
         }));

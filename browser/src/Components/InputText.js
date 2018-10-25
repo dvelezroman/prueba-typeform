@@ -1,4 +1,5 @@
 import React from "react";
+import axios from 'axios';
 import uuid from "uuid";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -7,6 +8,7 @@ import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Select from "./Select";
 import PrimaryButton from "./PrimaryButton";
+import { createDataForm } from "../Forms/formParser";
 
 import {
   storeQuestion,
@@ -43,31 +45,19 @@ const types = [
     value: "opinion_scale",
     steps: 5
   },
-  {
-    label: "Rango",
-    value: "rating",
-    steps: 5,
-    shape: "star"
-  },
+  // {
+  //   label: "Rango",
+  //   value: "rating",
+  //   steps: 5,
+  //   shape: "star"
+  // },
   {
     label: "Si o No",
     value: "yes_no"
   },
   {
-    label: "Correo Electrónico",
-    value: "email"
-  },
-  {
-    label: "Texto",
-    value: "long_text"
-  },
-  {
     label: "Selección",
     value: "multiple_choice"
-  },
-  {
-    label: "Número",
-    value: "number"
   }
 ];
 
@@ -96,7 +86,7 @@ class InputText extends React.Component {
       question: {
         ref: "",
         title: "",
-        type: "rating",
+        type: "opinion_scale",
         description: "",
         speciality: "Medicina General",
         scale: "5",
@@ -115,7 +105,7 @@ class InputText extends React.Component {
     if (this.state.question.ref === "") {
       uid = uuid();
     }
-    console.log("Lo que viene : ", event.target.value);
+    //console.log("Lo que viene : ", event.target.value);
     this.setState(
       {
         question: {
@@ -146,17 +136,50 @@ class InputText extends React.Component {
         group: this.state.question.group
       };
       this.props.addQuestion(data);
+      // enviar a crear un formulario con la pregunta que llega aqui
+      //this.createPoll()
       this.setState({
         question: {
           ref: "",
           title: "",
           description: "",
           speciality: "Medicina General",
-          group: "Consultas ambulatorias"
+          group: 1
         },
         questions: [data.question, ...this.props.questions]
       });
     }
+  };
+
+  createPoll() {
+    let data = createDataForm(this.state.question.title, [this.state.question]);
+    console.log('Data para crear el form : ', data);
+    const token = "Cx7TVARyv64h6iyFJM5syoYJ8r7wAHnrMnvW3UAbkLh3";
+    axios
+      .post("https://api.typeform.com/forms", data, {
+        headers: { Authorization: "Bearer " + token }
+      })
+      .then(res => res.data)
+      .then(created => {
+        console.log("Created form : ", created);
+        axios
+          .post("/api/polls/new", {
+            ref: created.id,
+            name: this.state.question.title,
+            url: created._links.display,
+            group: this.state.question.group,
+            file: null
+          })
+          .then(res => {
+            alert('El formulario se creó con éxito');
+          })
+        }
+      )
+      .catch(error => {
+        alert('El formulario no se pudo crear');
+      });
+    // prueba
+    //createForm(data);
   };
 
   componentDidMount() {
@@ -187,7 +210,6 @@ class InputText extends React.Component {
             variant="outlined"
           />
           <TextField
-            required
             onChange={this.handleChange("description")}
             id="desc-required"
             value={this.state.question.description}
@@ -203,12 +225,12 @@ class InputText extends React.Component {
             array={types}
             handleChange={this.handleChange}
           />
-          <Select
+          {/* <Select
             label={"group"}
             value={this.state.question.group}
             array={groups}
             handleChange={this.handleChange}
-          />
+          /> */}
           {this.state.question.type === "rating" ? (
             <div>
               <Select
@@ -230,7 +252,7 @@ class InputText extends React.Component {
                 label={"choices"}
                 style={{ margin: 8 }}
                 value={this.state.question.choices}
-                onChange={this.handleChange("choices")}
+                onChange={this.handleChange}
                 placeholder="Ingrese las opciones separadas por comas"
                 helperText="Separe las opciones por comas asi: Opcion 1, Opcion 2,..."
                 fullWidth
