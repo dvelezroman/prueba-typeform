@@ -24,6 +24,7 @@ const styles = theme => ({
 class ShowOrders extends Component {
   render() {
     const { classes, orders } = this.props;
+    console.log('Orders: ', orders);
     return (
       <Paper className={classes.root}>
         <Table className={classes.table}>

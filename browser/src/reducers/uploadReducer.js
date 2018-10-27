@@ -19,7 +19,7 @@ export default (state = initial_state, action) => {
       return Object.assign({}, state, { orders: [...action.payload] });
     }
     case CLEAR_REGS: {
-      return Object.assign({}, state, { orders: [] });
+      return initial_state;
     }
     default:
       return state;

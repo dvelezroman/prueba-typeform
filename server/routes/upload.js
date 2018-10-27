@@ -49,9 +49,9 @@ router.post("/", function(req, res) {
           output: null, //since we don't need output.json
           lowerCaseHeaders: true
         },
-        async function(err, result) {
+        function(err, result) {
           if (err) {
-            return res.json({ error_code: 1, err_desc: err, data: null });
+            return res.status(200).json({ error_code: 1, err_desc: err, data: 'Error en la conversion a json' });
           }
           // here we must store in DataBase
           const dataArray = getDataInArrays(result);
@@ -65,8 +65,8 @@ router.post("/", function(req, res) {
 
           let promises_clients = dataArray.clients.map(client =>
             Client.findOrCreate({
-              where: { hcu: client.hcu, name: client.name, email: client.email }
-            })
+              where: { hcu: client.hcu, name: client.name, email: client.email } // aqui e sla guevada ... revisar las consultasd e de creacion por busqueda
+            })//.spread((clientResult, created)
           );
 
           let promises_offices = dataArray.offices.map(office =>
@@ -105,14 +105,14 @@ router.post("/", function(req, res) {
                               attended: order.attended,
                               description: "Atendido"
                             }
-                          }).then(orderCreated => {
-                            if (orderCreated[1]) {
-                              orderCreated[0].setClient(client);
-                              orderCreated[0].setDoctor(doctor);
-                              orderCreated[0].setGroup(group);
-                              orderCreated[0].setService(service);
-                              orderCreated[0].setOffice(office);
-                              orderCreated[0].setFile(file);
+                          }).then(([orderCreated, created]) => {
+                            if (created) {
+                              orderCreated.setClient(client);
+                              orderCreated.setDoctor(doctor);
+                              orderCreated.setGroup(group);
+                              orderCreated.setService(service);
+                              orderCreated.setOffice(office);
+                              orderCreated.setFile(file);
                             }
                           })
                         )
@@ -137,17 +137,17 @@ router.post("/", function(req, res) {
               const response = {
                 error_code: 0,
                 err_desc: null,
-                message: "OK"
+                message: "Se grabaron todas las ordenes"
               };
-              res.json(response);
+              res.status(201).json(response);
             })
             .catch(err => {
               const response = {
                 error_code: 1,
                 err_desc: err,
-                message: "Salio mal"
+                message: "No se grabaron todas las ordenes"
               };
-              res.json(response);
+              res.status(200).json(response);
             });
         }
       );
@@ -158,7 +158,7 @@ router.post("/", function(req, res) {
         //error deleting the file
       }
     } catch (e) {
-      res.json({ error_code: 1, err_desc: "Corupted excel file" });
+      res.json({ error_code: 1, err_desc: "Corrupted excel file" });
     }
   });
 });

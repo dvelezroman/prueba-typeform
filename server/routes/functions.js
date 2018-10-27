@@ -26,6 +26,7 @@ const getDataInArrays = rawData => {
     groups: [],
     services: []
   };
+  //console.log('Como llega la data: ', rawData);
   rawData.map(reg => {
     data = Object.assign(
       {},
@@ -53,6 +54,7 @@ const getDataInArrays = rawData => {
       }
     );
   });
+  //console.log("Como se va la data en array: ", data);
   return data;
 };
 
