@@ -58,10 +58,7 @@ router.post("/", function(req, res) {
           // promises to create the data in database
           let ref = uuid();
           let fileName = req.file.originalname.split(".")[0];
-          let promises_file = File.create({
-            ref: ref,
-            name: fileName
-          });
+          let promises_file = File.findOrCreate({ where: { ref: ref, name: fileName } });
 
           let promises_clients = dataArray.clients.map(client =>
             Client.findOrCreate({

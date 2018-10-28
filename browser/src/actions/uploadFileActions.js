@@ -36,9 +36,11 @@ export const uploadFile = file => dispatch => {
       "content-type": "application/x-www-form-urlencoded"
     }
   };
-  axios.post(url, formData, config).then(res => {
+  return axios.post(url, formData, config).then(res => {
+    //console.log("Respuesta luego de subir archivo : ", res.data);
     let fileName = file.name.split(".")[0];
     dispatch(storeRegs(fileName));
     dispatch(loadingFile()); // sets loading to false
+    return res.data;
   });
 };

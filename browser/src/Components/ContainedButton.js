@@ -31,10 +31,12 @@ class ContainedButton extends Component {
     };
   }
 
-  onFormSubmit = e => {
+  onFormSubmit = async (e) => {
     e.preventDefault(); // Stop form submit
     if (this.state.file) {
-      this.props.uploadFile(this.state.file);
+      let response = await this.props.uploadFile(this.state.file).then(res => res);
+      if (response.error_code) alert(`Hubo un error, quizas estas tratando de subir un archivo que ya fue cargado anteriormente.`)
+      else alert('Todo bien');
     } else {
       alert("Debe seleccionar un archivo");
     }
@@ -43,6 +45,10 @@ class ContainedButton extends Component {
   onChange = e => {
     e.preventDefault(); // stops for summit
     this.setState({ file: e.target.files[0] });
+  };
+
+  componentWillUnmount() {
+    this.props.clearRegs();
   };
 
   render() {
