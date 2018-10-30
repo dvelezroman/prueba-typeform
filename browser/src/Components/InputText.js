@@ -45,12 +45,12 @@ const types = [
     value: "opinion_scale",
     steps: 5
   },
-  // {
-  //   label: "Rango",
-  //   value: "rating",
-  //   steps: 5,
-  //   shape: "star"
-  // },
+  {
+    label: "Rango",
+    value: "rating",
+    steps: 5,
+    shape: "star"
+  },
   {
     label: "Si o No",
     value: "yes_no"
@@ -231,7 +231,7 @@ class InputText extends React.Component {
             array={groups}
             handleChange={this.handleChange}
           /> */}
-          {this.state.question.type === "rating" ? (
+          {(this.state.question.type === "rating" || this.state.question.type === "opinion_scale") ? (
             <div>
               <Select
                 label={"shape"}

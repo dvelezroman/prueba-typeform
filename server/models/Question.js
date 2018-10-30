@@ -29,7 +29,7 @@ const Question = db.define("question", {
   },
   allow_multiple_selection: {
     type: Sequelize.BOOLEAN,
-    default: false
+    defaultValue: false
   },
   speciality: {
     type: Sequelize.STRING
