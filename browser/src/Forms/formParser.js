@@ -47,7 +47,8 @@ export const createDataForm = (
         type: `${question.type}`,
         properties: {
           description: question.description,
-          steps: question.scale
+          steps: question.scale,
+          start_at_one: true
         }
       };
     } else {
