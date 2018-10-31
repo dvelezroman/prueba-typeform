@@ -7,7 +7,7 @@ const storeInDataBase = (
   pservices,
   porders
 ) =>
-  Promise.all([
+  Promise.all([ // ejecutar por cada array mejor
     pfile,
     ...pclients,
     ...pdoctors,

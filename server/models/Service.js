@@ -3,8 +3,7 @@ const db = require("./db");
 
 const Service = db.define("service", {
   description: {
-    type: Sequelize.STRING,
-    allowNull: false
+    type: Sequelize.STRING
   }
 });
 

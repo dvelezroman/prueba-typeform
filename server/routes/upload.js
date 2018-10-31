@@ -19,7 +19,7 @@ const File = models.File;
 /** API path that will upload the files */
 router.post("/", function(req, res) {
   let exceltojson; //Initialization
-  upload(req, res, async function(err) {
+  upload(req, res, function(err) {
     if (err) {
       res.json({ error_code: 1, err_desc: err });
       return;
@@ -49,7 +49,7 @@ router.post("/", function(req, res) {
           output: null, //since we don't need output.json
           lowerCaseHeaders: true
         },
-        function(err, result) {
+        async function(err, result) {
           if (err) {
             return res.status(200).json({ error_code: 1, err_desc: err, data: 'Error en la conversion a json' });
           }
@@ -58,32 +58,33 @@ router.post("/", function(req, res) {
           // promises to create the data in database
           let ref = uuid();
           let fileName = req.file.originalname.split(".")[0];
-          let promises_file = File.findOrCreate({ where: { ref: ref, name: fileName } });
-
+          // stores file uploaded
+          let promises_file = File.findOrCreate({ where: { name: fileName }, defaults: { ref: ref } });
+          // stores the clients contained in the file uploaded
           let promises_clients = dataArray.clients.map(client =>
             Client.findOrCreate({
-              where: { hcu: client.hcu, name: client.name, email: client.email } // aqui e sla guevada ... revisar las consultasd e de creacion por busqueda
-            })//.spread((clientResult, created)
+              where: { hcu: client.hcu }, defaults: { name: client.name, email: client.email }
+            })
           );
-
+          // stores the offices contained in the orders of the file uploaded
           let promises_offices = dataArray.offices.map(office =>
             Office.findOrCreate({ where: { description: office.description } })
           );
-
+          // stores the doctors contained in the orders of the file uploaded
           let promises_doctors = dataArray.doctors.map(doctor =>
             Doctor.findOrCreate({ where: { name: doctor.name } })
           );
-
+          // stores the groups contained the orders of the file uploaded
           let promises_groups = dataArray.groups.map(group =>
             Group.findOrCreate({ where: { description: group.description } })
           );
-
+          // stores the services of the orders in the file uploaded
           let promises_services = dataArray.services.map(service =>
             Service.findOrCreate({
               where: { description: service.description }
             })
-          );
-
+          );          
+          // set the orders to be stored in the db
           let promises_orders = dataArray.orders.map(order =>
             Client.findOne({ where: { hcu: order.hcu } }).then(client => {
               Doctor.findOne({ where: { name: order.doctor } }).then(doctor =>
@@ -96,13 +97,8 @@ router.post("/", function(req, res) {
                         where: { description: order.office }
                       }).then(office =>
                         File.findOne({ where: { ref: ref } }).then(file =>
-                          Order.findOrCreate({
-                            where: {
-                              ref: order.ref,
-                              attended: order.attended,
-                              description: "Atendido"
-                            }
-                          }).then(([orderCreated, created]) => {
+                          Order.findOrCreate({ where: { ref: order.ref, attended: order.attended, description: "Atendido" } })
+                          .then(([orderCreated, created]) => {
                             if (created) {
                               orderCreated.setClient(client);
                               orderCreated.setDoctor(doctor);
@@ -119,22 +115,14 @@ router.post("/", function(req, res) {
               );
             })
           );
-          // promises to create the data in database
-
-          storeInDataBase(
-            promises_file,
-            promises_clients,
-            promises_doctors,
-            promises_groups,
-            promises_offices,
-            promises_services,
-            promises_orders
-          )
-            .then(() => {
+          // run the promises from above
+          await storeInDataBase(promises_file, promises_clients, promises_doctors, promises_groups, promises_offices, promises_services, promises_orders)
+            .then(array => {
               const response = {
                 error_code: 0,
                 err_desc: null,
-                message: "Se grabaron todas las ordenes"
+                data: array,
+                message: "Se grabaron todos los datos"
               };
               res.status(201).json(response);
             })
@@ -142,7 +130,7 @@ router.post("/", function(req, res) {
               const response = {
                 error_code: 1,
                 err_desc: err,
-                message: "No se grabaron todas las ordenes"
+                message: "No se grabaron todos los datos"
               };
               res.status(200).json(response);
             });

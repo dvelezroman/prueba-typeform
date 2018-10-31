@@ -35,8 +35,12 @@ class ContainedButton extends Component {
     e.preventDefault(); // Stop form submit
     if (this.state.file) {
       let response = await this.props.uploadFile(this.state.file).then(res => res);
-      if (response.error_code) alert(`Hubo un error, quizas estas tratando de subir un archivo que ya fue cargado anteriormente.`)
-      else alert('Todo bien');
+      //console.log(`Response: ${JSON.stringify(response)}`);
+      if (response.error_code) alert(`Hubo un error, quizas estas tratando de subir un archivo que ya fue cargado anteriormente...`)
+      else {
+        //console.log(`Response: ${JSON.stringify(response.data)}`);
+        alert('Todo bien');
+      }
     } else {
       alert("Debe seleccionar un archivo");
     }

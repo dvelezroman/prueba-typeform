@@ -9,7 +9,7 @@ import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import Select from "./Select";
 import PrimaryButton from "./PrimaryButton";
-import { createDataForm } from "../Forms/formParser";
+// import { createDataForm } from "../Forms/formParser";
 
 import {
   storeQuestion,
@@ -46,12 +46,12 @@ const types = [
     value: "opinion_scale",
     steps: 5
   },
-  {
-    label: "Rango",
-    value: "rating",
-    steps: 5,
-    shape: "star"
-  },
+  // {
+  //   label: "Rango",
+  //   value: "rating",
+  //   steps: 5,
+  //   shape: "star"
+  // },
   {
     label: "Si o No",
     value: "yes_no"
@@ -190,14 +190,19 @@ class InputText extends React.Component {
     ) : (
       <Grid container className={classes.container}>
         <Grid item xs={12}>
+          <div className={classes.root}>
+            <h3>Agregar Preguntas</h3>
+          </div>
+        </Grid>
+        <Grid item xs={12}>
         <form className={classes.container} noValidate autoComplete="off">
           <TextField
             required
             onChange={this.handleChange("title")}
             id="title-required"
             value={this.state.question.title}
-            label="Asunto"
-            placeholder="Escriba el asunto de la pregunta"
+            label="Pregunta"
+            placeholder="Escriba aquí la pregunta"
             className={classes.textField1}
             margin="normal"
             variant="outlined"
@@ -206,24 +211,24 @@ class InputText extends React.Component {
             onChange={this.handleChange("description")}
             id="desc"
             value={this.state.question.description}
-            label="Cuerpo"
-            placeholder="Describa la pregunta"
+            label="Aclaratoria"
+            placeholder="Escriba la aclaratoria para la pregunta"
             className={classes.textField2}
             margin="normal"
             variant="outlined"
+          />
+          <Select
+            label={"group"}
+            name={"Categoría"}
+            value={this.state.question.group}
+            array={groups}
+            handleChange={this.handleChange}
           />
           <Select
             label={"type"}
             name={"Tipo"}
             value={this.state.question.type}
             array={types}
-            handleChange={this.handleChange}
-          />
-          <Select
-            label={"group"}
-            name={"Grupo"}
-            value={this.state.question.group}
-            array={groups}
             handleChange={this.handleChange}
           />
           {(this.state.question.type === "rating" || this.state.question.type === "opinion_scale") ? (
