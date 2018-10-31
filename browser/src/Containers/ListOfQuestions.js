@@ -53,7 +53,7 @@ class ListOfQuestions extends Component {
     const { classes, questions, filterGroup } = this.props;
     //let filtered_questions = questions;
     let filtered_questions = questions.filter(question => {
-      if (question.group && question.groupId === Number(filterGroup)) {
+      if (question.enabled && question.group && question.groupId === Number(filterGroup)) {
         return true;
       }
       return false;

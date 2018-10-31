@@ -33,7 +33,7 @@ class ListOfQuestionsWithoutCheck extends Component {
     const { classes, questions, clickEnable } = this.props;
     let array = questions;
     array = sortArray(array);
-    console.log('Questions: ', array);
+    //console.log('Questions: ', array);
     return (
       <List className={classes.root} subheader={<li />}>
         {array.map(question => (
