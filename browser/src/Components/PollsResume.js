@@ -62,7 +62,7 @@ class PollsResume extends Component {
         this.props.getPollAnswers(polls[i].ref).then(answers => {
           let data = {
             ref: polls[0].ref,
-            answers: answers.items.length
+            answers: answers.items
           };
           axios.post('/api/polls/sendpolls', data).then(() => this.props.getSendPolls());
         })
@@ -109,7 +109,7 @@ class PollsResume extends Component {
                       <CustomTableCell>{row.date}</CustomTableCell>
                       <CustomTableCell numeric>{row.clients}</CustomTableCell>
                       <CustomTableCell numeric>{row.answers}</CustomTableCell>
-                      <CustomTableCell numeric>{row.answers - row.clients}</CustomTableCell>
+                      <CustomTableCell numeric>{row.clients - row.answers}</CustomTableCell>
                     </TableRow>
                   );
                 })}

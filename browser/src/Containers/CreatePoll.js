@@ -50,7 +50,7 @@ class CreatePoll extends Component {
     this.state = {
       ref: "",
       title: "",
-      group: 1,
+      group: 0,
       selectedQuestions: [],
       urlform: "",
       showAlertDialog: false,
@@ -143,7 +143,7 @@ class CreatePoll extends Component {
 
   render() {
     //console.log("State", this.state);
-    const { classes, loggedUser } = this.props;
+    const { classes, loggedUser, groups } = this.props;
     return !loggedUser.logged ? (
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta informacion</h1>
@@ -189,23 +189,26 @@ class CreatePoll extends Component {
               onChange={this.handleChange("title")}
               id="poll-title-required"
               value={this.state.title}
-              label="Titulo de Formulario"
-              placeholder="Escriba un titulo para el formulario"
+              label="Titulo de la Encuesta"
+              placeholder="Escriba un titulo para identificar"
               className={classes.textField}
               margin="normal"
               variant="outlined"
             />
-            {/* <Select
+            <Select
               label={"group"}
+              name={"Grupo"}
               value={this.state.group}
               array={[{ value: "0", label: "Elija Grupo" }, ...groups]}
               handleChange={this.handleChange}
-            /> */}
+            />
             <Select
               label={"fileSelected"}
+              name={"Archivos"}
               value={this.state.fileSelected}
               array={this.state.files}
               handleChange={this.handleChange}
+              helperText={"Seleccione uno"}
             />
           </Grid>
 
