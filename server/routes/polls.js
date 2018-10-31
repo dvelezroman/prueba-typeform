@@ -31,8 +31,18 @@ router.post("/sendpolls", (req, res, next) => {
   // actualiza el numero de answers para una encuesta
   let answers = req.body.answers; // recibe el numero de respuestas para una encuesta
   let ref = req.body.ref; // recibe el ref de la encuesta para poder buscarla y actualizarle el numero de respuestas
+  let average = 0;
+  if (answers.length)
+    {
+      let sum = 0;
+      answers.forEach(element => {
+        sum = sum + element.answers[0].number;
+      });
+      average = sum / answers.length;
+    }
+  //console.log('Average: ', average);
   Poll.findOne({ where: { ref: ref }})
-  .then(poll => PollsSend.update({ answers: answers }, { where: { pollId: poll.id } }))
+  .then(poll => PollsSend.update({ answers: answers.length, average: average }, { where: { pollId: poll.id } }))
   .then(() => res.status(201).json({ error: false, msg: 'updated' }));
 });
 

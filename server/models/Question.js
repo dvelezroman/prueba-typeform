@@ -31,6 +31,10 @@ const Question = db.define("question", {
     type: Sequelize.BOOLEAN,
     defaultValue: false
   },
+  enabled: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: true
+  },
   speciality: {
     type: Sequelize.STRING
   }

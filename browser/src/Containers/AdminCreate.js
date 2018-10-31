@@ -8,8 +8,7 @@ import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
-import { loginUser, storeUser, clearUser } from "../actions/UserActions";
-import Axios from "axios";
+// import { loginUser, storeUser, clearUser } from "../actions/UserActions";
 
 const styles = theme => ({
   container: {

@@ -16,6 +16,19 @@ router.post("/new", function(req, res, next) {
   });
 });
 
+router.put("/disable", (req, res, next) => {
+  Question.findOne({ where: { ref: req.body.ref }})
+  .then(question => {
+    Question.update({ enabled: !question.enabled }, { where: { ref: question.ref }})
+    .then(updated => {
+      res.status(200).json({
+        error: false,
+        data: updated
+      })
+    })
+  })
+});
+
 router.get("/", function(req, res) {
   Question.findAll({ include: [Group] }).then(questions =>
     res.status(200).json(questions)

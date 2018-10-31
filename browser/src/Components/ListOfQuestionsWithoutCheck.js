@@ -5,7 +5,11 @@ import { withStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+import IconButton from '@material-ui/core/IconButton';
+import CommentIcon from '@material-ui/icons/Comment';
 import { getQuestionsDB } from "../actions/questionActions";
+
+const sortArray = array => array.sort((a,b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
 
 const styles = theme => ({
   root: {
@@ -26,16 +30,21 @@ const styles = theme => ({
 
 class ListOfQuestionsWithoutCheck extends Component {
   render() {
-    const { classes, questions } = this.props;
-
+    const { classes, questions, clickEnable } = this.props;
+    let array = questions;
+    array = sortArray(array);
+    console.log('Questions: ', array);
     return (
       <List className={classes.root} subheader={<li />}>
-        {questions.map(question => (
+        {array.map(question => (
           <ListItem key={question.ref}>
             <ListItemText
-              primary={question.title}
-              secondary={`${question.description}`}
+              primary={question.enabled ? question.title : `Pregunta Deshabilitada (${question.title})`}
+              secondary={question.enabled ? `${question.description}` : ``}
             />
+            <IconButton aria-label="Deshabilitar" onClick={clickEnable(question.ref)}>
+              <CommentIcon />
+            </IconButton>
           </ListItem>
         ))}
       </List>
@@ -48,7 +57,7 @@ ListOfQuestionsWithoutCheck.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  //questions: state.questionsReducer.questions
+  questions: state.questionsReducer.questions
 });
 
 const mapDispatchToProps = dispatch => ({

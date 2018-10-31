@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
+import Paper from "@material-ui/core/Paper";
 import Select from "./Select";
 import PrimaryButton from "./PrimaryButton";
 import { createDataForm } from "../Forms/formParser";
@@ -31,11 +32,11 @@ const shapes = [
 
 const scale = [
   { label: 5, value: 5 },
-  { label: 6, value: 6 },
+  //{ label: 6, value: 6 },
   { label: 7, value: 7 },
-  { label: 8, value: 8 },
+  //{ label: 8, value: 8 },
   { label: 9, value: 9 },
-  { label: 10, value: 10 },
+  //{ label: 10, value: 10 },
   { label: 11, value: 11 }
 ];
 
@@ -69,10 +70,20 @@ const styles = theme => ({
     display: "flex",
     flexWrap: "wrap"
   },
-  textField: {
+  paper: {
+    padding: 16,
+    textAlign: "center",
+    color: theme.palette.text.secondary
+  },
+  textField1: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
-    width: 200
+    width: 300
+  },
+  textField2: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: 600
   },
   dense: {
     marginTop: 16
@@ -98,7 +109,18 @@ class InputText extends React.Component {
       questions: []
     };
     this.handleChange = this.handleChange.bind(this);
+    this.clickEnable = this.clickEnable.bind(this);
   }
+
+  clickEnable = value => event => {
+    event.preventDefault();
+    //console.log('Ref : ', value );
+    axios.put("/api/questions/disable", { ref: value })
+    .then(res => res.data)
+    .then(data => {
+      this.props.getQuestionsDB();
+    });
+  };
 
   handleChange = label => event => {
     let uid = this.state.question.ref;
@@ -151,37 +173,6 @@ class InputText extends React.Component {
     }
   };
 
-  createPoll() {
-    let data = createDataForm(this.state.question.title, [this.state.question]);
-    console.log('Data para crear el form : ', data);
-    const token = "Cx7TVARyv64h6iyFJM5syoYJ8r7wAHnrMnvW3UAbkLh3";
-    axios
-      .post("https://api.typeform.com/forms", data, {
-        headers: { Authorization: "Bearer " + token }
-      })
-      .then(res => res.data)
-      .then(created => {
-        console.log("Created form : ", created);
-        axios
-          .post("/api/polls/new", {
-            ref: created.id,
-            name: this.state.question.title,
-            url: created._links.display,
-            group: this.state.question.group,
-            file: null
-          })
-          .then(res => {
-            alert('El formulario se creó con éxito');
-          })
-        }
-      )
-      .catch(error => {
-        alert('El formulario no se pudo crear');
-      });
-    // prueba
-    //createForm(data);
-  };
-
   componentDidMount() {
     this.props.getQuestionsDB();
     this.props.getGroupsDB();
@@ -190,58 +181,64 @@ class InputText extends React.Component {
 
   render() {
     //console.log("State: ", this.state.question);
+    //console.log('Questions: ', this.props.questions);
     const { classes, loggedUser, groups } = this.props;
     return !loggedUser.logged ? (
       <div className={classes.root}>
-        <h1>Necesitas loggearte para ver esta informacion</h1>
+        <h1>Necesitas loggearte para ver esta información</h1>
       </div>
     ) : (
       <Grid container className={classes.container}>
         <Grid item xs={12}>
+        <form className={classes.container} noValidate autoComplete="off">
           <TextField
             required
             onChange={this.handleChange("title")}
             id="title-required"
             value={this.state.question.title}
-            label="Titulo"
-            placeholder="Escriba un titulo"
-            className={classes.textField}
+            label="Asunto"
+            placeholder="Escriba el asunto de la pregunta"
+            className={classes.textField1}
             margin="normal"
             variant="outlined"
           />
           <TextField
             onChange={this.handleChange("description")}
-            id="desc-required"
+            id="desc"
             value={this.state.question.description}
-            label="Descripción"
+            label="Cuerpo"
             placeholder="Describa la pregunta"
-            className={classes.textField}
+            className={classes.textField2}
             margin="normal"
             variant="outlined"
           />
           <Select
             label={"type"}
+            name={"Tipo"}
             value={this.state.question.type}
             array={types}
             handleChange={this.handleChange}
           />
-          {/* <Select
+          <Select
             label={"group"}
+            name={"Grupo"}
             value={this.state.question.group}
             array={groups}
             handleChange={this.handleChange}
-          /> */}
+          />
           {(this.state.question.type === "rating" || this.state.question.type === "opinion_scale") ? (
             <div>
               <Select
                 label={"shape"}
                 value={this.state.question.shape}
+                name={"Forma"}
                 array={shapes}
                 handleChange={this.handleChange}
               />
               <Select
                 label={"scale"}
                 value={this.state.question.scale}
+                name={"Escala"}
                 array={scale}
                 handleChange={this.handleChange}
               />
@@ -249,12 +246,12 @@ class InputText extends React.Component {
           ) : this.state.question.type === "multiple_choice" ? (
             <div>
               <TextField
-                label={"choices"}
-                style={{ margin: 8 }}
+                label={"Opciones"}
                 value={this.state.question.choices}
-                onChange={this.handleChange}
+                onChange={this.handleChange("choices")}
+                className={classes.textField1}
                 placeholder="Ingrese las opciones separadas por comas"
-                helperText="Separe las opciones por comas asi: Opcion 1, Opcion 2,..."
+                helperText="Opción 1, Opción 2, Opción 3,..."
                 fullWidth
                 margin="normal"
                 variant="outlined"
@@ -262,6 +259,7 @@ class InputText extends React.Component {
               <Select
                 label={"allow_multiple_selection"}
                 value={this.state.question.allow_multiple_selection}
+                name={"Seleccione"}
                 array={[
                   { label: "Selección Multiple", value: true },
                   { label: "Solo una opción", value: false }
@@ -274,15 +272,19 @@ class InputText extends React.Component {
           )}
 
           <PrimaryButton button={"Añadir"} handleClick={this.handleSubmit} />
+          </form>
         </Grid>
         <Grid item xs={12}>
-          <ListOfQuestionsWithoutCheck
-            questions={
-              this.state.questions.length
-                ? this.state.questions
-                : this.props.questions
-            }
-          />
+          <Paper className={classes.root}>
+            <ListOfQuestionsWithoutCheck
+              clickEnable={this.clickEnable}
+              // questions={
+              //   this.state.questions.length
+              //     ? this.state.questions
+              //     : this.props.questions
+              // }
+            />
+          </Paper>
         </Grid>
       </Grid>
     );
@@ -305,6 +307,7 @@ const mapDispatchToProps = dispatch => ({
   addQuestion: question => {
     dispatch(storeQuestionInDB(question));
     dispatch(clearQuestion());
+    dispatch(getQuestionsDB())
   },
   getQuestionsDB: () => dispatch(getQuestionsDB()),
   storeQuestionDB: question => {
