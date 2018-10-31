@@ -50,6 +50,8 @@ class CreatePoll extends Component {
     this.state = {
       ref: "",
       title: "",
+      subject: "",
+      greet: "",
       group: 0,
       selectedQuestions: [],
       urlform: "",
@@ -180,9 +182,30 @@ class CreatePoll extends Component {
           spacing={16}
         >
           <Grid item xs={12}>
+          <form className={classes.container} noValidate autoComplete="off">
             <CreatePollButton
               disabled={this.state.selectedQuestions.length ? false : true}
               createPoll={this.createPoll}
+            />
+            <TextField
+              onChange={this.handleChange("subject")}
+              id="subject-required"
+              value={this.state.subject}
+              label="Titulo del Correo"
+              placeholder="Escriba un titulo para el correo en el que se enviará esta encuesta"
+              className={classes.textField}
+              margin="normal"
+              variant="outlined"
+            />
+            <TextField
+              onChange={this.handleChange("greet")}
+              id="greet-required"
+              value={this.state.greet}
+              label="Saludo"
+              placeholder="Escriba un saludo para incluir en el cuerpo del correo"
+              className={classes.textField}
+              margin="normal"
+              variant="outlined"
             />
             <TextField
               required
@@ -197,21 +220,21 @@ class CreatePoll extends Component {
             />
             <Select
               label={"group"}
-              name={"Grupo"}
+              name={"Categoría"}
               value={this.state.group}
-              array={[{ value: "0", label: "Elija Grupo" }, ...groups]}
+              array={[{ value: "0", label: "Elija Categoría" }, ...groups]}
               handleChange={this.handleChange}
             />
             <Select
               label={"fileSelected"}
-              name={"Archivos"}
+              name={"Archivo"}
               value={this.state.fileSelected}
               array={this.state.files}
               handleChange={this.handleChange}
-              helperText={"Seleccione uno"}
+              helperText={"Elija un archivo"}
             />
+          </form>
           </Grid>
-
           <Grid item xs={12}>
             <ListOfQuestions
               filterGroup={this.state.group}
