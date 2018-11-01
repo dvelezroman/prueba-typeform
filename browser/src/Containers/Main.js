@@ -21,6 +21,7 @@ import ChangePassword from "./ChangePassword";
 import RecoverPassword from "./RecoverPassword";
 import UploadedFiles from "./UploadedFiles";
 import AdminCreate from "./AdminCreate";
+import UpdateQuestion from "../Components/UpdateQuestion";
 import { setAdmin } from "../actions/adminActions";
 
 const styles = theme => ({
@@ -106,6 +107,15 @@ class Main extends Component {
                       render={() => (
                         <Grid container>
                           <LoginForm />
+                        </Grid>
+                      )}
+                    />
+                    <Route
+                      exact
+                      path="/questions/update/:id"
+                      render={() => (
+                        <Grid container>
+                          <UpdateQuestion />
                         </Grid>
                       )}
                     />

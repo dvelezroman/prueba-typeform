@@ -30,18 +30,21 @@ const styles = theme => ({
 
 class ListOfQuestionsWithoutCheck extends Component {
   render() {
-    const { classes, questions, clickEnable } = this.props;
+    const { classes, questions, clickEnable, clickUpdate } = this.props;
     let array = questions;
     array = sortArray(array);
     //console.log('Questions: ', array);
     return (
       <List className={classes.root} subheader={<li />}>
         {array.map(question => (
-          <ListItem key={question.ref}>
+          <ListItem key={question.id}>
             <ListItemText
-              primary={question.enabled ? question.title : `Pregunta Deshabilitada (${question.title})`}
-              secondary={question.enabled ? `${question.description}` : ``}
+              primary={question.enabled ? `${question.title} -- Categoría: ${question.group.description}` : `Deshabilitada (${question.title})`}
+              secondary={question.enabled ? `${question.description}  - Tipo: ${question.type}` : ``}
             />
+            <IconButton aria-label="Actualizar" onClick={clickUpdate(question.id)}>
+              <CommentIcon />
+            </IconButton>
             <IconButton aria-label="Deshabilitar" onClick={clickEnable(question.ref)}>
               <CommentIcon />
             </IconButton>
