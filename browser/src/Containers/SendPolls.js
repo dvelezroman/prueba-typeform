@@ -106,8 +106,8 @@ class SendPolls extends React.Component {
             array.push({ email: email, name: name });
           }
         });
-
-        arrays.push({ clients: array, subject: urlForm[i].name, urlForm: urlForm[i].url, body: this.state.body });
+        //console.log('Array: ', urlForm[i]);
+        arrays.push({ clients: array, formName: urlForm[i].name, urlForm: urlForm[i].url, subject: urlForm[i].subject, greet: urlForm[i].greet, body: this.state.body }); // aqui por cada formulario seleccionado debe crearse un elemento
       });
       let promises_for_sending_emails = [];
       arrays.forEach(array => {
@@ -134,6 +134,8 @@ class SendPolls extends React.Component {
           id: item.id,
           ref: item.ref,
           name: item.name,
+          subject: item.subject,
+          greet: item.greet,
           url: item.url,
           group: item.group ? item.group.description : "",
           file: item.file ? item.file.name : "",

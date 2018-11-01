@@ -9,16 +9,19 @@ const Poll = db.define("poll", {
     type: Sequelize.STRING
   },
   description: {
-    type: Sequelize.STRING
+    type: Sequelize.STRING,
+    defaultValue: "Formulario de Encuesta"
   },
   name: {
     type: Sequelize.STRING
   },
   subject: {
-    type: Sequelize.STRING
+    type: Sequelize.STRING,
+    defaultValue: "Encuesta de Satisfacción del Cliente - Medilink S.A."
   },
   greet: {
-    type: Sequelize.STRING
+    type: Sequelize.STRING,
+    defaultValue: "Por favor ayúdenos dando click sobre el enlace, y conteste una pregunta acerca de su experiencia en la atención recibida: "
   },
   send: {
     type: Sequelize.BOOLEAN,

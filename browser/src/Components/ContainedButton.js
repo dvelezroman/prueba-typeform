@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
+import { withRouter } from "react-router";
 import PropTypes from "prop-types";
+import axios from "axios";
 import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
@@ -27,19 +30,24 @@ class ContainedButton extends Component {
   constructor() {
     super();
     this.state = {
-      file: null
+      file: null,
+      orders: []
     };
   }
 
-  onFormSubmit = async (e) => {
-    e.preventDefault(); // Stop form submit
+  onFormSubmit = async (event) => {
+    event.preventDefault(); // Stop form submit
     if (this.state.file) {
       let response = await this.props.uploadFile(this.state.file).then(res => res);
-      //console.log(`Response: ${JSON.stringify(response)}`);
-      if (response.error_code) alert(`Hubo un error, quizas estas tratando de subir un archivo que ya fue cargado anteriormente...`)
+      //console.log(`Response: ${response}`);
+      if (response.error_code) alert(response.message)
       else {
-        //console.log(`Response: ${JSON.stringify(response.data)}`);
-        alert('Todo bien');
+        
+        // let { data } = await axios.get(`/api/files/${response.data}/orders`)
+        // .then(res => res.data);
+        // this.setState({ orders: data });
+        alert('El archivo cargó completamente');
+        this.props.history.push("/files");
       }
     } else {
       alert("Debe seleccionar un archivo");
@@ -95,7 +103,8 @@ class ContainedButton extends Component {
             </Paper>
           </Grid>
           <Grid item xs={12}>
-            {loading ? <CircularIndeterminated /> : <ShowOrders />}
+            {loading ? <CircularIndeterminated /> : ""}
+            {/* {loading ? <CircularIndeterminated /> : <ShowOrders orders={this.state.orders}/>} */}
           </Grid>
         </Grid>
       </div>
@@ -109,7 +118,6 @@ ContainedButton.propTypes = {
 
 const mapStateToProps = state => ({
   loggedUser: state.userReducer,
-  orders: state.uploadReducer.orders,
   loading: state.uploadReducer.loading
 });
 
@@ -121,4 +129,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(ContainedButton));
+)(withStyles(styles)(withRouter(ContainedButton)));

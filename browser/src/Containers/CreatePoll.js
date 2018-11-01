@@ -81,7 +81,7 @@ class CreatePoll extends Component {
       subject: "",
       greet: "",
       urlform: "",
-      group: "",
+      group: "0",
       selectedQuestions: [],
       fileSelected: 1
     });
@@ -104,6 +104,8 @@ class CreatePoll extends Component {
           .post("/api/polls/new", {
             ref: created.id,
             name: this.state.title,
+            subject: this.state.subject,
+            greet: this.state.greet,
             url: created._links.display,
             group: this.state.group,
             file: this.state.fileSelected
@@ -224,7 +226,7 @@ class CreatePoll extends Component {
               label={"group"}
               name={"Categoría"}
               value={this.state.group}
-              array={[{ value: "0", label: "Elija Categoría" }, ...groups]}
+              array={[{ value: "0", label: "Todas" }, ...groups]}
               handleChange={this.handleChange}
             />
             <Select
