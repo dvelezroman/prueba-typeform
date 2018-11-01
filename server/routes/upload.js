@@ -121,7 +121,7 @@ router.post("/", function(req, res) {
               const response = {
                 error_code: 0,
                 err_desc: null,
-                data: array,
+                data: fileName,
                 message: "Se grabaron todos los datos"
               };
               res.status(201).json(response);

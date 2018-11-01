@@ -18,7 +18,7 @@ const CustomTableCell = withStyles(theme => ({
     color: theme.palette.common.white
   },
   body: {
-    fontSize: 14
+    fontSize: 10
   }
 }))(TableCell);
 
@@ -64,6 +64,7 @@ class PollsResume extends Component {
             ref: polls[0].ref,
             answers: answers.items
           };
+          //console.log('Data: ', data);
           axios.post('/api/polls/sendpolls', data).then(() => this.props.getSendPolls());
         })
         

@@ -78,8 +78,10 @@ class CreatePoll extends Component {
       showAlertDialog: false,
       ref: "",
       title: "",
+      subject: "",
+      greet: "",
       urlform: "",
-      group: "",
+      group: "0",
       selectedQuestions: [],
       fileSelected: 1
     });
@@ -102,6 +104,8 @@ class CreatePoll extends Component {
           .post("/api/polls/new", {
             ref: created.id,
             name: this.state.title,
+            subject: this.state.subject,
+            greet: this.state.greet,
             url: created._links.display,
             group: this.state.group,
             file: this.state.fileSelected
@@ -195,7 +199,7 @@ class CreatePoll extends Component {
               placeholder="Escriba un titulo para el correo en el que se enviará esta encuesta"
               className={classes.textField}
               margin="normal"
-              variant="outlined"
+              
             />
             <TextField
               onChange={this.handleChange("greet")}
@@ -205,7 +209,7 @@ class CreatePoll extends Component {
               placeholder="Escriba un saludo para incluir en el cuerpo del correo"
               className={classes.textField}
               margin="normal"
-              variant="outlined"
+              
             />
             <TextField
               required
@@ -222,7 +226,7 @@ class CreatePoll extends Component {
               label={"group"}
               name={"Categoría"}
               value={this.state.group}
-              array={[{ value: "0", label: "Elija Categoría" }, ...groups]}
+              array={[{ value: "0", label: "Todas" }, ...groups]}
               handleChange={this.handleChange}
             />
             <Select

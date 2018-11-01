@@ -29,6 +29,21 @@ router.put("/disable", (req, res, next) => {
   })
 });
 
+router.put("/update/:ref", (req, res) => {
+  let ref = req.params.ref;
+  let body = req.body;
+  Question.update(body, { returning: true, where: { ref: ref } })
+  .then(([ rowsUpdate, [updatedQuestion] ]) => {
+    res.status(201).json({ error: false, data: updatedQuestion })
+  }).catch(err => res.status(200).json({ error: true, data: err }));
+});
+
+router.get("/:id", (req, res, next) => {
+  Question.findById(req.params.id)
+  .then(found => res.status(200).json({ error: false, data: found }))
+  .catch(err => res.status(200).json({ error: true, data: err }))
+});
+
 router.get("/", function(req, res) {
   Question.findAll({ include: [Group] }).then(questions =>
     res.status(200).json(questions)

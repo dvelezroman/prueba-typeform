@@ -19,7 +19,9 @@ import PollsResume from "../Components/PollsResume";
 import LoginForm from "./LoginForm";
 import ChangePassword from "./ChangePassword";
 import RecoverPassword from "./RecoverPassword";
+import UploadedFiles from "./UploadedFiles";
 import AdminCreate from "./AdminCreate";
+import UpdateQuestion from "../Components/UpdateQuestion";
 import { setAdmin } from "../actions/adminActions";
 
 const styles = theme => ({
@@ -73,12 +75,12 @@ class Main extends Component {
               <NavBar />
             </Grid>
             <Grid container spacing={16}>
-              <Grid item xs={3}>
+              <Grid item xs={2}>
                 <Paper className={classes.paper}>
                   <NestedList />
                 </Paper>
               </Grid>
-              <Grid item xs={9}>
+              <Grid item xs={10}>
                 <Paper className={classes.paper}>
                   <Switch>
                   <Route
@@ -105,6 +107,15 @@ class Main extends Component {
                       render={() => (
                         <Grid container>
                           <LoginForm />
+                        </Grid>
+                      )}
+                    />
+                    <Route
+                      exact
+                      path="/questions/update/:id"
+                      render={() => (
+                        <Grid container>
+                          <UpdateQuestion />
                         </Grid>
                       )}
                     />
@@ -152,6 +163,15 @@ class Main extends Component {
                       render={() => (
                         <Grid container>
                           <CreatePoll />
+                        </Grid>
+                      )}
+                    />
+                    <Route
+                      exact
+                      path="/files"
+                      render={() => (
+                        <Grid container>
+                          <UploadedFiles />
                         </Grid>
                       )}
                     />

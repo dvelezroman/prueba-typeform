@@ -1,7 +1,6 @@
-import React from "react";
+import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 import axios from 'axios';
-import { withRouter } from 'react-router-dom';
-import uuid from "uuid";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
@@ -10,18 +9,7 @@ import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import Select from "./Select";
 import PrimaryButton from "./PrimaryButton";
-// import { createDataForm } from "../Forms/formParser";
-
-import {
-  storeQuestion,
-  clearQuestion,
-  storeQuestionInDB,
-  getQuestionsDB,
-  getGroupsDB
-} from "../actions/questionActions";
-
-import { storeQuestionDB } from "../actions/firebaseActions";
-import ListOfQuestionsWithoutCheck from "./ListOfQuestionsWithoutCheck";
+import { getGroupsDB } from "../actions/questionActions";
 
 const shapes = [
   { label: "Circulo", value: "circle" },
@@ -91,7 +79,7 @@ const styles = theme => ({
   }
 });
 
-class InputText extends React.Component {
+class UpdateQuestion extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -106,91 +94,65 @@ class InputText extends React.Component {
         choices: "",
         allow_multiple_selection: false,
         group: 1
-      },
-      questions: []
+      }
     };
     this.handleChange = this.handleChange.bind(this);
-    this.clickEnable = this.clickEnable.bind(this);
-    this.clickUpdate = this.clickUpdate.bind(this);
   }
 
-  clickEnable = value => event => {
-    event.preventDefault();
-    //console.log('Ref : ', value );
-    axios.put("/api/questions/disable", { ref: value })
-    .then(res => res.data)
-    .then(data => {
-      this.props.getQuestionsDB();
-    });
-  };
-
-  clickUpdate = value => event => {
-    event.preventDefault();
-    //console.log('Id : ', value );
-    this.props.history.push(`/questions/update/${value}`);
-  };
-
   handleChange = label => event => {
-    let uid = this.state.question.ref;
-    if (this.state.question.ref === "") {
-      uid = uuid();
-    }
-    //console.log("Lo que viene : ", event.target.value);
     this.setState(
       {
         question: {
           ...this.state.question,
-          ref: uid,
           [label]: event.target.value
         }
-      },
-      () => this.props.storeQuestion(this.state.question)
+      }
     );
   };
 
-  handleSubmit = event => {
+  handleSubmit = async (event) => {
     event.preventDefault();
-    if (this.props.question.description && this.props.question.title) {
-      let data = {
-        question: {
-          ref: this.state.question.ref,
-          title: this.state.question.title,
-          type: this.state.question.type,
-          description: this.state.question.description,
-          speciality: this.state.question.speciality,
-          scale: this.state.question.scale,
-          shape: this.state.question.shape,
-          choices: this.state.question.choices,
-          allow_multiple_selection: this.state.question.allow_multiple_selection
-        },
+    let ref = this.state.question.ref;
+    let question = {
+        title: this.state.question.title,
+        description: this.state.question.description,
+        scale: this.state.question.scale,
+        shape: this.state.question.shape,
+        type: this.state.question.type,
+        choices: this.state.question.choices,
+        allow_multiple_selection: this.state.question.allow_multiple_selection,
         group: this.state.question.group
-      };
-      this.props.addQuestion(data);
-      // enviar a crear un formulario con la pregunta que llega aqui
-      //this.createPoll()
-      this.setState({
-        question: {
-          ref: "",
-          title: "",
-          description: "",
-          speciality: "Medicina General",
-          group: 1
-        },
-        questions: [data.question, ...this.props.questions]
-      });
-    }
+    };
+    let response = await axios.put(`/api/questions/update/${ref}`, question).then(res => res.data);
+    //console.log('Response: ', response.data);
+    if (response.error) alert ('No se pudo editar la pregunta');
+    else alert('Los cambios se realizaron');
+    this.props.history.push("/questions");
   };
 
-  componentDidMount() {
-    this.props.getQuestionsDB();
-    this.props.getGroupsDB();
-    this.setState({ questions: [...this.props.questions] });
+  async componentDidMount() {
+    const { id } = this.props.match.params;
+    let { data } = await axios.get(`/api/questions/${id}`).then(res => res.data);
+    //console.log('Question: ', data);
+    this.setState({ question: { 
+        id: data.id,
+        ref: data.ref,
+        title: data.title,
+        type: data.type,
+        description: data.description,
+        speciality: data.speciality,
+        scale: data.scale,
+        shape: data.shape,
+        choices: data.choices,
+        allow_multiple_selection: data.allow_multiple_selection,
+        group: data.groupId
+    }});
+    //this.props.getGroups();
   }
 
   render() {
-    //console.log("State: ", this.state.question);
-    //console.log('Questions: ', this.props.questions);
     const { classes, loggedUser, groups } = this.props;
+    //console.log(`Question: `, this.state.question);
     return !loggedUser.logged ? (
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta información</h1>
@@ -199,7 +161,7 @@ class InputText extends React.Component {
       <Grid container className={classes.container}>
         <Grid item xs={12}>
           <div className={classes.root}>
-            <h3>Agregar Preguntas</h3>
+            <h3>Editar una Pregunta</h3>
           </div>
         </Grid>
         <Grid item xs={12}>
@@ -227,7 +189,7 @@ class InputText extends React.Component {
           <Select
             label={"group"}
             name={"Categoría"}
-            value={this.state.question.group}
+            value={this.state.question.groupId}
             array={groups}
             handleChange={this.handleChange}
           />
@@ -283,54 +245,28 @@ class InputText extends React.Component {
             <div />
           )}
 
-          <PrimaryButton button={"Añadir"} handleClick={this.handleSubmit} />
+          <PrimaryButton button={"Aceptar"} handleClick={this.handleSubmit} />
           </form>
-        </Grid>
-        <Grid item xs={12}>
-          <Paper className={classes.root}>
-            <ListOfQuestionsWithoutCheck
-              clickEnable={this.clickEnable}
-              clickUpdate={this.clickUpdate}
-              // questions={
-              //   this.state.questions.length
-              //     ? this.state.questions
-              //     : this.props.questions
-              // }
-            />
-          </Paper>
         </Grid>
       </Grid>
     );
   }
 }
 
-InputText.propTypes = {
+UpdateQuestion.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
   loggedUser: state.userReducer,
-  question: state.questionsReducer.question,
-  questions: state.questionsReducer.questions,
   groups: state.questionsReducer.groups
 });
 
-const mapDispatchToProps = dispatch => ({
-  storeQuestion: question => dispatch(storeQuestion(question)),
-  addQuestion: question => {
-    dispatch(storeQuestionInDB(question));
-    dispatch(clearQuestion());
-    dispatch(getQuestionsDB())
-  },
-  getQuestionsDB: () => dispatch(getQuestionsDB()),
-  storeQuestionDB: question => {
-    dispatch(storeQuestionDB(question));
-    dispatch(clearQuestion());
-  },
-  getGroupsDB: () => dispatch(getGroupsDB())
+const mapDispatchToProps = dispatch => ({  
+  getGroups: () => dispatch(getGroupsDB())
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(withRouter(InputText)));
+)(withStyles(styles)(withRouter(UpdateQuestion)));
