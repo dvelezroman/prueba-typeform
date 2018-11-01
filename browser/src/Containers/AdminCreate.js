@@ -8,6 +8,8 @@ import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
+import { setAdmin } from "../actions/adminActions";
+
 // import { loginUser, storeUser, clearUser } from "../actions/UserActions";
 
 const styles = theme => ({
@@ -56,9 +58,11 @@ const styles = theme => ({
 });
 
 const mapStateToProps = state => ({
+  existAdmin: state.adminReducer
 });
 
 const mapDispatchToProps = dispatch => ({
+  setAdmin: () => dispatch(setAdmin())
 });
 
 class AdminCreate extends React.Component {
@@ -94,13 +98,15 @@ class AdminCreate extends React.Component {
         .then(res => res.data)
         .then(data => {
             if (!data.error) {
-              this.setState({ redirect: true }, () => alert('El usuario administrador se creó con éxito'));
+              alert('El usuario se creó con éxito');
+              this.props.setAdmin();
+              //this.setState({ redirect: true }, () => alert('El usuario administrador se creó con éxito'));
             }else {
                 alert('El usuario administrador no se creó');
             };
         })
     }else {
-        alert('Faltan datos para crear usuario');
+        alert('Faltan datos para crear usuario, o las claves no coinciden');
     }
   }
 
@@ -114,7 +120,7 @@ class AdminCreate extends React.Component {
       </div>
     ) : (
       <div>
-        <h1 className={classes.title}>Creación inicial del Administrador</h1>
+        <h2 className={classes.title}>Creación inicial del Usuario Administrador</h2>
         <Grid container spacing={16} justify="center">
           <Grid item md={5}>
             <div>

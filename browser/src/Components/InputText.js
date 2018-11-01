@@ -205,7 +205,7 @@ class InputText extends React.Component {
             placeholder="Escriba aquí la pregunta"
             className={classes.textField1}
             margin="normal"
-            variant="outlined"
+            
           />
           <TextField
             onChange={this.handleChange("description")}
@@ -215,7 +215,6 @@ class InputText extends React.Component {
             placeholder="Escriba la aclaratoria para la pregunta"
             className={classes.textField2}
             margin="normal"
-            variant="outlined"
           />
           <Select
             label={"group"}

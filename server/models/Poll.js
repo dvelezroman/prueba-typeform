@@ -3,19 +3,22 @@ const db = require("./db");
 
 const Poll = db.define("poll", {
   ref: {
-    type: Sequelize.STRING,
-    allowNull: false
+    type: Sequelize.STRING
   },
   url: {
-    type: Sequelize.STRING,
-    allowNull: false
+    type: Sequelize.STRING
   },
   description: {
     type: Sequelize.STRING
   },
   name: {
-    type: Sequelize.STRING,
-    allowNull: false
+    type: Sequelize.STRING
+  },
+  subject: {
+    type: Sequelize.STRING
+  },
+  greet: {
+    type: Sequelize.STRING
   },
   send: {
     type: Sequelize.BOOLEAN,

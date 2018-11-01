@@ -40,4 +40,4 @@ db.sync({ force: true })
     console.log(`Listening on PORT ${process.env.SERVER_PORT}`)
   )
 )
-.then(() => seed());
+//.then(() => seed());

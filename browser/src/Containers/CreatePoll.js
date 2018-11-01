@@ -78,6 +78,8 @@ class CreatePoll extends Component {
       showAlertDialog: false,
       ref: "",
       title: "",
+      subject: "",
+      greet: "",
       urlform: "",
       group: "",
       selectedQuestions: [],
@@ -195,7 +197,7 @@ class CreatePoll extends Component {
               placeholder="Escriba un titulo para el correo en el que se enviará esta encuesta"
               className={classes.textField}
               margin="normal"
-              variant="outlined"
+              
             />
             <TextField
               onChange={this.handleChange("greet")}
@@ -205,7 +207,7 @@ class CreatePoll extends Component {
               placeholder="Escriba un saludo para incluir en el cuerpo del correo"
               className={classes.textField}
               margin="normal"
-              variant="outlined"
+              
             />
             <TextField
               required

@@ -94,6 +94,7 @@ class TextFields extends React.Component {
       .then(user => {
         if (user.success) {
           this.props.storeUser(user.data);
+          //this.props.history.push("/polls/resume");
           this.setState({ redirect: true });
         } else {
           alert("Usuario o contraseña erronea");
@@ -108,7 +109,7 @@ class TextFields extends React.Component {
     const { email, password, redirect } = this.state;
     return redirect ? (
       <div>
-        <Redirect to="/" />
+        <Redirect to="/polls/resume" />
       </div>
     ) : (
       <div>
