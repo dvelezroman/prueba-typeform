@@ -51,7 +51,7 @@ class ListOfQuestions extends Component {
 
   render() {
     const { classes, questions, filterGroup } = this.props;
-    let filtered_questions = questions;
+    let filtered_questions = [];
     if (Number(filterGroup)) {
       filtered_questions = questions.filter(question => {
         if (question.enabled && question.group && question.groupId === Number(filterGroup)) {
