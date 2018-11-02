@@ -148,8 +148,9 @@ class CreatePoll extends Component {
   }
 
   render() {
-    //console.log("State", this.state);
+    
     const { classes, loggedUser, groups } = this.props;
+    console.log("Files", this.state.files);
     return !loggedUser.logged ? (
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta informacion</h1>
@@ -226,7 +227,7 @@ class CreatePoll extends Component {
               label={"group"}
               name={"Categoría"}
               value={this.state.group}
-              array={[{ value: "0", label: "Todas" }, ...groups]}
+              array={[{ value: 0, label: "Seleccione" }, ...groups]}
               handleChange={this.handleChange}
             />
             <Select

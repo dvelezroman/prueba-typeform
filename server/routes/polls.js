@@ -92,8 +92,9 @@ router.post("/send", (req, res, next) => {
 });
 
 router.post("/new", function(req, res, next) {
-  Group.findOne({ where: { id: req.body.group } }).then(group =>
-    File.findOne({ where: { name: req.body.file } }).then(file =>
+  //console.log('Beodo: ', Number(req.body.group));
+  Group.findOne({ where: { id: Number(req.body.group) } }).then(group =>
+    File.findOne({ where: { id: Number(req.body.file) } }).then(file =>
       Poll.create({
         ref: req.body.ref,
         url: req.body.url,
