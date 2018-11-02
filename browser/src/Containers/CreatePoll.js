@@ -83,7 +83,7 @@ class CreatePoll extends Component {
       urlform: "",
       group: "0",
       selectedQuestions: [],
-      fileSelected: 1
+      fileSelected: ""
     });
     this.props.history.push("/polls/send");
   };
@@ -135,7 +135,7 @@ class CreatePoll extends Component {
       .get(`/api/files`)
       .then(res => res.data)
       .then(files => {
-        let arrayFiles = files.map(file => ({
+        let arrayFiles = files.data.map(file => ({
           value: file.id,
           label: file.name
         }));
