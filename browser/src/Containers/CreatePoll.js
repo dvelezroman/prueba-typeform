@@ -22,6 +22,8 @@ import { createDataForm } from "../Forms/formParser";
 
 import ListOfQuestions from "./ListOfQuestions";
 
+window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
+
 function Transition(props) {
   return <Slide direction="up" {...props} />;
 }
@@ -227,7 +229,7 @@ class CreatePoll extends Component {
               label={"group"}
               name={"Categoría"}
               value={this.state.group}
-              array={[{ value: 0, label: "Seleccione" }, ...groups]}
+              array={[{ value: "0", label: "Seleccione" }, ...groups]}
               handleChange={this.handleChange}
             />
             <Select

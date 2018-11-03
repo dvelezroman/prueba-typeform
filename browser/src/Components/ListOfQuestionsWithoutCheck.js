@@ -29,6 +29,10 @@ const styles = theme => ({
 });
 
 class ListOfQuestionsWithoutCheck extends Component {
+  componentDidMount() {
+    this.props.getQuestionsDB();
+  };
+
   render() {
     const { classes, questions, clickEnable, clickUpdate } = this.props;
     let array = questions;
