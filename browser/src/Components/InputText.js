@@ -109,6 +109,7 @@ class InputText extends React.Component {
       },
       questions: []
     };
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.clickEnable = this.clickEnable.bind(this);
     this.clickUpdate = this.clickUpdate.bind(this);
@@ -166,6 +167,7 @@ class InputText extends React.Component {
         group: this.state.question.group
       };
       this.props.addQuestion(data);
+      this.props.getQuestionsDB();
       // enviar a crear un formulario con la pregunta que llega aqui
       //this.createPoll()
       this.setState({
@@ -188,7 +190,7 @@ class InputText extends React.Component {
   }
 
   render() {
-    //console.log("State: ", this.state.question);
+    //console.log("State: ", this.state.questions);
     //console.log('Questions: ', this.props.questions);
     const { classes, loggedUser, groups } = this.props;
     return !loggedUser.logged ? (
@@ -320,7 +322,6 @@ const mapDispatchToProps = dispatch => ({
   addQuestion: question => {
     dispatch(storeQuestionInDB(question));
     dispatch(clearQuestion());
-    dispatch(getQuestionsDB())
   },
   getQuestionsDB: () => dispatch(getQuestionsDB()),
   storeQuestionDB: question => {

@@ -74,7 +74,7 @@ class PollsResume extends Component {
 
   render() {
     const { classes, loggedUser, sendPolls } = this.props;
-    // console.log('SendPolls : ', sendPolls);
+    //console.log('SendPolls : ', sendPolls);
     return !loggedUser.logged ? (
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta informacion</h1>
