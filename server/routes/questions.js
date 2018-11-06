@@ -9,7 +9,7 @@ router.get("/test", (req, res, next) => {
 });
 router.post("/new", function(req, res, next) {
   console.log('QuestionBody: ', req.body);
-  let question = req.body;
+  let question = req.body.question;
   const newQuestion = {
     subject: question.subject,
     greet: question.greet,

@@ -153,8 +153,8 @@ class CreateQuestionsPoll extends Component {
       .then(res => res.data)
       .then(formCreated => {
         let url = formCreated._links.display;
-        const question_p = axios.post("/api/questions/new", {question: this.state.question, url });
-        const poll_p = axios.post("/api/polls/new", this.state.question );
+        const question_p = axios.post("/api/questions/new", {question: this.state.question});
+        const poll_p = axios.post("/api/polls/new", {poll: this.state.question, url} );
         Promise.all([question_p, poll_p]).then(() => alert('Se creo encuesta...')).catch(err => alert('No se creó encuesta en la BD'));
       }).catch(err => err);
   };
@@ -197,14 +197,14 @@ class CreateQuestionsPoll extends Component {
       groups = groups.map(group => ({
           value: group.id,
           label: group.description,
-      }))
+      }));
       this.setState({ groups: groups, questions: questions })
   }
 
   render() {
     const { classes, loggedUser } = this.props;
     if (loggedUser) {
-        //console.log("State: ", this.state);
+        console.log("State: ", this.state);
         //console.log('Questions: ', this.props.questions);
     }
     return !loggedUser.logged ? (

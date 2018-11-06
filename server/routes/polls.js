@@ -93,7 +93,7 @@ router.post("/send", (req, res, next) => {
 
 router.post("/new", function(req, res, next) {
   console.log('PollData: ', req.body);
-  let question = req.body.question;
+  let question = req.body.poll;
   let url = req.body.url;
   Group.findOne({ where: { id: Number(question.group) } }).then(group =>
     Poll.create({
@@ -111,9 +111,9 @@ router.post("/new", function(req, res, next) {
 });
 
 router.get("/", function(req, res) {
-  Poll.findAll({ include: [Group, File] })
+  Poll.findAll({ include: [Group] })
     .then(polls => res.status(200).json(polls))
-    .catch(err => res.status(404).json(err));
+    .catch(err => res.status(200).json(err));
 });
 
 module.exports = router;
