@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
+import { connect } from 'react-redux';
 import { withStyles } from "@material-ui/core/styles";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import Grid from "@material-ui/core/Grid";
@@ -21,10 +22,9 @@ const styles = theme => ({
   root: {
     flex: 1,
     backgroundColor: theme.palette.background.paper,
-    fontSize: 10
   },
   nested: {
-    paddingLeft: theme.spacing.unit * 4
+    paddingLeft: theme.spacing.unit * 2
   },
   button: {}
 });
@@ -40,9 +40,12 @@ class NestedList extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
-
-    return (
+    const { classes, loggedUser } = this.props;
+    return !loggedUser.logged ? (
+      <div className={classes.root}>
+        <h6>Debes Iniciar Sesión</h6>
+      </div>
+    ) : (
       <Grid container className={classes.root}>
         <Grid item xs={12}>
           <List
@@ -57,14 +60,14 @@ class NestedList extends React.Component {
                 <ListItemText inset primary="Estado" />
               </ListItem>
             </Link>
-            <Link to="/questions">
+            {/* <Link to="/questions">
               <ListItem button>
                 <ListItemIcon>
                   <ADB />
                 </ListItemIcon>
                 <ListItemText inset primary="Preguntas" />
               </ListItem>
-            </Link>
+            </Link> */}
             <ListItem button onClick={this.handleClick("openPolls")}>
               <ListItemIcon>
                 <ConfirmationNumber />
@@ -86,7 +89,7 @@ class NestedList extends React.Component {
             </Collapse>
             <Collapse in={this.state.openPolls} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                <Link to="/polls">
+                <Link to="/questions">
                   <ListItem button className={classes.nested}>
                     <ListItemIcon>
                       <StarBorder />
@@ -111,17 +114,17 @@ class NestedList extends React.Component {
             <Link to="/upload">
               <ListItem button>
                 <ListItemIcon>
-                  <StarBorder />
+                  <ADB />
                 </ListItemIcon>
-                <ListItemText inset primary="Cargar Archivo" />
+                <ListItemText inset primary="Carga" />
               </ListItem>
             </Link>
             <Link to="/files">
               <ListItem button>
                 <ListItemIcon>
-                  <StarBorder />
+                  <ADB />
                 </ListItemIcon>
-                <ListItemText inset primary="Ver Archivos" />
+                <ListItemText inset primary="Archivos" />
               </ListItem>
             </Link>
           </List>
@@ -135,4 +138,8 @@ NestedList.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(NestedList);
+const mapStateToProps = state => ({
+  loggedUser: state.userReducer
+});
+
+export default connect(mapStateToProps)(withStyles(styles)(NestedList));

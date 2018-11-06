@@ -21,7 +21,7 @@ export const createDataForm = (
         type: `${question.type}`,
         properties: {
           description: question.description,
-          steps: question.scale,
+          steps: Number(question.scale),
           shape: question.shape
         }
       };
@@ -47,7 +47,7 @@ export const createDataForm = (
         type: `${question.type}`,
         properties: {
           description: question.description,
-          steps: question.scale,
+          steps: Number(question.scale),
           start_at_one: true
         }
       };

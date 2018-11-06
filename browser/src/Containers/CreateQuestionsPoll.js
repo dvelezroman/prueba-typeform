@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import axios from 'axios';
 import { withRouter } from 'react-router-dom';
 import uuid from "uuid";
@@ -8,20 +8,11 @@ import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
-import Select from "./Select";
-import PrimaryButton from "./PrimaryButton";
-// import { createDataForm } from "../Forms/formParser";
+import Select from "../Components/Select";
+import PrimaryButton from "../Components/PrimaryButton";
+import { createDataForm } from "../Forms/formParser";
 
-import {
-  storeQuestion,
-  clearQuestion,
-  storeQuestionInDB,
-  getQuestionsDB,
-  getGroupsDB
-} from "../actions/questionActions";
-
-import { storeQuestionDB } from "../actions/firebaseActions";
-import ListOfQuestionsWithoutCheck from "./ListOfQuestionsWithoutCheck";
+import ListOfQuestionsWithoutCheck from "../Components/ListOfQuestionsWithoutCheck";
 
 const shapes = [
   { label: "Circulo", value: "circle" },
@@ -79,35 +70,39 @@ const styles = theme => ({
   textField1: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
-    width: 300
+    width: "80%"
   },
   textField2: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
-    width: 600
+    width: "80%"
   },
   dense: {
     marginTop: 16
   }
 });
 
-class InputText extends React.Component {
-  constructor(props) {
-    super(props);
+class CreateQuestionsPoll extends Component {
+  constructor() {
+    super();
     this.state = {
       question: {
+        subject: "",
+        greet: "",
         ref: "",
+        url: "",
         title: "",
         type: "opinion_scale",
         description: "",
         speciality: "Medicina General",
-        scale: "5",
+        scale: 5,
         shape: "star",
         choices: "",
         allow_multiple_selection: false,
-        group: 1
+        group: 0
       },
-      questions: []
+      questions: [],
+      groups: [],
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -144,55 +139,74 @@ class InputText extends React.Component {
           ref: uid,
           [label]: event.target.value
         }
-      },
-      () => this.props.storeQuestion(this.state.question)
+      }
     );
+  };
+
+  createPoll() {
+    let data = createDataForm(this.state.question.subject, [this.state.question]);
+    //console.log("Data para crear Form : ", JSON.stringify(data));
+    const token = "Cx7TVARyv64h6iyFJM5syoYJ8r7wAHnrMnvW3UAbkLh3";
+    axios.post("https://api.typeform.com/forms", data, {
+        headers: { Authorization: "Bearer " + token }
+      })
+      .then(res => res.data)
+      .then(formCreated => {
+        let url = formCreated._links.display;
+        const question_p = axios.post("/api/questions/new", {question: this.state.question, url });
+        const poll_p = axios.post("/api/polls/new", this.state.question );
+        Promise.all([question_p, poll_p]).then(() => alert('Se creo encuesta...')).catch(err => alert('No se creó encuesta en la BD'));
+      }).catch(err => err);
   };
 
   handleSubmit = event => {
     event.preventDefault();
-    if (this.props.question.description && this.props.question.title) {
-      let data = {
-        question: {
-          ref: this.state.question.ref,
-          title: this.state.question.title,
-          type: this.state.question.type,
-          description: this.state.question.description,
-          speciality: this.state.question.speciality,
-          scale: this.state.question.scale,
-          shape: this.state.question.shape,
-          choices: this.state.question.choices,
-          allow_multiple_selection: this.state.question.allow_multiple_selection
-        },
-        group: this.state.question.group
-      };
-      this.props.addQuestion(data);
-      this.props.getQuestionsDB();
-      // enviar a crear un formulario con la pregunta que llega aqui
-      //this.createPoll()
-      this.setState({
-        question: {
-          ref: "",
-          title: "",
-          description: "",
-          speciality: "Medicina General",
-          group: 1
-        },
-        questions: [data.question, ...this.props.questions]
-      });
-    }
+    let question = this.state.question;
+    if (question.subject && question.greet && question.title) {
+        this.createPoll();
+        //console.log('Respuesta de la creacion de la encuesta : ', data);
+        // una vez que crea la encuesta, ahora guarda la pregunta en la base
+    };
+    // this.setState({
+    // question: {
+    //     subject: "",
+    //     greet: "",
+    //     ref: "",
+    //     title: "",
+    //     type: "opinion_scale",
+    //     description: "",
+    //     speciality: "Medicina General",
+    //     scale: 5,
+    //     shape: "star",
+    //     choices: "",
+    //     allow_multiple_selection: false,
+    //     group: 0
+    // }
+    // });
   };
 
-  componentDidMount() {
-    this.props.getQuestionsDB();
-    this.props.getGroupsDB();
-    this.setState({ questions: [...this.props.questions] });
+  fetchGroups = () => axios.get("/api/groups").then(res => res.data);
+
+  fetchQuestions = () => axios.get("/api/questions").then(res => res.data);
+
+  async componentDidMount() {
+      let groups = await this.fetchGroups().then(data => data);
+      //console.log('Groups: ', groups);
+      let questions = await this.fetchQuestions().then(data=> data);
+      //console.log('Questions: ', questions);
+      groups = groups.map(group => ({
+          value: group.id,
+          label: group.description,
+      }))
+      this.setState({ groups: groups, questions: questions })
   }
 
   render() {
-    //console.log("State: ", this.state.questions);
-    //console.log('Questions: ', this.props.questions);
-    const { classes, loggedUser, groups } = this.props;
+    const { classes, loggedUser } = this.props;
+    if (loggedUser) {
+        //console.log("State: ", this.state);
+        //console.log('Questions: ', this.props.questions);
+    }
     return !loggedUser.logged ? (
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta información</h1>
@@ -201,104 +215,129 @@ class InputText extends React.Component {
       <Grid container className={classes.container}>
         <Grid item xs={12}>
           <div className={classes.root}>
-            <h3>Agregar Preguntas</h3>
+            <h3>Crear Pregunta y Encuesta</h3>
           </div>
         </Grid>
         <Grid item xs={12}>
         <form className={classes.container} noValidate autoComplete="off">
-          <TextField
-            required
-            onChange={this.handleChange("title")}
-            id="title-required"
-            value={this.state.question.title}
-            label="Pregunta"
-            placeholder="Escriba aquí la pregunta"
-            className={classes.textField1}
-            margin="normal"
+            <Grid container className={classes.container}>
+                <Grid item xs={6}>
+                    <TextField
+                    required
+                    onChange={this.handleChange("subject")}
+                    id="subject-required"
+                    value={this.state.question.subject}
+                    label="Titulo del Correo"
+                    placeholder="Escriba un titulo para el correo en el que se enviará esta encuesta"
+                    className={classes.textField2}
+                    margin="normal"
+                    />
+                </Grid>
+                <Grid item xs={6}>
+                    <TextField
+                    required
+                    onChange={this.handleChange("greet")}
+                    id="greet-required"
+                    value={this.state.question.greet}
+                    label="Saludo"
+                    placeholder="Escriba un saludo para incluir en el cuerpo del correo"
+                    className={classes.textField2}
+                    margin="normal"
+                    />
+                </Grid>
+                <Grid item xs={6}>
+                    <TextField
+                    required
+                    onChange={this.handleChange("title")}
+                    id="title-required"
+                    value={this.state.question.title}
+                    label="Pregunta"
+                    placeholder="Escriba aquí la pregunta"
+                    className={classes.textField1}
+                    margin="normal"
+                    />
+                </Grid>
+                <Grid item xs={6}>
+                    <TextField
+                    onChange={this.handleChange("description")}
+                    id="desc"
+                    value={this.state.question.description}
+                    label="Aclaratoria"
+                    placeholder="Escriba la aclaratoria para la pregunta"
+                    className={classes.textField2}
+                    margin="normal"
+                    />
+                </Grid>
+                <Grid item className={classes.container} xs={12}>
+                        <Select
+                        label={"group"}
+                        name={"Categoría"}
+                        value={this.state.question.group}
+                        array={this.state.groups}
+                        handleChange={this.handleChange}
+                    />
+                    <Select
+                        label={"type"}
+                        name={"Tipo"}
+                        value={this.state.question.type}
+                        array={types}
+                        handleChange={this.handleChange}
+                    />
+                    {(this.state.question.type === "rating" || this.state.question.type === "opinion_scale") ? (
+                        <div className={classes.container}>
+                        <Select
+                            label={"shape"}
+                            value={this.state.question.shape}
+                            name={"Forma"}
+                            array={shapes}
+                            handleChange={this.handleChange}
+                        />
+                        <Select
+                            label={"scale"}
+                            value={this.state.question.scale}
+                            name={"Escala"}
+                            array={scale}
+                            handleChange={this.handleChange}
+                        />
+                        </div>
+                    ) : this.state.question.type === "multiple_choice" ? (
+                        <div className={classes.container}>
+                        <TextField
+                            label={"Opciones"}
+                            value={this.state.question.choices}
+                            onChange={this.handleChange("choices")}
+                            className={classes.textField1}
+                            placeholder="Ingrese las opciones separadas por comas"
+                            helperText="Opción 1, Opción 2, Opción 3,..."
+                            fullWidth
+                            margin="normal"
+                            variant="outlined"
+                        />
+                        <Select
+                            label={"allow_multiple_selection"}
+                            value={this.state.question.allow_multiple_selection}
+                            name={"Seleccione"}
+                            array={[
+                            { label: "Selección Multiple", value: true },
+                            { label: "Solo una opción", value: false }
+                            ]}
+                            handleChange={this.handleChange}
+                        />
+                        </div>
+                    ) : (
+                        <div />
+                    )}
+                </Grid>
+            </Grid>
             
-          />
-          <TextField
-            onChange={this.handleChange("description")}
-            id="desc"
-            value={this.state.question.description}
-            label="Aclaratoria"
-            placeholder="Escriba la aclaratoria para la pregunta"
-            className={classes.textField2}
-            margin="normal"
-          />
-          <Select
-            label={"group"}
-            name={"Categoría"}
-            value={this.state.question.group}
-            array={groups}
-            handleChange={this.handleChange}
-          />
-          <Select
-            label={"type"}
-            name={"Tipo"}
-            value={this.state.question.type}
-            array={types}
-            handleChange={this.handleChange}
-          />
-          {(this.state.question.type === "rating" || this.state.question.type === "opinion_scale") ? (
-            <div>
-              <Select
-                label={"shape"}
-                value={this.state.question.shape}
-                name={"Forma"}
-                array={shapes}
-                handleChange={this.handleChange}
-              />
-              <Select
-                label={"scale"}
-                value={this.state.question.scale}
-                name={"Escala"}
-                array={scale}
-                handleChange={this.handleChange}
-              />
-            </div>
-          ) : this.state.question.type === "multiple_choice" ? (
-            <div>
-              <TextField
-                label={"Opciones"}
-                value={this.state.question.choices}
-                onChange={this.handleChange("choices")}
-                className={classes.textField1}
-                placeholder="Ingrese las opciones separadas por comas"
-                helperText="Opción 1, Opción 2, Opción 3,..."
-                fullWidth
-                margin="normal"
-                variant="outlined"
-              />
-              <Select
-                label={"allow_multiple_selection"}
-                value={this.state.question.allow_multiple_selection}
-                name={"Seleccione"}
-                array={[
-                  { label: "Selección Multiple", value: true },
-                  { label: "Solo una opción", value: false }
-                ]}
-                handleChange={this.handleChange}
-              />
-            </div>
-          ) : (
-            <div />
-          )}
+            
 
-          <PrimaryButton button={"Añadir"} handleClick={this.handleSubmit} />
+            <PrimaryButton button={"Crear Encuesta"} handleClick={this.handleSubmit} />
           </form>
         </Grid>
         <Grid item xs={12}>
           <Paper className={classes.root}>
-            <ListOfQuestionsWithoutCheck
-              clickEnable={this.clickEnable}
-              clickUpdate={this.clickUpdate}
-              // questions={
-              //   this.state.questions.length
-              //     ? this.state.questions
-              //     : this.props.questions
-              // }
-            />
+            <ListOfQuestionsWithoutCheck clickEnable={this.clickEnable} clickUpdate={this.clickUpdate} />
           </Paper>
         </Grid>
       </Grid>
@@ -306,32 +345,19 @@ class InputText extends React.Component {
   }
 }
 
-InputText.propTypes = {
+CreateQuestionsPoll.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-  loggedUser: state.userReducer,
-  question: state.questionsReducer.question,
-  questions: state.questionsReducer.questions,
-  groups: state.questionsReducer.groups
+  loggedUser: state.userReducer
 });
 
 const mapDispatchToProps = dispatch => ({
-  storeQuestion: question => dispatch(storeQuestion(question)),
-  addQuestion: question => {
-    dispatch(storeQuestionInDB(question));
-    dispatch(clearQuestion());
-  },
-  getQuestionsDB: () => dispatch(getQuestionsDB()),
-  storeQuestionDB: question => {
-    dispatch(storeQuestionDB(question));
-    dispatch(clearQuestion());
-  },
-  getGroupsDB: () => dispatch(getGroupsDB())
+  
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(withRouter(InputText)));
+)(withStyles(styles)(withRouter(CreateQuestionsPoll)));

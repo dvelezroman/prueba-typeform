@@ -27,7 +27,7 @@ function NavBar(props) {
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="title" color="inherit" className={classes.grow}>
+          <Typography variant="h6" color="inherit" className={classes.grow}>
             ENCUESTAS MEDILINK
           </Typography>
           <LoginButton />

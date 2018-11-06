@@ -37,7 +37,15 @@ const Question = db.define("question", {
   },
   speciality: {
     type: Sequelize.STRING
-  }
+  },
+  subject: {
+    type: Sequelize.STRING,
+    defaultValue: "Encuesta de Satisfacción del Cliente - Medilink S.A."
+  },
+  greet: {
+    type: Sequelize.STRING,
+    defaultValue: "Por favor ayúdenos dando click sobre el enlace, y conteste una pregunta acerca de su experiencia en la atención recibida: "
+  },
 });
 
 module.exports = Question;

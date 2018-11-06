@@ -92,21 +92,21 @@ router.post("/send", (req, res, next) => {
 });
 
 router.post("/new", function(req, res, next) {
-  //console.log('PollData: ', req.body);
-  Group.findOne({ where: { id: Number(req.body.group) } }).then(group =>
-    File.findOne({ where: { name: req.body.file } }).then(file =>
-      Poll.create({
-        ref: req.body.ref,
-        url: req.body.url,
-        name: req.body.name,
-        subject: req.body.subject,
-        greet: req.body.greet
-      }).then(poll => {
-        poll.setGroup(group);
-        poll.setFile(file);
-        res.status(201).json(poll);
-      })
-    )
+  console.log('PollData: ', req.body);
+  let question = req.body.question;
+  let url = req.body.url;
+  Group.findOne({ where: { id: Number(question.group) } }).then(group =>
+    Poll.create({
+      ref: question.ref,
+      url: url,
+      name: question.subject,
+      subject: question.subject,
+      greet: question.greet
+    }).then(poll => {
+      poll.setGroup(group);
+      //poll.setFile(file);
+      res.status(201).json(poll);
+    })
   );
 });
 
