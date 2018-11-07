@@ -49,7 +49,7 @@ const getDataInArrays = rawData => {
           }
         ],
         doctors: [...data.doctors, { name: reg.medico }],
-        groups: [...data.groups, { description: reg.grupo }],
+        groups: [...data.groups, { description: reg.grupo }], // aqui revisar con lodash
         services: [...data.services, { description: reg.servicio }]
       }
     );

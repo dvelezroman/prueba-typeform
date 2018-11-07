@@ -1,6 +1,7 @@
 const express = require("express");
 var fs = require("fs");
 const router = express.Router();
+const _ = require("lodash");
 const uuid = require("uuid");
 const { upload } = require("./multer");
 const { storeInDataBase, getDataInArrays } = require("./functions");
@@ -61,25 +62,30 @@ router.post("/", function(req, res) {
           // stores file uploaded
           let promises_file = File.findOrCreate({ where: { name: fileName }, defaults: { ref: ref } });
           // stores the clients contained in the file uploaded
-          let promises_clients = dataArray.clients.map(client =>
+          let clients = _.uniqBy(dataArray.clients, client => client.hcu); // deletes repeated clients
+          let promises_clients = clients.map(client =>
             Client.findOrCreate({
               where: { hcu: client.hcu }, defaults: { name: client.name, email: client.email }
             })
           );
           // stores the offices contained in the orders of the file uploaded
-          let promises_offices = dataArray.offices.map(office =>
+          let offices = _.uniqBy(dataArray.offices, office => office.description); // deletes repeated offices
+          let promises_offices = offices.map(office =>
             Office.findOrCreate({ where: { description: office.description } })
           );
           // stores the doctors contained in the orders of the file uploaded
-          let promises_doctors = dataArray.doctors.map(doctor =>
+          let doctors = _.uniqBy(dataArray.doctors, doctor => doctor.name); // deletes repeated doctors
+          let promises_doctors = doctors.map(doctor =>
             Doctor.findOrCreate({ where: { name: doctor.name } })
           );
           // stores the groups contained the orders of the file uploaded
-          let promises_groups = dataArray.groups.map(group =>
+          let groups = _.uniqBy(dataArray.groups, group => group.description);  // deletes repeated categories
+          let promises_groups = groups.map(group =>
             Group.findOrCreate({ where: { description: group.description } })
           );
           // stores the services of the orders in the file uploaded
-          let promises_services = dataArray.services.map(service =>
+          let services = _.uniqBy(dataArray.services, service => service.description); // deletes repeated services
+          let promises_services = services.map(service =>
             Service.findOrCreate({
               where: { description: service.description }
             })
