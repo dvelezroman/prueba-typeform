@@ -101,30 +101,27 @@ class CreateQuestionsPoll extends Component {
         allow_multiple_selection: false,
         group: 0
       },
-      questions: [],
       groups: [],
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.clickEnable = this.clickEnable.bind(this);
-    this.clickUpdate = this.clickUpdate.bind(this);
   }
 
-  clickEnable = value => event => {
-    event.preventDefault();
-    //console.log('Ref : ', value );
-    axios.put("/api/questions/disable", { ref: value })
-    .then(res => res.data)
-    .then(data => {
-      this.props.getQuestionsDB();
-    });
-  };
+  // clickEnable = value => event => {
+  //   event.preventDefault();
+  //   //console.log('Ref : ', value );
+  //   axios.put("/api/questions/disable", { ref: value })
+  //   .then(res => res.data)
+  //   .then(data => {
+  //     this.props.getQuestionsDB();
+  //   });
+  // };
 
-  clickUpdate = value => event => {
-    event.preventDefault();
-    //console.log('Id : ', value );
-    this.props.history.push(`/questions/update/${value}`);
-  };
+  // clickUpdate = value => event => {
+  //   event.preventDefault();
+  //   //console.log('Id : ', value );
+  //   this.props.history.push(`/questions/update/${value}`);
+  // };
 
   handleChange = label => event => {
     let uid = this.state.question.ref;
@@ -157,11 +154,10 @@ class CreateQuestionsPoll extends Component {
         const question = Object.assign({}, ...this.state.question, { ...this.state.question, url: url });
         const question_p = axios.post("/api/questions/new", {question});
         const poll_p = axios.post("/api/polls/new", {poll: this.state.question, url, ref} );
-        Promise.all([question_p, poll_p]).then(() => {
+        Promise.all([question_p, poll_p]).then(async() => {
           alert('Se creo encuesta...');
-          let questions = this.fetchQuestions().then(data => data);
-          this.setState({ 
-            questions: questions, 
+          this.props.getQuestionsDB();
+          this.setState({  
             question: {
               subject: "",
               greet: "",
@@ -176,7 +172,7 @@ class CreateQuestionsPoll extends Component {
               allow_multiple_selection: false,
               group: 0
             }
-          }) // get questions from database
+          })
         }).catch(err => alert('No se creó encuesta en la BD'));
       }).catch(err => err);
   };
@@ -199,18 +195,15 @@ class CreateQuestionsPoll extends Component {
   fetchQuestions = () => axios.get("/api/questions").then(res => res.data);
 
   async componentDidMount() {
-    getQuestionsDB();
     let groups = await this.fetchGroups().then(data => data);
     //console.log('Groups: ', groups);
-    let questions = await this.fetchQuestions().then(data => data);
-    //console.log('Questions: ', questions);
     groups = groups.map(group => ({
         value: group.id,
         label: group.description,
     }));
     let group = 0;
     if (groups.length) group = groups[0].value;
-    this.setState({ groups: groups, questions: questions, question: { ...this.state.question, group: group } })
+    this.setState({ groups: groups, question: { ...this.state.question, group: group } })
   }
 
   render() {
@@ -346,7 +339,7 @@ class CreateQuestionsPoll extends Component {
         </Grid>
         <Grid item xs={12}>
           <Paper className={classes.root}>
-            <ListOfQuestionsWithoutCheck clickEnable={this.clickEnable} clickUpdate={this.clickUpdate} />
+            <ListOfQuestionsWithoutCheck />
           </Paper>
         </Grid>
       </Grid>
@@ -359,7 +352,8 @@ CreateQuestionsPoll.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  loggedUser: state.userReducer
+  loggedUser: state.userReducer,
+  questions: state.questionsReducer.questions
 });
 
 const mapDispatchToProps = dispatch => ({

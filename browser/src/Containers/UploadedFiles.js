@@ -172,7 +172,7 @@ class UploadedFiles extends Component {
                     disableRipple
                   />
                   <ListItemText
-                    primary={`Encuesta: ${value.subject} - Cuerpo: ${value.greet}`}
+                    primary={`Encuesta: ${value.subject} - Cuerpo: ${value.greet} - Categoría: ${value.group.description}`}
                     secondary={(value.type === "opinion_scale") ? `Pregunta: ${value.title} - tipo: Escala - escala: 1 al ${value.scale}` : (value.type === "yes_no") ? `Pregunta: ${value.title} - tipo: Si o No` : `Pregunta: ${value.title} - tipo: Selección - Opciones: ${value.choices.map((choice, i) => `${i}. ${choice} - `)}` }
                   />
                   {/* <ListItemSecondaryAction>
