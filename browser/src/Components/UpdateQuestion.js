@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
-import Paper from "@material-ui/core/Paper";
+// import Paper from "@material-ui/core/Paper";
 import Select from "./Select";
 import PrimaryButton from "./PrimaryButton";
 import { getGroupsDB } from "../actions/questionActions";

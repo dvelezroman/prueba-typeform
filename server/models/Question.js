@@ -46,6 +46,9 @@ const Question = db.define("question", {
     type: Sequelize.STRING,
     defaultValue: "Por favor ayúdenos dando click sobre el enlace, y conteste una pregunta acerca de su experiencia en la atención recibida: "
   },
+  url: {
+    type: Sequelize.STRING
+  }
 });
 
 module.exports = Question;

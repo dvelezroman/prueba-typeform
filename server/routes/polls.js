@@ -6,7 +6,7 @@ const Group = models.Group;
 const Poll = models.Poll;
 const PollsSend = models.PollsSend;
 const File = models.File;
-const html = require("./email");
+//const html = require("./email");
 
 const smtpTransport = nodemailer.createTransport({
   service: "Gmail",
@@ -53,12 +53,13 @@ router.post("/sendpolls", (req, res, next) => {
   .then(() => res.status(201).json({ error: false, msg: 'updated' }));
 });
 
+// sends email to a group of emails belonging a one category
 router.post("/send", (req, res, next) => {
-  console.log('Hola: ', req.body);
-  // aqui va la accion de enviar mail con gmail
+  console.log('Body: ', req.body);
+  //aqui va la accion de enviar mail con gmail
   let emails = req.body.clients.map(item => item.email);
   let names = req.body.clients.map(item => item.name);
-  let url = req.body.urlForm;
+  let url = req.body.url;
   let subject = req.body.subject;
   let greet = req.body.greet;
   let html = `<html><body>${greet}<br>Por favor complete la siguiente encuesta : <h2><a href=${url}>Visite la encuesta</a></h2></body></html>`
@@ -92,7 +93,7 @@ router.post("/send", (req, res, next) => {
 });
 
 router.post("/new", function(req, res, next) {
-  console.log('PollData: ', req.body);
+  //console.log('PollData: ', req.body);
   let question = req.body.poll;
   let url = req.body.url;
   Group.findOne({ where: { id: Number(question.group) } }).then(group =>

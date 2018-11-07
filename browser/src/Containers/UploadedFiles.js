@@ -7,10 +7,13 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Checkbox from "@material-ui/core/Checkbox";
 import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
+import PrimaryButton from "../Components/PrimaryButton";
+//import Paper from "@material-ui/core/Paper";
 // import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
 import ShowOrders from "../Components/ShowOrders";
+
+import _ from "lodash";
 
 const styles = theme => ({
   root: {
@@ -40,7 +43,7 @@ class UploadedFiles extends Component {
     orders: [],
     questions: [],
     polls:[],
-    selectedGroups: []
+    selectedQuestions: []
   };
 
   handleListItemClick = async (event, file) => {
@@ -49,9 +52,9 @@ class UploadedFiles extends Component {
   };
 
   handlePollCheck = value => () => {
-    const { selectedGroups } = this.state;
-    const currentIndex = selectedGroups.indexOf(value);
-    const newChecked = [...selectedGroups];
+    const { selectedQuestions } = this.state;
+    const currentIndex = selectedQuestions.indexOf(value);
+    const newChecked = [...selectedQuestions];
 
     if (currentIndex === -1) {
       newChecked.push(value);
@@ -61,9 +64,40 @@ class UploadedFiles extends Component {
 
     this.setState(
       {
-        selectedGroups: newChecked
+        selectedQuestions: newChecked
       }
     );
+  };
+
+  sendEmails() {
+    let file = this.state.selectedFile;
+    let polls = this.state.selectedQuestions;
+    let orders = this.state.orders;
+    if (!file.ref) alert('Debes seleccionar un archivo cargado!');
+    else if (!polls.length) alert('Debes Seleccionar una Encuesta al menos!');
+    else {
+      let grouped_polls = _.groupBy(polls, poll => poll.groupId);
+      let grouped_orders = _.groupBy(orders, order => order.groupId);
+      //console.log('File: ', file);
+      //console.log('Grouped Questions: ', grouped_polls);
+      //console.log('Grouped Orders: ', grouped_orders);
+      // por cada formulario seleccionado, enviarle ese formulario a los clientes de la misma categoría del formulario
+      let promises_to_send_emails = [];
+      polls.forEach(poll => {
+        let group = poll.groupId;
+        let clients = grouped_orders[group];
+        let url = poll.url;
+        let subject = poll.subject;
+        let greet = poll.greet;
+        let body = {clients, subject, greet, url};
+        promises_to_send_emails.push(axios.post("/api/polls/send", body));
+      });
+      Promise.all(promises_to_send_emails).then(res => {
+        // enviar a guardar a la base de datos las encuestas enviadas
+        if (res.length > 1) alert("Las encuestas se enviaron exitosamente");
+        else alert("Las encuesta se envió exitosamente");
+      });
+    }
   };
 
   fetchPolls = () => axios.get("/api/polls").then(res => res.data);
@@ -96,7 +130,10 @@ class UploadedFiles extends Component {
       </div>
     ) : (
         <Grid container className={classes.root}>
-          <Grid item xs={6}>
+          <Grid item xs={12}>
+            <PrimaryButton button={(this.state.selectedQuestions.length > 1) ? "Enviar Encuestas" : "Enviar Encuesta"} handleClick={() => this.sendEmails()} />
+          </Grid>
+          <Grid item xs={4}>
             <Grid item xs={12}>
                 Lista de archivos que han sido cargados
             </Grid>
@@ -113,7 +150,7 @@ class UploadedFiles extends Component {
                       </List>))}
             </Grid>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={8}>
           <Grid item xs={12}>
                 Lista de Encuestas Disponibles
             </Grid>
@@ -128,14 +165,13 @@ class UploadedFiles extends Component {
                   className={classes.listItem}
                 >
                   <Checkbox
-                    checked={this.state.selectedGroups.indexOf(value) !== -1}
+                    checked={this.state.selectedQuestions.indexOf(value) !== -1}
                     tabIndex={-1}
                     disableRipple
                   />
                   <ListItemText
                     primary={`Encuesta: ${value.subject} - Cuerpo: ${value.greet}`}
                     secondary={(value.type === "opinion_scale") ? `Pregunta: ${value.title} - tipo: Escala - escala: 1 al ${value.scale}` : (value.type === "yes_no") ? `Pregunta: ${value.title} - tipo: Si o No` : `Pregunta: ${value.title} - tipo: Selección - Opciones: ${value.choices.map((choice, i) => `${i}. ${choice} - `)}` }
-                    secondary={"verga"}
                   />
                   {/* <ListItemSecondaryAction>
                     <IconButton aria-label="Comments">

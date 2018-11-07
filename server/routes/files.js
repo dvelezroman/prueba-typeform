@@ -26,6 +26,7 @@ router.get("/:name/orders", async (req, res) => {
         name: item.client.name,
         email: item.client.email,
         doctor: item.doctor.name,
+        groupId: item.groupId,
         group: item.group.description,
         office: item.office.description
       })

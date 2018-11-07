@@ -153,7 +153,8 @@ class CreateQuestionsPoll extends Component {
       .then(res => res.data)
       .then(formCreated => {
         let url = formCreated._links.display;
-        const question_p = axios.post("/api/questions/new", {question: this.state.question});
+        const question = Object.assign({}, ...this.state.question, { ...this.state.question, url: url });
+        const question_p = axios.post("/api/questions/new", {question});
         const poll_p = axios.post("/api/polls/new", {poll: this.state.question, url} );
         Promise.all([question_p, poll_p]).then(() => alert('Se creo encuesta...')).catch(err => alert('No se creó encuesta en la BD'));
       }).catch(err => err);
@@ -162,11 +163,14 @@ class CreateQuestionsPoll extends Component {
   handleSubmit = event => {
     event.preventDefault();
     let question = this.state.question;
-    if (question.subject && question.greet && question.title) {
+    if (question.group && question.subject && question.greet && question.title) {
         this.createPoll();
         //console.log('Respuesta de la creacion de la encuesta : ', data);
         // una vez que crea la encuesta, ahora guarda la pregunta en la base
-    };
+    }else {
+      if (question.group) alert('Faltan datos para crear una encuesta');
+      else alert('No existen categorías seleccionadas, debebría cargar un archivo primero')
+    }
     // this.setState({
     // question: {
     //     subject: "",
@@ -198,14 +202,16 @@ class CreateQuestionsPoll extends Component {
           value: group.id,
           label: group.description,
       }));
-      this.setState({ groups: groups, questions: questions })
+      let group = 0;
+      if (groups.length) group = groups[0].value;
+      this.setState({ groups: groups, questions: questions, question: { ...this.state.question, group: group } })
   }
 
   render() {
     const { classes, loggedUser } = this.props;
     if (loggedUser) {
-        console.log("State: ", this.state);
-        //console.log('Questions: ', this.props.questions);
+        //console.log("State: ", this.state);
+        //console.log('Question: ', this.state.question);
     }
     return !loggedUser.logged ? (
       <div className={classes.root}>
@@ -329,9 +335,6 @@ class CreateQuestionsPoll extends Component {
                     )}
                 </Grid>
             </Grid>
-            
-            
-
             <PrimaryButton button={"Crear Encuesta"} handleClick={this.handleSubmit} />
           </form>
         </Grid>

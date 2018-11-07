@@ -124,7 +124,7 @@ class NestedList extends React.Component {
                 <ListItemIcon>
                   <ADB />
                 </ListItemIcon>
-                <ListItemText inset primary="Archivos" />
+                <ListItemText inset primary="Enviar" />
               </ListItem>
             </Link>
           </List>

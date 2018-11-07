@@ -8,8 +8,8 @@ import { connect } from "react-redux";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { withStyles } from "@material-ui/core";
 import NavBar from "../Components/NavBar";
-import InputText from "../Components/InputText";
-import CircularIndeterminated from "../Components/CircularIndeterminated";
+//import InputText from "../Components/InputText";
+//import CircularIndeterminated from "../Components/CircularIndeterminated";
 import NestedList from "../Components/NestedList";
 import CreatePoll from "./CreatePoll";
 import ContainedButton from "../Components/ContainedButton";
@@ -53,7 +53,7 @@ class Main extends Component {
   };
 
   render() {
-    const { classes, isCreatingForm, existAdmin } = this.props;
+    const { classes, existAdmin } = this.props;
     if (!existAdmin) {
       //console.log('No hay usuario', existAdmin);
       return (
