@@ -55,9 +55,10 @@ router.post("/sendpolls", (req, res, next) => {
 
 // sends email to a group of emails belonging a one category
 router.post("/send", (req, res, next) => {
-  console.log('Body: ', req.body);
-  //aqui va la accion de enviar mail con gmail
+  //console.log('Body: ', req.body);
+  // aqui va la accion de enviar mail con gmail
   let emails = req.body.clients.map(item => item.email);
+  let file = req.body.fileId;
   let names = req.body.clients.map(item => item.name);
   let url = req.body.url;
   let subject = req.body.subject;
@@ -82,6 +83,7 @@ router.post("/send", (req, res, next) => {
         if (updatedPoll) {
           PollsSend.create({ clients: emails.length, answers: 0 }).then(sendPoll => {
             sendPoll.setPoll(updatedPoll);
+            File.findById(file).then(file => {updatedPoll.setFile(file)});
           });
         }
       });
