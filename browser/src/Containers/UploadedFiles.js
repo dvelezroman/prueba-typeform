@@ -124,6 +124,7 @@ class UploadedFiles extends Component {
 
   render() {
     const { classes, loggedUser } = this.props;
+    const questions = this.state.questions.filter(question => question.enabled);
     //console.log('State : ', this.state);
     return !loggedUser.logged ? (
       <div className={classes.root}>
@@ -156,7 +157,7 @@ class UploadedFiles extends Component {
                 Lista de Encuestas Disponibles
             </Grid>
             <List>
-              {this.state.questions.map((value, i) => (
+              {questions.map((value, i) => (
                 <ListItem
                   key={i}
                   role={undefined}
@@ -184,7 +185,7 @@ class UploadedFiles extends Component {
             </List>
           </Grid>
           <Grid item xs={12}>
-            { this.state.selectedFile.name ? `Ordenes contendas en el archivo : ${this.state.selectedFile.name}` : `Selecciona un archivo para ver las ordenes contenidas`}
+            { this.state.selectedFile.name ? `Ordenes contenidas en el archivo : ${this.state.selectedFile.name}` : `Selecciona un archivo para ver las ordenes contenidas`}
           </Grid>
           <Grid item xs={12}>
             { this.state.selectedFile.name ? <ShowOrders orders={this.state.orders}/> : ""}

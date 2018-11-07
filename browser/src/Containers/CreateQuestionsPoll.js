@@ -11,8 +11,8 @@ import Paper from "@material-ui/core/Paper";
 import Select from "../Components/Select";
 import PrimaryButton from "../Components/PrimaryButton";
 import { createDataForm } from "../Forms/formParser";
-
 import ListOfQuestionsWithoutCheck from "../Components/ListOfQuestionsWithoutCheck";
+import { getQuestionsDB } from "../actions/questionActions";
 
 const shapes = [
   { label: "Circulo", value: "circle" },
@@ -157,7 +157,27 @@ class CreateQuestionsPoll extends Component {
         const question = Object.assign({}, ...this.state.question, { ...this.state.question, url: url });
         const question_p = axios.post("/api/questions/new", {question});
         const poll_p = axios.post("/api/polls/new", {poll: this.state.question, url, ref} );
-        Promise.all([question_p, poll_p]).then(() => alert('Se creo encuesta...')).catch(err => alert('No se creó encuesta en la BD'));
+        Promise.all([question_p, poll_p]).then(() => {
+          alert('Se creo encuesta...');
+          let questions = this.fetchQuestions().then(data => data);
+          this.setState({ 
+            questions: questions, 
+            question: {
+              subject: "",
+              greet: "",
+              ref: "",
+              title: "",
+              type: "opinion_scale",
+              description: "",
+              speciality: "Medicina General",
+              scale: 5,
+              shape: "star",
+              choices: "",
+              allow_multiple_selection: false,
+              group: 0
+            }
+          }) // get questions from database
+        }).catch(err => alert('No se creó encuesta en la BD'));
       }).catch(err => err);
   };
 
@@ -171,23 +191,7 @@ class CreateQuestionsPoll extends Component {
     }else {
       if (question.group) alert('Faltan datos para crear una encuesta');
       else alert('No existen categorías seleccionadas, debebría cargar un archivo primero')
-    }
-    // this.setState({
-    // question: {
-    //     subject: "",
-    //     greet: "",
-    //     ref: "",
-    //     title: "",
-    //     type: "opinion_scale",
-    //     description: "",
-    //     speciality: "Medicina General",
-    //     scale: 5,
-    //     shape: "star",
-    //     choices: "",
-    //     allow_multiple_selection: false,
-    //     group: 0
-    // }
-    // });
+    };
   };
 
   fetchGroups = () => axios.get("/api/groups").then(res => res.data);
@@ -195,17 +199,18 @@ class CreateQuestionsPoll extends Component {
   fetchQuestions = () => axios.get("/api/questions").then(res => res.data);
 
   async componentDidMount() {
-      let groups = await this.fetchGroups().then(data => data);
-      //console.log('Groups: ', groups);
-      let questions = await this.fetchQuestions().then(data=> data);
-      //console.log('Questions: ', questions);
-      groups = groups.map(group => ({
-          value: group.id,
-          label: group.description,
-      }));
-      let group = 0;
-      if (groups.length) group = groups[0].value;
-      this.setState({ groups: groups, questions: questions, question: { ...this.state.question, group: group } })
+    getQuestionsDB();
+    let groups = await this.fetchGroups().then(data => data);
+    //console.log('Groups: ', groups);
+    let questions = await this.fetchQuestions().then(data => data);
+    //console.log('Questions: ', questions);
+    groups = groups.map(group => ({
+        value: group.id,
+        label: group.description,
+    }));
+    let group = 0;
+    if (groups.length) group = groups[0].value;
+    this.setState({ groups: groups, questions: questions, question: { ...this.state.question, group: group } })
   }
 
   render() {
@@ -358,7 +363,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  
+  getQuestionsDB: () => dispatch(getQuestionsDB())
 });
 
 export default connect(

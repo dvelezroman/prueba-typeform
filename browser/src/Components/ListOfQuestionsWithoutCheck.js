@@ -5,8 +5,8 @@ import { withStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-// import IconButton from '@material-ui/core/IconButton';
-// import CommentIcon from '@material-ui/icons/Comment';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { getQuestionsDB } from "../actions/questionActions";
 
 const sortArray = array => array.sort((a,b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
@@ -34,7 +34,7 @@ class ListOfQuestionsWithoutCheck extends Component {
   };
 
   render() {
-    const { classes, questions } = this.props;
+    const { classes, questions, clickEnable } = this.props;
     let array = questions;
     array = sortArray(array);
     //console.log('Questions: ', array);
@@ -43,15 +43,15 @@ class ListOfQuestionsWithoutCheck extends Component {
         {array.map(question => (
           <ListItem key={question.id}>
             <ListItemText
-              primary={question.enabled ? `${question.title} -- Categoría: ${question.group.description}` : `Deshabilitada (${question.title})`}
+              primary={question.enabled ? `${question.title} -- Categoría: ${question.group ? question.group.description : ""}` : `Deshabilitada (${question.title})`}
               secondary={question.enabled ? `${question.description}  - Tipo: ${question.type}` : ``}
             />
             {/* <IconButton aria-label="Actualizar" onClick={clickUpdate(question.id)}>
               <CommentIcon />
-            </IconButton>
-            <IconButton aria-label="Deshabilitar" onClick={clickEnable(question.ref)}>
-              <CommentIcon />
             </IconButton> */}
+            <IconButton aria-label="Deshabilitar" onClick={clickEnable(question.ref)}>
+              <DeleteIcon />
+            </IconButton>
           </ListItem>
         ))}
       </List>

@@ -10,6 +10,8 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 
+const sortArray = array => array.sort((a,b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
+
 const CustomTableCell = withStyles(theme => ({
   head: {
     backgroundColor: theme.palette.common.black,
@@ -39,6 +41,7 @@ const styles = theme => ({
 class ShowOrders extends Component {
   render() {
     const { classes, orders, loggedUser } = this.props;
+    let orders_sorted = sortArray(orders);
     //console.log('Orders: ', orders);
     return (
       !loggedUser.logged ? (
@@ -65,7 +68,7 @@ class ShowOrders extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {orders.map(order => {
+                {orders_sorted.map(order => {
                   return (
                     <TableRow className={classes.row} key={order.id}>
                       <CustomTableCell numeric component="th" scope="row">
