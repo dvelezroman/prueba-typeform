@@ -152,10 +152,11 @@ class CreateQuestionsPoll extends Component {
       })
       .then(res => res.data)
       .then(formCreated => {
+        let ref = formCreated.id;
         let url = formCreated._links.display;
         const question = Object.assign({}, ...this.state.question, { ...this.state.question, url: url });
         const question_p = axios.post("/api/questions/new", {question});
-        const poll_p = axios.post("/api/polls/new", {poll: this.state.question, url} );
+        const poll_p = axios.post("/api/polls/new", {poll: this.state.question, url, ref} );
         Promise.all([question_p, poll_p]).then(() => alert('Se creo encuesta...')).catch(err => alert('No se creó encuesta en la BD'));
       }).catch(err => err);
   };

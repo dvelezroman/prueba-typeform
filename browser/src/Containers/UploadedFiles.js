@@ -76,7 +76,7 @@ class UploadedFiles extends Component {
     if (!file.ref) alert('Debes seleccionar un archivo cargado!');
     else if (!polls.length) alert('Debes Seleccionar una Encuesta al menos!');
     else {
-      let grouped_polls = _.groupBy(polls, poll => poll.groupId);
+      //let grouped_polls = _.groupBy(polls, poll => poll.groupId);
       let grouped_orders = _.groupBy(orders, order => order.groupId);
       //console.log('File: ', file);
       //console.log('Grouped Questions: ', grouped_polls);
@@ -89,7 +89,8 @@ class UploadedFiles extends Component {
         let url = poll.url;
         let subject = poll.subject;
         let greet = poll.greet;
-        let body = {clients, subject, greet, url};
+        let fileId = file.id;
+        let body = {clients, subject, greet, url, fileId};
         promises_to_send_emails.push(axios.post("/api/polls/send", body));
       });
       Promise.all(promises_to_send_emails).then(res => {
@@ -123,7 +124,7 @@ class UploadedFiles extends Component {
 
   render() {
     const { classes, loggedUser } = this.props;
-    console.log('State : ', this.state);
+    //console.log('State : ', this.state);
     return !loggedUser.logged ? (
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta informacion</h1>

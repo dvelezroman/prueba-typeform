@@ -57,7 +57,7 @@ class NestedList extends React.Component {
                 <ListItemIcon>
                   <Home />
                 </ListItemIcon>
-                <ListItemText inset primary="Estado" />
+                <ListItemText inset primary="Enviadas" />
               </ListItem>
             </Link>
             {/* <Link to="/questions">
@@ -68,14 +68,14 @@ class NestedList extends React.Component {
                 <ListItemText inset primary="Preguntas" />
               </ListItem>
             </Link> */}
-            <ListItem button onClick={this.handleClick("openPolls")}>
+            {/* <ListItem button onClick={this.handleClick("openPolls")}>
               <ListItemIcon>
                 <ConfirmationNumber />
               </ListItemIcon>
               <ListItemText inset primary="Encuestas" />
               {this.state.open ? <ExpandLess /> : <ExpandMore />}
-            </ListItem>
-            <Collapse in={this.state.openPolls} timeout="auto" unmountOnExit>
+            </ListItem> */}
+            {/* <Collapse in={this.state.openPolls} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
                 <Link to="/">
                   <ListItem button className={classes.nested}>
@@ -86,8 +86,8 @@ class NestedList extends React.Component {
                   </ListItem>
                 </Link>
               </List>
-            </Collapse>
-            <Collapse in={this.state.openPolls} timeout="auto" unmountOnExit>
+            </Collapse> */}
+            {/* <Collapse in={this.state.openPolls} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
                 <Link to="/questions">
                   <ListItem button className={classes.nested}>
@@ -98,8 +98,8 @@ class NestedList extends React.Component {
                   </ListItem>
                 </Link>
               </List>
-            </Collapse>
-            <Collapse in={this.state.openPolls} timeout="auto" unmountOnExit>
+            </Collapse> */}
+            {/* <Collapse in={this.state.openPolls} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
                 <Link to="/polls/send">
                   <ListItem button className={classes.nested}>
@@ -110,7 +110,15 @@ class NestedList extends React.Component {
                   </ListItem>
                 </Link>
               </List>
-            </Collapse>
+            </Collapse> */}
+            <Link to="/questions">
+              <ListItem button>
+                <ListItemIcon>
+                  <ADB />
+                </ListItemIcon>
+                <ListItemText inset primary="Crear" />
+              </ListItem>
+            </Link>
             <Link to="/upload">
               <ListItem button>
                 <ListItemIcon>

@@ -97,10 +97,11 @@ router.post("/send", (req, res, next) => {
 router.post("/new", function(req, res, next) {
   //console.log('PollData: ', req.body);
   let question = req.body.poll;
+  let ref = req.body.ref
   let url = req.body.url;
   Group.findOne({ where: { id: Number(question.group) } }).then(group =>
     Poll.create({
-      ref: question.ref,
+      ref: ref,
       url: url,
       name: question.subject,
       subject: question.subject,
