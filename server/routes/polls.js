@@ -46,6 +46,9 @@ router.post("/sendpolls", (req, res, next) => {
         }else if(element.answers && element.answers[0].type === 'boolean') { // hay que poner que lleve los si y no, y las multiple decisiones
           len++;
           sum = element.answers[0].boolean ? sum + 1 : sum;
+        }else {
+          len++;
+          sum = sum + 1;
         }
       });
       average = sum / len;
