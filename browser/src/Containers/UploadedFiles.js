@@ -3,6 +3,7 @@ import axios from "axios";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
+//import * as typeformEmbed from '@typeform/embed' // Typeform SDK
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -47,8 +48,10 @@ class UploadedFiles extends Component {
   };
 
   handleListItemClick = async (event, file) => {
-    let { data } = await axios.get(`/api/files/${file.name}/orders`).then(res => res.data);
-    this.setState({ selectedFile: file, orders: data });
+    let { data } = await axios.get(`/api/files/${file.id}/orders`).then(res => res.data);
+    //console.log('Orders : ',data);
+    if (!data.error) this.setState({ selectedFile: file, orders: data });
+    else this.setState({ selectedFile: file });
   };
 
   handlePollCheck = value => () => {
@@ -73,6 +76,7 @@ class UploadedFiles extends Component {
     let file = this.state.selectedFile;
     let polls = this.state.selectedQuestions;
     let orders = this.state.orders;
+    //console.log('Polls selected: ', polls);
     if (!file.ref) alert('Debes seleccionar un archivo cargado!');
     else if (!polls.length) alert('Debes Seleccionar una Encuesta al menos!');
     else {
@@ -90,7 +94,15 @@ class UploadedFiles extends Component {
         let subject = poll.subject;
         let greet = poll.greet;
         let fileId = file.id;
-        let body = {clients, subject, greet, url, fileId};
+        let scale = poll.scale;
+        let shape = poll.shape;
+        let title = poll.title;
+        let type = poll.type;
+        let description = poll.description;
+        let choices = poll.choices;
+        let allow_multiple_selection = poll.allow_multiple_selection;
+        let body = {clients, subject, greet, url, scale, shape, title, type, description, choices, allow_multiple_selection, fileId};
+        //console.log('envio a /api/polls/send', body);
         promises_to_send_emails.push(axios.post("/api/polls/send", body));
       });
       Promise.all(promises_to_send_emails).then(res => {

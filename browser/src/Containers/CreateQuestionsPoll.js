@@ -27,9 +27,9 @@ const scale = [
   //{ label: 6, value: 6 },
   { label: 7, value: 7 },
   //{ label: 8, value: 8 },
-  { label: 9, value: 9 },
+  //{ label: 9, value: 9 },
   //{ label: 10, value: 10 },
-  { label: 11, value: 11 }
+  //{ label: 11, value: 11 }
 ];
 
 const types = [
@@ -170,7 +170,7 @@ class CreateQuestionsPoll extends Component {
               shape: "star",
               choices: "",
               allow_multiple_selection: false,
-              group: 0
+              group: 1
             }
           })
         }).catch(err => alert('No se creó encuesta en la BD'));

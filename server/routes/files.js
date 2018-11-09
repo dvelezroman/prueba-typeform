@@ -12,10 +12,11 @@ router.get("/test", (req, res) => {
   res.status(200).json("OK");
 });
 
-router.get("/:name/orders", async (req, res) => {
-  let name = req.params.name;
-  let file = await File.findOne({ where: { name: name }}).then(found => found);
-  //console.log('Name : ', name);
+router.get("/:id/orders", async (req, res) => {
+  //console.log('Req.params: ', req.params);
+  let id = req.params.id;
+  let file = await File.findById(id).then(found => found.dataValues);
+  //console.log('File : ', file);
   Order.findAll({ where: { fileId: file.id }, include: [ File, Client, Doctor, Group, Office ]})
   .then(array => {
     let orders = array.map(item => ({

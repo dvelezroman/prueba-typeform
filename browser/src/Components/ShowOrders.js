@@ -41,7 +41,7 @@ const styles = theme => ({
 class ShowOrders extends Component {
   render() {
     const { classes, orders, loggedUser } = this.props;
-    let orders_sorted = sortArray(orders);
+    let orders_sorted = orders.length ? sortArray(orders) : [];
     //console.log('Orders: ', orders);
     return (
       !loggedUser.logged ? (
