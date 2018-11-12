@@ -54,6 +54,13 @@ const footer = `
     <img alt="" height="1px" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="border:none;border-radius:0px;display:block;font-size:13px;outline:none;text-decoration:none;width:100%;height:1px;" width="1"></td> </tr> </tbody> </table> <!--[if mso | IE]> 
     </td></tr></table> <![endif]--> </td> </tr> </tbody> </table> </div> <!--[if mso | IE]> </td></tr></table> <![endif]--> </div> 
     </body> 
+    <footer>
+        <p>Enviado por : Medilink S.A.</p>
+        <p>Todo el contenido de este boletín es enviado a nuestros clientes con el objetivo exclusivamente informativo.</p>
+        <p>Política de Privacidad: Las direcciones de e-mail facilitadas por nuestros clientes son utilizadas exclusivamente para el boletín y en ningún caso son suministradas a terceros.</p>
+        <p>Contacto: <a href="mailto:administrador@medilink.com.ec">
+            someone@example.com</a>.</p>
+    </footer>
     </html>`;
 
 module.exports = footer;

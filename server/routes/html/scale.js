@@ -95,7 +95,7 @@ const body = (url, question) => {
                 <td style="vertical-align:top;width:114px;" class="opinionScaleStep-outlook"> <![endif]-->`;
     // armo las preguntas
     let body_questions = '';
-    let string = "";
+    //let string = "";
     let scale_5 = `<div class="mj-column-per-19 outlook-group-fix opinionScaleStep" style="vertical-align: top; display: inline-block; direction: ltr; font-size: 13px; text-align: left; width: 19.2%;"> `;
     let scale_7 = `<div class="mj-column-per-13 outlook-group-fix opinionScaleStep" style="vertical-align: top; display: inline-block; direction: ltr; font-size: 13px; text-align: left; width: 13.714285714285714%;">`;
     for (let x = 1; x <= question.scale; x++) {
@@ -114,8 +114,8 @@ const body = (url, question) => {
         }        
         body_questions = body_questions.concat(string); // voy concatenando las preguntas según la escala seleccionada
     };
-    if (question.scale === 5) return head_html_5.concat(body_questions);
-    if (question.scale === 7) return head_html_7.concat(body_questions); // concatenado todo el head y el body lo devuelvo
+    if (question.scale === 5) return head_html_5.concat(body_question_title ,body_questions);
+    if (question.scale === 7) return head_html_7.concat(body_question_title ,body_questions); // concatenado todo el head y el body lo devuelvo
 }
 
 module.exports = body;

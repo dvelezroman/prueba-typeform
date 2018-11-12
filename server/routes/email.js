@@ -15,6 +15,7 @@ const html = (url, question) => {
   }else {
     string = string.concat(choices(url, question), footer);
   };
+  //console.log('HTML : ', string);
   return string;
 };
 
