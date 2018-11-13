@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
+//import { Redirect } from "react-router-dom";
 import { withRouter } from "react-router";
 import PropTypes from "prop-types";
 //import axios from "axios";
@@ -10,7 +10,7 @@ import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import Chip from "@material-ui/core/Chip";
-import ShowOrders from "./ShowOrders";
+// import ShowOrders from "./ShowOrders";
 import CircularIndeterminated from "./CircularIndeterminated";
 import { clearRegs, uploadFile } from "../actions/uploadFileActions";
 

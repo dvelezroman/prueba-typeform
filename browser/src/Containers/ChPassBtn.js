@@ -43,7 +43,7 @@ class ChPassBtn extends React.Component {
   }
 
   render() {
-    const { classes, loggedUser } = this.props;
+    const { classes } = this.props;
     //var isLogged = Object.keys(loggedUser).length;
     return (
       <div>

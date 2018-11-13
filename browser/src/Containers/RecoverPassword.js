@@ -94,7 +94,7 @@ class RecoverPassword extends React.Component {
   render() {
     //console.log("User Logged", this.props.loggedUser);
     const { classes } = this.props;
-    const { email, password, redirect } = this.state;
+    const { email, redirect } = this.state;
     return redirect ? (
       <div>
         <Redirect to="/login" />

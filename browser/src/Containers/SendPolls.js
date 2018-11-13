@@ -3,7 +3,7 @@ import axios from "axios";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
+// import TextField from "@material-ui/core/TextField";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Grid from "@material-ui/core/Grid";
@@ -118,7 +118,7 @@ class SendPolls extends React.Component {
         }
       });
       Promise.all([...promises_for_sending_emails]).then(res => {
-        // enviar a guardar a la base de datos las encuestas enviadas
+        console.log('Recibe de la api : ', res.data);
         if (res.length > 1) alert("Las encuestas se enviaron exitosamente");
         else alert("Las encuesta se envió exitosamente");
       });

@@ -113,7 +113,7 @@ class AdminCreate extends React.Component {
   render() {
     //console.log("User Logged", this.props.loggedUser);
     const { classes } = this.props;
-    const { name, email, password, password2, role, redirect } = this.state;
+    const { name, email, password, password2, redirect } = this.state;
     return redirect ? (
       <div>
         <Redirect to="/login" />

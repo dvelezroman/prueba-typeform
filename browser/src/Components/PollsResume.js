@@ -49,6 +49,7 @@ class PollsResume extends Component {
   componentDidMount() {
     // traer las refs de las encuestas que han sido enviadas y armar un array de refs []
     axios.get('/api/polls/sendpolls').then(res => res.data).then(sendpolls => {
+      //console.log('SendPolls: ', sendpolls);
       let polls = sendpolls.map(sendpoll => ({
         clients: sendpoll.clients,
         ref: sendpoll.poll.ref,

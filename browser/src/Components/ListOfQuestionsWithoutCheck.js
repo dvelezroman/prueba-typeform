@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import axios from 'axios';
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import IconButton from '@material-ui/core/IconButton';
-import CommentIcon from '@material-ui/icons/Comment';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { getQuestionsDB } from "../actions/questionActions";
 
 const sortArray = array => array.sort((a,b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
@@ -29,12 +30,28 @@ const styles = theme => ({
 });
 
 class ListOfQuestionsWithoutCheck extends Component {
+  constructor(props){
+    super(props);
+    this.state = {};
+    this.clickEnable = this.clickEnable.bind(this);
+  };
+
+  clickEnable = value => event => {
+    event.preventDefault();
+    //console.log('Ref : ', value );
+    axios.put("/api/questions/disable", { ref: value })
+    .then(res => res.data)
+    .then(data => {
+      this.props.getQuestionsDB();
+    });
+  };
+
   componentDidMount() {
     this.props.getQuestionsDB();
   };
 
   render() {
-    const { classes, questions, clickEnable, clickUpdate } = this.props;
+    const { classes, questions } = this.props;
     let array = questions;
     array = sortArray(array);
     //console.log('Questions: ', array);
@@ -43,14 +60,14 @@ class ListOfQuestionsWithoutCheck extends Component {
         {array.map(question => (
           <ListItem key={question.id}>
             <ListItemText
-              primary={question.enabled ? `${question.title} -- Categoría: ${question.group.description}` : `Deshabilitada (${question.title})`}
+              primary={question.enabled ? `${question.title} -- Categoría: ${question.group ? question.group.description : ""}` : `Deshabilitada (${question.title})`}
               secondary={question.enabled ? `${question.description}  - Tipo: ${question.type}` : ``}
             />
-            <IconButton aria-label="Actualizar" onClick={clickUpdate(question.id)}>
+            {/* <IconButton aria-label="Actualizar" onClick={clickUpdate(question.id)}>
               <CommentIcon />
-            </IconButton>
-            <IconButton aria-label="Deshabilitar" onClick={clickEnable(question.ref)}>
-              <CommentIcon />
+            </IconButton> */}
+            <IconButton aria-label="Deshabilitar" onClick={this.clickEnable(question.ref)}>
+              <DeleteIcon />
             </IconButton>
           </ListItem>
         ))}

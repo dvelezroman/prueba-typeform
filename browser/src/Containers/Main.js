@@ -8,8 +8,8 @@ import { connect } from "react-redux";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { withStyles } from "@material-ui/core";
 import NavBar from "../Components/NavBar";
-import InputText from "../Components/InputText";
-import CircularIndeterminated from "../Components/CircularIndeterminated";
+//import InputText from "../Components/InputText";
+//import CircularIndeterminated from "../Components/CircularIndeterminated";
 import NestedList from "../Components/NestedList";
 import CreatePoll from "./CreatePoll";
 import ContainedButton from "../Components/ContainedButton";
@@ -23,6 +23,7 @@ import UploadedFiles from "./UploadedFiles";
 import AdminCreate from "./AdminCreate";
 import UpdateQuestion from "../Components/UpdateQuestion";
 import { setAdmin } from "../actions/adminActions";
+import CreateQuestionsPoll from "./CreateQuestionsPoll";
 
 const styles = theme => ({
   root: {
@@ -52,13 +53,13 @@ class Main extends Component {
   };
 
   render() {
-    const { classes, isCreatingForm, existAdmin } = this.props;
+    const { classes, existAdmin } = this.props;
     if (!existAdmin) {
       //console.log('No hay usuario', existAdmin);
       return (
         <div className={classes.root}>
         <CssBaseline />
-          <Grid container spacing={16}>
+          <Grid container spacing={8}>
             <Grid item xs={12}>
               <AdminCreate />
             </Grid>
@@ -70,11 +71,11 @@ class Main extends Component {
       return (
         <div className={classes.root}>
           <CssBaseline />
-          <Grid container spacing={16}>
+          <Grid container>
             <Grid item xs={12}>
               <NavBar />
             </Grid>
-            <Grid container spacing={16}>
+            <Grid container spacing={8}>
               <Grid item xs={2}>
                 <Paper className={classes.paper}>
                   <NestedList />
@@ -123,20 +124,7 @@ class Main extends Component {
                       exact
                       path="/questions"
                       render={() => (
-                        <Grid container>
-                          <Grid item xs={12}>
-                            <InputText />
-                          </Grid>
-                          <Grid item xs={12}>
-                            {isCreatingForm ? (
-                              <Grid item xs={12}>
-                                <CircularIndeterminated />
-                              </Grid>
-                            ) : (
-                              <Grid item xs={12} />
-                            )}
-                          </Grid>
-                        </Grid>
+                          <CreateQuestionsPoll />
                       )}
                     />
                     <Route

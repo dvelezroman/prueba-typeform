@@ -4,11 +4,11 @@ const models = require("../models");
 const Group = models.Group;
 
 router.post("/new", function(req, res, next) {
-  Group.create(req.body).then(question => res.status(201).json(question));
+  Group.create(req.body).then(group => res.status(201).json(group));
 });
 
 router.get("/", function(req, res) {
-  Group.findAll({}).then(questions => res.status(200).json(questions));
+  Group.findAll({}).then(groups => res.status(200).json(groups));
 });
 
 module.exports = router;

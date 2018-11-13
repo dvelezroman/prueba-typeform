@@ -6,6 +6,7 @@
     "dependencies": {
         "@material-ui/core": "^3.1.1",
         "@material-ui/icons": "^2.0.3",
+        "@typeform/embed": "^0.5.12",
         "autoprefixer": "7.1.6",
         "axios": "^0.18.0",
         "babel-core": "6.26.0",
@@ -38,6 +39,7 @@
         "gmail-send": "^1.2.14",
         "html-webpack-plugin": "2.29.0",
         "jest": "20.0.4",
+        "lodash": "^4.17.11",
         "nodemailer": "^4.6.8",
         "object-assign": "4.1.1",
         "postcss-flexbugs-fixes": "3.2.0",

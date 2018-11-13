@@ -8,10 +8,26 @@ router.get("/test", (req, res, next) => {
   res.status(200).json("Todo OK..");
 });
 router.post("/new", function(req, res, next) {
-  Group.findOne({ where: { id: req.body.group } }).then(group => {
-    Question.create(req.body.question).then(question => {
-      question.setGroup(group);
-      res.status(201).json(question);
+  //console.log('QuestionBody: ', req.body);
+  let question = req.body.question;
+  const newQuestion = {
+    subject: question.subject,
+    greet: question.greet,
+    ref: question.ref,
+    title: question.title,
+    type: question.type,
+    url: question.url,
+    description: question.description,
+    speciality: question.speciality,
+    scale: question.scale,
+    shape: question.shape,
+    choices: question.choices,
+    allow_multiple_selection: question.allow_multiple_selection,
+  }
+  Group.findOne({ where: { id: question.group } }).then(group => {
+    Question.create(newQuestion).then(created => {
+      created.setGroup(group);
+      res.status(201).json(created);
     });
   });
 });
