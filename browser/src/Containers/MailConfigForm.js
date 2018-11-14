@@ -36,6 +36,14 @@ const service = [
 ];
 
 const styles = theme => ({
+  root: {
+    width: '100%',
+    maxWidth: 360,
+    backgroundColor: theme.palette.background.paper,
+    position: 'relative',
+    overflow: 'auto',
+    maxHeight: 300
+  },
   container: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -169,111 +177,123 @@ class MailConfigForm extends Component {
         </Grid>
         
         <Grid item xs={4}>
-            <TextField
-              id="select-sevice"
-              select
-              label="Servicio"
-              className={classes.textField}
-              value={this.state.service}
-              onChange={this.handleChange('service')}
-              SelectProps={{
-                MenuProps: {
-                  className: classes.menu,
-                },
-              }}
-              helperText="Seleccione Servicio de Correo"
-              margin="normal"
-              variant="outlined"
-            >
-              {service.map((option, i) => (
-                <MenuItem key={i} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              id="description"
-              label="Descripción"
-              className={classes.textField}
-              value={this.state.description}
-              onChange={this.handleChange('description')}
-              margin="normal"
-              variant="outlined"
-            />
-            <TextField
-              id="host"
-              label="Host"
-              className={classes.textField}
-              value={this.state.host}
-              onChange={this.handleChange('host')}
-              margin="normal"
-              variant="outlined"
-            />
-            <TextField
-              id="port"
-              label="Puerto"
-              value={this.state.port}
-              className={classes.textField}
-              onChange={this.handleChange('port')}
-              margin="normal"
-              variant="outlined"
-            />
-            <TextField
-              id="user"
-              label="Usuario"
-              value={this.state.user}
-              className={classes.textField}
-              onChange={this.handleChange('user')}
-              margin="normal"
-              variant="outlined"
-            />
-            <TextField
-              id="password"
-              className={classNames(classes.margin, classes.textField)}
-              variant="outlined"
-              type={this.state.showPassword ? 'text' : 'password'}
-              label="Password"
-              value={this.state.password}
-              onChange={this.handleChange('pass')}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="Ver contraseña"
-                      onClick={this.handleClickShowPassword}
-                    >
-                      {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <Button
-              variant="contained"
-              size="medium"
-              className={classes.button}
-              onClick={this.handleSubmit}
-            >
-              Añadir
-            </Button>
-        </Grid>
-        <Grid item xs={8}>
           <Grid item xs={12}>
-                Lista de Servidores de Correo
+            <h3>Añadir un servidor de correo</h3>
           </Grid>
           <Grid item xs={12}>
+            <TextField
+                id="select-sevice"
+                select
+                label="Servicio"
+                className={classes.textField}
+                value={this.state.service}
+                onChange={this.handleChange('service')}
+                SelectProps={{
+                  MenuProps: {
+                    className: classes.menu,
+                  },
+                }}
+                helperText="Seleccione Servicio de Correo"
+                margin="normal"
+                variant="outlined"
+              >
+                {service.map((option, i) => (
+                  <MenuItem key={i} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                id="description"
+                label="Descripción"
+                className={classes.textField}
+                value={this.state.description}
+                onChange={this.handleChange('description')}
+                margin="normal"
+                variant="outlined"
+              />{this.state.service === "Otro" ?
+                    <div>
+                      <TextField
+                      id="host"
+                      label="Host"
+                      className={classes.textField}
+                      value={this.state.host}
+                      onChange={this.handleChange('host')}
+                      margin="normal"
+                      variant="outlined"
+                    />
+                    <TextField
+                      id="port"
+                      label="Puerto"
+                      value={this.state.port}
+                      className={classes.textField}
+                      onChange={this.handleChange('port')}
+                      margin="normal"
+                      variant="outlined"
+                    />
+                    </div> : <div></div>}
+              <TextField
+                id="user"
+                label="Usuario"
+                value={this.state.user}
+                className={classes.textField}
+                onChange={this.handleChange('user')}
+                margin="normal"
+                variant="outlined"
+              />
+              <TextField
+                id="password"
+                className={classNames(classes.margin, classes.textField)}
+                variant="outlined"
+                type={this.state.showPassword ? 'text' : 'password'}
+                label="Password"
+                value={this.state.password}
+                onChange={this.handleChange('pass')}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="Ver contraseña"
+                        onClick={this.handleClickShowPassword}
+                      >
+                        {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <Button
+                variant="contained"
+                size="medium"
+                className={classes.button}
+                onClick={this.handleSubmit}
+              >
+                Añadir
+              </Button>
+          </Grid>
+        </Grid>
+            
+        <Grid item xs={8}>
+          <Grid item xs={12}>
+            <h3>Añadir un servidor de correo</h3>
+            <div>Debe haber seleccionado uno</div>
+          </Grid>
+          <Grid item xs={12}>
+            <List component="nav">
                 {this.state.servers.map(item => (
-                    <List key={item.id} component="nav">
-                        <ListItem
-                            button
-                            selected={item.selected}
-                            onClick={event => this.handleSelected(event, item)}
-                        >
-                            <ListItemText 
-                              primary={`Descripción : ${item.description} <> Servicio: ${item.service}`} 
-                              secondary={`Host: ${item.host} <> Cuenta: ${item.user}`} />
-                        </ListItem>
-                    </List>))}
+                    
+                  <ListItem
+                    key={item.id} 
+                    button
+                    selected={item.selected}
+                    onClick={event => this.handleSelected(event, item)}
+                  >
+                  <ListItemText 
+                    primary={`Descripción : ${item.description} <> Servicio: ${item.service}`} 
+                    secondary={`Host: ${item.host} <> Cuenta: ${item.user}`} />
+                  </ListItem>
+                ))}
+            </List>
           </Grid>
         </Grid>
       </Grid>
