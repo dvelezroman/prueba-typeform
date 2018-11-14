@@ -24,6 +24,7 @@ import AdminCreate from "./AdminCreate";
 import UpdateQuestion from "../Components/UpdateQuestion";
 import { setAdmin } from "../actions/adminActions";
 import CreateQuestionsPoll from "./CreateQuestionsPoll";
+import MailConfigForm from "./MailConfigForm";
 
 const styles = theme => ({
   root: {
@@ -170,6 +171,17 @@ class Main extends Component {
                         <Grid container>
                           <Grid item xs={12}>
                             <ContainedButton />
+                          </Grid>
+                        </Grid>
+                      )}
+                    />
+                    <Route
+                      exact
+                      path="/mailserver"
+                      render={() => (
+                        <Grid container>
+                          <Grid item xs={12}>
+                            <MailConfigForm />
                           </Grid>
                         </Grid>
                       )}

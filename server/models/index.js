@@ -9,6 +9,7 @@ const Poll = require("./Poll");
 const PollsSend = require("./PollsSend");
 const Question = require("./Question");
 const File = require("./File");
+const MailServer = require("./MailServer");
 
 Order.belongsTo(Client);
 Order.belongsTo(Doctor);
@@ -33,5 +34,6 @@ module.exports = {
   Poll,
   Question,
   File,
-  PollsSend
+  PollsSend,
+  MailServer
 };

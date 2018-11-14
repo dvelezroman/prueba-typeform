@@ -97,7 +97,6 @@ class ContainedButton extends Component {
                   className={classes.button}
                 >
                   Cargar Archivo
-                  <CloudUploadIcon className={classes.rightIcon} />
                 </Button>
               </form>
             </Paper>

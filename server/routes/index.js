@@ -9,6 +9,7 @@ router.use("/clients", require("./clients"));
 router.use("/orders", require("./orders"));
 router.use("/files", require("./files"));
 router.use("/upload", require("./upload"));
+router.use("/mailserver", require("./mailserver"));
 
 router.use(function(req, res) {
   res.status(404).end();

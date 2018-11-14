@@ -72,7 +72,7 @@ class UploadedFiles extends Component {
     );
   };
 
-  sendEmails() {
+  async sendEmails() {
     let file = this.state.selectedFile;
     let polls = this.state.selectedQuestions;
     let orders = this.state.orders;
@@ -80,6 +80,8 @@ class UploadedFiles extends Component {
     if (!file.ref) alert('Debes seleccionar un archivo cargado!');
     else if (!polls.length) alert('Debes Seleccionar una Encuesta al menos!');
     else {
+      let server = await axios.get("/api/mailserver/selected").then(res => res.data.data);
+      //console.log('Server: ', server);
       //let grouped_polls = _.groupBy(polls, poll => poll.groupId);
       let grouped_orders = _.groupBy(orders, order => order.groupId);
       //console.log('File: ', file);
@@ -103,7 +105,7 @@ class UploadedFiles extends Component {
         let allow_multiple_selection = poll.allow_multiple_selection;
         let body = {clients, subject, greet, url, scale, shape, title, type, description, choices, allow_multiple_selection, fileId};
         //console.log('envio a /api/polls/send', body);
-        promises_to_send_emails.push(axios.post("/api/polls/send", body));
+        promises_to_send_emails.push(axios.post("/api/polls/send", { array: body, server }));
       });
       Promise.all(promises_to_send_emails).then(res => {
         // enviar a guardar a la base de datos las encuestas enviadas
@@ -165,7 +167,7 @@ class UploadedFiles extends Component {
             </Grid>
           </Grid>
           <Grid item xs={8}>
-          <Grid item xs={12}>
+            <Grid item xs={12}>
                 Lista de Encuestas Disponibles
             </Grid>
             <List>

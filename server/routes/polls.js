@@ -6,15 +6,8 @@ const Group = models.Group;
 const Poll = models.Poll;
 const PollsSend = models.PollsSend;
 const File = models.File;
+const { MailServer } = models;
 const { html } = require("./email");
-
-const smtpTransport = nodemailer.createTransport({
-  service: "Gmail",
-  auth: {
-    user: "caffeinasw@gmail.com",
-    pass: "telurico1604"
-  }
-});
 
 router.get("/test", (req, res) => {
   res.status(200).json("OK");
@@ -27,7 +20,7 @@ router.get("/sendpolls", (req, res, next) => {
     .catch(err => res.status(404).json(err));
 })
 
-router.post("/sendpolls", (req, res, next) => {
+router.post("/sendpolls", (req, res) => {
   // actualiza el numero de answers para una encuesta
   let answers = req.body.answers; // recibe el numero de respuestas para una encuesta
   let ref = req.body.ref; // recibe el ref de la encuesta para poder buscarla y actualizarle el numero de respuestas
@@ -60,10 +53,11 @@ router.post("/sendpolls", (req, res, next) => {
 });
 
 // sends email to a group of emails belonging a one category
-router.post("/send", (req, res, next) => {
+router.post("/send", async (req, res, next) => {
   //console.log('Body: ', req.body);
-  let params = req.body;
+  let params = req.body.array;
   // aqui va la accion de enviar mail con gmail
+  let server = req.body.server;
   let emails = params.clients.map(item => item.email);
   let file = params.fileId;
   let names = params.clients.map(item => item.name);
@@ -82,6 +76,17 @@ router.post("/send", (req, res, next) => {
   //console.log('question : ', question);
   let poll_html = html(url, question); // tengo que enviarle la pregunta y el url
   //console.log('Body listo: ', poll_html);
+  let smtpTransport = null;
+  if (server.service !== "Otro") {
+    smtpTransport = nodemailer.createTransport({
+      service: server.service,
+      auth: {
+        user: server.user,
+        pass: server.pass
+      }
+    });
+  };
+  if (smtpTransport === null) res.status(200).json({ error: true, data: [], msg: "No se ha seleccionado un servidor de correo"});
   let mail = {
     from: "Servicios al Cliente - Medilink S.A. <dvelezroman@gmail.com>", // aqui cambiar el correo del remitente
     to: emails, // esto lo vamos a abrir con for o map y poder personalizarlo con el nombre

@@ -8,7 +8,7 @@ import { clearUser } from "../actions/UserActions";
 const styles = {
   buttonLogin: {
     backgroundColor: "#6eb4ea",
-    marginLeft: "10px",
+    marginLeft: "5px",
     color: "white",
     "&:hover": {
       color: "white"
@@ -39,7 +39,6 @@ const mapDispatchToProps = dispatch => ({
 class LoginBtn extends React.Component {
   constructor() {
     super();
-    this.state = {};
     this.unlogUser = this.unlogUser.bind(this);
   }
 
@@ -57,7 +56,7 @@ class LoginBtn extends React.Component {
             <Button
               className={classes.buttonLogin}
               onClick={this.unlogUser}
-              size="medium"
+              size="small"
             >
               Logout
             </Button>
@@ -65,7 +64,7 @@ class LoginBtn extends React.Component {
         ) : (
           <Button
             className={classes.buttonLogin}
-            size="medium"
+            size="small"
             component={Link}
             to={"/login"}
           >
