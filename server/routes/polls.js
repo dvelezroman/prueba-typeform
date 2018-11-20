@@ -85,8 +85,20 @@ router.post("/send", async (req, res, next) => {
         pass: server.pass
       }
     });
+  }else {
+    smtpTransport = nodemailer.createTransport({
+      pool: true,
+      auth: {
+        user: server.user,
+        pass: server.pass
+      },
+      host: server.host,
+      port: server.port,
+      secure: server.secure
+    });
   };
   if (smtpTransport === null) res.status(200).json({ error: true, data: [], msg: "No se ha seleccionado un servidor de correo"});
+  //console.log('Server: ', smtpTransport);
   let mail = {
     from: "Servicios al Cliente - Medilink S.A. <dvelezroman@gmail.com>", // aqui cambiar el correo del remitente
     to: emails, // esto lo vamos a abrir con for o map y poder personalizarlo con el nombre

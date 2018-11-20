@@ -34,7 +34,7 @@ router.post("/", (req, res) => {
     .then(() => 
         MailServer.findOrCreate({ 
             where: {description: body.description },
-            defaults: { service: body.service, host: body.host, port: body.port, secure: body.secure, user: body.user, pass: body.pass, selected: true }
+            defaults: { service: body.service, host: body.host, port: body.port, secure: true, user: body.user, pass: body.pass, selected: true }
         }).then(([data, created]) => {
             if (created) res.status(201).json({ error: false, data: data, msg: "Se guardaron los datos" });
             else res.status(200).json({ error: true, data: data, msg: "No se guardaron los datos"});
