@@ -1,13 +1,14 @@
 const express = require("express");
 const nodemailer = require("nodemailer");
 const router = express.Router();
+const path = require("path");
 const models = require("../models");
 const Group = models.Group;
 const Poll = models.Poll;
 const PollsSend = models.PollsSend;
 const File = models.File;
-const { MailServer } = models;
-const { html } = require("./email");
+//const { MailServer } = models;
+const { html } = require("./html/email");
 
 router.get("/test", (req, res) => {
   res.status(200).json("OK");
@@ -142,6 +143,15 @@ router.post("/new", function(req, res, next) {
     })
   );
 });
+
+router.get("/answer/:poll_id/data/:value", (req, res) => {
+  let params = req.params;
+  //console.log('Params: ', params);
+  const successFilePath = path.resolve(path.join(`${__dirname}/html/success.html`));
+  res.sendFile(successFilePath);
+  // logica para registrar la respuesta de la encuesta,
+  //res.status(201).json({ error: false, data: { poll_id: params.poll_id, value: params.value }, msg: 'Respuesta registrada'})
+}); // recibe las respuestas de las encuestas enviadas
 
 router.get("/", function(req, res) {
   Poll.findAll({ include: [Group] })

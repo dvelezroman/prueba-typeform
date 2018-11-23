@@ -15,7 +15,7 @@ app.options("/api/upload", cors());
 require("./config/config"); // config.js
 
 app.use(express.static(path.join(__dirname, "/../browser/build")));
-app.use(express.static(path.resolve(`${__dirname}/../browser/build`)));
+app.use(express.static(path.resolve(`${__dirname}/../browser/public`)));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());

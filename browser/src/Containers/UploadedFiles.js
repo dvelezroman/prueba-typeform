@@ -140,6 +140,7 @@ class UploadedFiles extends Component {
     const { classes, loggedUser } = this.props;
     const questions = this.state.questions.filter(question => question.enabled);
     //console.log('State : ', this.state);
+    //console.log('Questions: ', questions);
     return !loggedUser.logged ? (
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta informacion</h1>
@@ -187,7 +188,7 @@ class UploadedFiles extends Component {
                   />
                   <ListItemText
                     primary={`Encuesta: ${value.subject} - Cuerpo: ${value.greet} - Categoría: ${value.group.description}`}
-                    secondary={(value.type === "opinion_scale") ? `Pregunta: ${value.title} - tipo: Escala - escala: 1 al ${value.scale}` : (value.type === "yes_no") ? `Pregunta: ${value.title} - tipo: Si o No` : `Pregunta: ${value.title} - tipo: Selección - Opciones: ${value.choices.map((choice, i) => `${i}. ${choice} - `)}` }
+                    secondary={(value.type === "opinion_scale") ? `Pregunta: ${value.title} - tipo: Escala - escala: 1 al ${value.scale}` : (value.type === "yes_no") ? `Pregunta: ${value.title} - tipo: Si o No` : `Pregunta: ${value.title} - tipo: Selección - Opciones: ${value.choices.split(',').map((choice, i) => `${i}. ${choice} - `)}` }
                   />
                   {/* <ListItemSecondaryAction>
                     <IconButton aria-label="Comments">
