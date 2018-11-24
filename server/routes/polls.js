@@ -7,7 +7,6 @@ const Group = models.Group;
 const Poll = models.Poll;
 const PollsSend = models.PollsSend;
 const File = models.File;
-//const { MailServer } = models;
 const { html } = require("./html/email");
 
 router.get("/test", (req, res) => {
@@ -74,7 +73,7 @@ router.post("/send", async (req, res, next) => {
     shape: params.shape,
     allow_multiple_selection: params.allow_multiple_selection
   };
-  //console.log('question : ', question);
+  //console.log('Clientes : ', names);
   let poll_html = html(url, question); // tengo que enviarle la pregunta y el url
   //console.log('Body listo: ', poll_html);
   let smtpTransport = null;
@@ -88,40 +87,46 @@ router.post("/send", async (req, res, next) => {
     });
   }else {
     smtpTransport = nodemailer.createTransport({
-      pool: true,
+      host: server.host,
+      port: server.port,
+      secure: true,
       auth: {
         user: server.user,
         pass: server.pass
       },
-      host: server.host,
-      port: server.port,
-      secure: server.secure
+      tls: {
+        rejectUnauthorized: false
+      }
     });
   };
-  if (smtpTransport === null) res.status(200).json({ error: true, data: [], msg: "No se ha seleccionado un servidor de correo"});
   //console.log('Server: ', smtpTransport);
   let mail = {
-    from: "Servicios al Cliente - Medilink S.A. <dvelezroman@gmail.com>", // aqui cambiar el correo del remitente
+    from: `Servicios al Cliente - Medilink S.A. ${server.user}`, // aqui cambiar el correo del remitente
     to: emails, // esto lo vamos a abrir con for o map y poder personalizarlo con el nombre
     subject: `${subject}`,
     html: poll_html,
   };
   smtpTransport.sendMail(mail, (err, response) => {
     if (err) {
-      res.status(200).json({ error: true, msg: "Error al enviar correo" });
-    } else {
-      Poll.update({ send: true }, { returning: true, where: { url: url } }).then(([ rowsUpdate, [updatedPoll] ]) => {
+      //console.log('Error: No se pudo enviar el correo: ', err);
+    }else {
+      //console.log('Response: ', res);
+      Poll.update({ send: true }, { returning: true, where: { url: url } })
+      .then(([ rowsUpdate, [updatedPoll] ]) => {
         if (updatedPoll) {
           PollsSend.create({ clients: emails.length, answers: 0 }).then(sendPoll => {
             sendPoll.setPoll(updatedPoll);
-            File.findById(file).then(file => {updatedPoll.setFile(file)});
+            File.findById(file).then(file => {
+              updatedPoll.setFile(file)
+            });
           });
         }
       });
+      res.status(201).json({ error: false, msg: "Formulario Enviado" });
     }
     smtpTransport.close();
+    res.status(200).json({ error: true, data: err, msg: "Formulario No enviado" });
   });
-  res.status(201).json({ error: false, msg: "Formulario Enviado" });
 });
 
 router.post("/new", function(req, res, next) {

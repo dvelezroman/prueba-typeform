@@ -7,7 +7,7 @@ import configureStore from "./store";
 import "typeface-roboto";
 import "./styles/index.css";
 import Main from "./Containers/Main";
-import registerServiceWorker from "./registerServiceWorker";
+//import registerServiceWorker from "./registerServiceWorker";
 
 ReactDOM.render(
   <Provider store={configureStore()}>
