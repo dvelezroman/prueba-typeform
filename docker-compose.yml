@@ -3,7 +3,7 @@ services:
   db:
     image: postgres:alpine
     volumes:
-      - /var/lib /postgresql:/var/lib/postgresql/data
+      - /var/lib/postgresql:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: postgres
       POSTGRES_DB: typeform
