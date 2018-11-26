@@ -82,8 +82,10 @@ class SendPolls extends React.Component {
     }
   };
 
-  handleSendPoll = e => {
+  handleSendPoll = async (e) => {
     e.preventDefault();
+    let server = await axios.get("/api/mailserver/selected").then(res => res.data.data);
+    console.log('Server: ', server);
     let polls = this.state.checked.map(item => ({
       fileId: item.fileId,
       groupId: item.groupId
@@ -110,10 +112,11 @@ class SendPolls extends React.Component {
         arrays.push({ clients: array, formName: urlForm[i].name, urlForm: urlForm[i].url, subject: urlForm[i].subject, greet: urlForm[i].greet, body: this.state.body }); // aqui por cada formulario seleccionado debe crearse un elemento
       });
       let promises_for_sending_emails = [];
+      
       arrays.forEach(array => {
         if (array.clients.length > 0) {
           promises_for_sending_emails.push(
-            axios.post("/api/polls/send", array)
+            axios.post("/api/polls/send", { array: array, server })
           );
         }
       });

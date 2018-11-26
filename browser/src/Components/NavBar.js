@@ -7,8 +7,9 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import LoginButton from "../Containers/LoginButton";
 import ChPassBtn from "../Containers/ChPassBtn";
+import MailServerButton from "../Components/MailServerButton";
 
-const styles = {
+const styles = theme => ({
   root: {
     flexGrow: 1
   },
@@ -18,8 +19,11 @@ const styles = {
   menuButton: {
     marginLeft: -12,
     marginRight: 20
+  },
+  button: {
+    margin: theme.spacing.unit,
   }
-};
+});
 
 function NavBar(props) {
   const { classes, loggedUser } = props;
@@ -32,6 +36,7 @@ function NavBar(props) {
           </Typography>
           <LoginButton />
           {loggedUser.logged ? <ChPassBtn /> : <div></div>}
+          {loggedUser.logged ? <MailServerButton /> : <div></div>}
         </Toolbar>
       </AppBar>
     </div>

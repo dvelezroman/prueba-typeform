@@ -44,6 +44,14 @@ router.get("/:ref", (req, res) => {
   .catch(err => res.status(200).json({ error: true, data: err }));
 });
 
+router.delete("/delete/:id", (req, res) => {
+  let fileId = req.params.id;
+  File.destroy({ where: { id: fileId }}).then(() => {
+    Order.destroy({ where: { fileId: fileId }})
+    .then(data => res.status(201).json({ error: false, data, msg: "Registro Eliminado" }));
+  });
+});
+
 router.get("/", function(req, res) {
   File.findAll({}).then(files => res.status(200).json({ error: false, data: files }));
 });

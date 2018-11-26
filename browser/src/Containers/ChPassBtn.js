@@ -37,11 +37,6 @@ const mapDispatchToProps = dispatch => ({
 });
 
 class ChPassBtn extends React.Component {
-  constructor() {
-    super();
-    this.state = {};
-  }
-
   render() {
     const { classes } = this.props;
     //var isLogged = Object.keys(loggedUser).length;
@@ -49,11 +44,11 @@ class ChPassBtn extends React.Component {
       <div>
           <Button
             className={classes.buttonLogin}
-            size="medium"
+            size="small"
             component={Link}
             to={"/login/password/change"}
           >
-            Cambiar Contraseña
+            Contraseña
           </Button>
       </div>
     );
