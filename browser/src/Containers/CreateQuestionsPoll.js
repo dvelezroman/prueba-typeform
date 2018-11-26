@@ -10,7 +10,7 @@ import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import Select from "../Components/Select";
 import PrimaryButton from "../Components/PrimaryButton";
-import { createDataForm } from "../Forms/formParser";
+// import { createDataForm } from "../Forms/formParser";
 import ListOfQuestionsWithoutCheck from "../Components/ListOfQuestionsWithoutCheck";
 import { getQuestionsDB } from "../actions/questionActions";
 
@@ -141,16 +141,16 @@ class CreateQuestionsPoll extends Component {
   };
 
   createPoll() {
-    let data = createDataForm(this.state.question.subject, [this.state.question]);
+    // let data = createDataForm(this.state.question.subject, [this.state.question]);
     //console.log("Data para crear Form : ", JSON.stringify(data));
-    const token = "Cx7TVARyv64h6iyFJM5syoYJ8r7wAHnrMnvW3UAbkLh3";
-    axios.post("https://api.typeform.com/forms", data, {
-        headers: { Authorization: "Bearer " + token }
-      })
-      .then(res => res.data)
-      .then(formCreated => {
-        let ref = formCreated.id;
-        let url = formCreated._links.display;
+    // const token = "Cx7TVARyv64h6iyFJM5syoYJ8r7wAHnrMnvW3UAbkLh3";
+    // axios.post("https://api.typeform.com/forms", data, {
+    //     headers: { Authorization: "Bearer " + token }
+    //   })
+    //   .then(res => res.data)
+    //   .then(formCreated => {
+        let ref = this.state.question.ref;
+        let url = this.state.question.ref;
         const question = Object.assign({}, ...this.state.question, { ...this.state.question, url: url });
         const question_p = axios.post("/api/questions/new", {question});
         const poll_p = axios.post("/api/polls/new", {poll: this.state.question, url, ref} );
@@ -174,7 +174,7 @@ class CreateQuestionsPoll extends Component {
             }
           })
         }).catch(err => alert('No se creó encuesta en la BD'));
-      }).catch(err => err);
+      // }).catch(err => err);
   };
 
   handleSubmit = event => {

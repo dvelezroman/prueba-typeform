@@ -18,7 +18,7 @@ import CreatePollButton from "../Components/CreatePollButton";
 import Select from "../Components/Select";
 import { getGroupsDB } from "../actions/questionActions";
 import { createForm, creatingForm, formCreated } from "../actions/typeForm";
-import { createDataForm } from "../Forms/formParser";
+// import { createDataForm } from "../Forms/formParser";
 
 import ListOfQuestions from "./ListOfQuestions";
 
@@ -92,23 +92,23 @@ class CreatePoll extends Component {
 
   createPoll = e => {
     e.preventDefault();
-    let data = createDataForm(this.state.title, this.state.selectedQuestions);
+    //let data = createDataForm(this.state.title, this.state.selectedQuestions);
     // prueba
     //console.log("Data para crear Form : ", JSON.stringify(data));
-    const token = "Cx7TVARyv64h6iyFJM5syoYJ8r7wAHnrMnvW3UAbkLh3";
-    axios
-      .post("https://api.typeform.com/forms", data, {
-        headers: { Authorization: "Bearer " + token }
-      })
-      .then(res => res.data)
-      .then(created =>
+    // const token = "Cx7TVARyv64h6iyFJM5syoYJ8r7wAHnrMnvW3UAbkLh3";
+    // axios
+    //   .post("https://api.typeform.com/forms", data, {
+    //     headers: { Authorization: "Bearer " + token }
+    //   })
+    //   .then(res => res.data)
+    //   .then(created =>
         axios
           .post("/api/polls/new", {
-            ref: created.id,
+            ref: this.state.ref,
             name: this.state.title,
             subject: this.state.subject,
             greet: this.state.greet,
-            url: created._links.display,
+            url: this.state.ref,
             group: this.state.group,
             file: this.state.fileSelected
           })
@@ -119,13 +119,13 @@ class CreatePoll extends Component {
               showAlertDialog: true
             });
           })
-      )
-      .catch(error => {
-        this.setState({
-          showAlertDialog: true,
-          urlForm: "Ocurrió un error, y no se creó el Formulario"
-        });
-      });
+      // )
+      // .catch(error => {
+      //   this.setState({
+      //     showAlertDialog: true,
+      //     urlForm: "Ocurrió un error, y no se creó el Formulario"
+      //   });
+      // });
     // prueba
     //createForm(data);
   };

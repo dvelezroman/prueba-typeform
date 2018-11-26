@@ -116,7 +116,7 @@ class MailConfigForm extends Component {
       pass,
       selected
     };
-    console.log('Este es el body a enviar : ', body);
+    //console.log('Este es el body a enviar : ', body);
     let server = await axios.post("/api/mailserver", body).then(res => res.data);
     if (server.error) alert(server.msg);
     else {

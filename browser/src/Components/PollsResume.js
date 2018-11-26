@@ -42,8 +42,19 @@ class PollsResume extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      sendpolls: []
-    }
+      selected: "",
+      polls: [],
+      answers: []
+    };
+    this.showResume = this.showResume.bind(this);
+  };
+
+  showResume = pollsend => e => {
+    //console.log('Ref: ', pollsendId);
+    axios.get(`/api/polls/answers/${pollsend.id}`)
+    .then(res => {
+      this.setState({ selected: pollsend.ref, answers: res.data })
+    });
   };
 
   componentDidMount() {
@@ -53,29 +64,31 @@ class PollsResume extends Component {
       let polls = sendpolls.map(sendpoll => ({
         clients: sendpoll.clients,
         ref: sendpoll.poll.ref,
+        date: sendpoll.createdAt.split('T')[0],
         answers: sendpoll.answers,
         id: sendpoll.id,
-        file: sendpoll.poll.file.name,
+        file: sendpoll.file.name,
         name: sendpoll.poll.name,
         group: sendpoll.poll.group.description
       }));
-      for (let i = 0; i < polls.length; i++) {
-        this.props.getPollAnswers(polls[i].ref).then(answers => {
-          let data = {
-            ref: polls[0].ref,
-            answers: answers.items
-          };
-          //console.log('Data: ', data);
-          axios.post('/api/polls/sendpolls', data).then(() => this.props.getSendPolls());
-        })
+      this.setState({ polls})
+      // for (let i = 0; i < polls.length; i++) { // recuperar las respuestas por cada encuesta enviada y preentar un resumen listo para descargar
+      //   this.props.getPollAnswers(polls[i].ref).then(answers => {
+      //     let data = {
+      //       ref: polls[0].ref,
+      //       answers: answers.items
+      //     };
+      //     //console.log('Data: ', data);
+      //     axios.post('/api/polls/sendpolls', data).then(() => this.props.getSendPolls());
+      //   })
         
-      }
+      // }
     });
   };
 
   render() {
-    const { classes, loggedUser, sendPolls } = this.props;
-    //console.log('SendPolls : ', sendPolls);
+    const { classes, loggedUser } = this.props;
+    //console.log('Answers : ', this.state.answers);
     return !loggedUser.logged ? (
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta informacion</h1>
@@ -90,6 +103,7 @@ class PollsResume extends Component {
             <Table className={classes.table}>
               <TableHead>
                 <TableRow>
+                <CustomTableCell>Ref</CustomTableCell>
                   <CustomTableCell>Formulario</CustomTableCell>
                   <CustomTableCell>Grupo</CustomTableCell>
                   <CustomTableCell>Archivo</CustomTableCell>
@@ -100,18 +114,61 @@ class PollsResume extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {sendPolls.map(row => {
+                {this.state.polls.map(row => {
                   return (
-                    <TableRow className={classes.row} key={row.id}>
+                    <TableRow className={classes.row} key={row.id} onClick={this.showResume({ ref: row.ref, id: row.id })}>
                       <CustomTableCell component="th" scope="row">
-                        {row.name}
+                        {row.ref}
                       </CustomTableCell>
+                      <CustomTableCell>{row.name}</CustomTableCell>
                       <CustomTableCell>{row.group}</CustomTableCell>
                       <CustomTableCell>{row.file}</CustomTableCell>
                       <CustomTableCell>{row.date}</CustomTableCell>
                       <CustomTableCell numeric>{row.clients}</CustomTableCell>
                       <CustomTableCell numeric>{row.answers}</CustomTableCell>
                       <CustomTableCell numeric>{row.clients - row.answers}</CustomTableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </Paper>
+        </Grid>
+        <Grid item xs={12}>
+          <Paper>
+            <Grid item xs={12}>Respuestas Registradas</Grid>
+            <Grid item xs={12}>Pregunta : {this.state.answers.length ? this.state.answers[0].pollsend.poll.question.title : "" }</Grid>
+          </Paper>
+        </Grid>
+        <Grid item xs={12}>
+          <Paper className={classes.root}>
+            <Table className={classes.table}>
+              <TableHead>
+                <TableRow>
+                <CustomTableCell>Id</CustomTableCell>
+                  <CustomTableCell>Tipo</CustomTableCell>
+                  <CustomTableCell>Valor</CustomTableCell>
+                  <CustomTableCell>Cliente</CustomTableCell>
+                  <CustomTableCell>Fecha</CustomTableCell>
+                  {/* <CustomTableCell numeric>Clientes Enviados</CustomTableCell>
+                  <CustomTableCell numeric>Contestados</CustomTableCell>
+                  <CustomTableCell numeric>Por Contestar</CustomTableCell> */}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {this.state.answers.map(row => {
+                  return (
+                    <TableRow className={classes.row} key={row.id}>
+                      <CustomTableCell component="th" scope="row">
+                        {row.id}
+                      </CustomTableCell>
+                      <CustomTableCell>{row.type}</CustomTableCell>
+                      <CustomTableCell>{row.value}</CustomTableCell>
+                      <CustomTableCell>{row.client.name}</CustomTableCell>
+                      <CustomTableCell>{row.createdAt.split('T')[0]}</CustomTableCell>
+                      {/* <CustomTableCell numeric>{row.clients}</CustomTableCell>
+                      <CustomTableCell numeric>{row.answers}</CustomTableCell>
+                      <CustomTableCell numeric>{row.clients - row.answers}</CustomTableCell> */}
                     </TableRow>
                   );
                 })}
