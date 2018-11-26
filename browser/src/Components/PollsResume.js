@@ -1,15 +1,20 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import axios from 'axios';
+import CsvDownloader from 'react-csv-downloader';
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
+import classNames from 'classnames';
+import Button from '@material-ui/core/Button';
 import Grid from "@material-ui/core/Grid";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
+import Typography from '@material-ui/core/Typography';
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
+import SaveIcon from '@material-ui/icons/Save';
 import { getPollAnswers, getSendPolls } from '../actions/typeForm';
 
 const CustomTableCell = withStyles(theme => ({
@@ -35,8 +40,68 @@ const styles = theme => ({
     "&:nth-of-type(odd)": {
       backgroundColor: theme.palette.background.default
     }
-  }
+  },
+  button: {
+    margin: theme.spacing.unit,
+  },
+  leftIcon: {
+    marginRight: theme.spacing.unit,
+  },
+  rightIcon: {
+    marginLeft: theme.spacing.unit,
+  },
+  iconSmall: {
+    fontSize: 20,
+  },
 });
+
+const columns = [{
+  id: 'ref_poll',
+  displayName: 'Referencia de Encuesta Enviada'
+}, {
+  id: 'hcu',
+  displayName: 'HCU de cliente',
+},
+{
+  id: 'cliente',
+  displayName: 'Nombre Cliente',
+},
+{
+  id: 'email',
+  displayName: 'Email de Cliente',
+},
+{
+  id: 'fecha_envio',
+  displayName: 'Fecha de Envío',
+},
+{
+  id: 'pregunta',
+  displayName: 'Titulo de la Pregunta',
+},
+{
+  id: 'tipo',
+  displayName: 'Tipo de Pregunta',
+},
+{
+  id: 'aclaratoria',
+  displayName: 'Aclaratoria de la Pregunta',
+},
+{
+  id: 'ref_preg',
+  displayName: 'Referencia de la Pregunta',
+},
+{
+  id: 'escala',
+  displayName: 'Escala',
+},
+{
+  id: 'fecha_respuesta',
+  displayName: 'Fecha de la Respuesta',
+},
+{
+  id: 'valor',
+  displayName: 'Valor de la Respuesta',
+}];
 
 class PollsResume extends Component {
   constructor(props) {
@@ -44,16 +109,38 @@ class PollsResume extends Component {
     this.state = {
       selected: "",
       polls: [],
-      answers: []
+      answers: [],
+      csv: [],
     };
     this.showResume = this.showResume.bind(this);
+  };
+
+  exportAnswers2Csv() {
+    let answers = this.state.answers;
+    let data = answers.map(answer => (
+      {
+        ref_poll: this.state.selected,
+        hcu: answer.client.hcu,
+        cliente: answer.client.name,
+        email: answer.client.email,
+        fecha_envio: answer.pollsend.createdAt.split('T')[0],
+        pregunta: answer.pollsend.poll.question.title,
+        tipo: answer.pollsend.poll.question.type === 'opinion_scale' ? 'escala' : answer.pollsend.poll.question.type === 'yes_no' ? 'si-no' : 'seleccion',
+        aclaratoria: answer.pollsend.poll.question.description,
+        ref_preg: answer.pollsend.poll.question.ref,
+        escala: answer.pollsend.poll.question.type === 'opinion_scale' ? answer.pollsend.poll.question.scale : "no_aplica",
+        fecha_respuesta: answer.createdAt.split('T')[0],
+        valor: answer.value
+      }
+    ))
+    this.setState({ csv: data });
   };
 
   showResume = pollsend => e => {
     //console.log('Ref: ', pollsendId);
     axios.get(`/api/polls/answers/${pollsend.id}`)
     .then(res => {
-      this.setState({ selected: pollsend.ref, answers: res.data })
+      this.setState({ selected: pollsend.ref, answers: res.data }, () => this.exportAnswers2Csv())
     });
   };
 
@@ -63,7 +150,7 @@ class PollsResume extends Component {
       //console.log('SendPolls: ', sendpolls);
       let polls = sendpolls.map(sendpoll => ({
         clients: sendpoll.clients,
-        ref: sendpoll.poll.ref,
+        ref: sendpoll.ref,
         date: sendpoll.createdAt.split('T')[0],
         answers: sendpoll.answers,
         id: sendpoll.id,
@@ -71,7 +158,8 @@ class PollsResume extends Component {
         name: sendpoll.poll.name,
         group: sendpoll.poll.group.description
       }));
-      this.setState({ polls})
+      this.setState({ polls })
+      //console.log('Polls: ', polls);
       // for (let i = 0; i < polls.length; i++) { // recuperar las respuestas por cada encuesta enviada y preentar un resumen listo para descargar
       //   this.props.getPollAnswers(polls[i].ref).then(answers => {
       //     let data = {
@@ -88,15 +176,21 @@ class PollsResume extends Component {
 
   render() {
     const { classes, loggedUser } = this.props;
-    //console.log('Answers : ', this.state.answers);
+    //console.log('CSV : ', this.state.csv);
     return !loggedUser.logged ? (
       <div className={classes.root}>
-        <h1>Necesitas loggearte para ver esta informacion</h1>
+        <Typography variant="h6" gutterBottom>
+              Necesitas loggearte para ver esta información
+        </Typography>
       </div>
     ) : (
       <Grid container>
         <Grid item xs={12}>
-          <Paper>CUADRO DE ESTADO DE LOS FORMULARIOS DE ENCUESTAS</Paper>
+          <Paper>
+            <Typography variant="h6" gutterBottom>
+              Cuadro de Estado de las Encuestas que han sido enviadas
+            </Typography>
+          </Paper>
         </Grid>
         <Grid item xs={12}>
           <Paper className={classes.root}>
@@ -109,8 +203,8 @@ class PollsResume extends Component {
                   <CustomTableCell>Archivo</CustomTableCell>
                   <CustomTableCell>Enviado</CustomTableCell>
                   <CustomTableCell numeric>Clientes Enviados</CustomTableCell>
-                  <CustomTableCell numeric>Contestados</CustomTableCell>
-                  <CustomTableCell numeric>Por Contestar</CustomTableCell>
+                  {/* <CustomTableCell numeric>Contestados</CustomTableCell>
+                  <CustomTableCell numeric>Por Contestar</CustomTableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -125,8 +219,8 @@ class PollsResume extends Component {
                       <CustomTableCell>{row.file}</CustomTableCell>
                       <CustomTableCell>{row.date}</CustomTableCell>
                       <CustomTableCell numeric>{row.clients}</CustomTableCell>
-                      <CustomTableCell numeric>{row.answers}</CustomTableCell>
-                      <CustomTableCell numeric>{row.clients - row.answers}</CustomTableCell>
+                      {/* <CustomTableCell numeric>{row.answers}</CustomTableCell>
+                      <CustomTableCell numeric>{row.clients - row.answers}</CustomTableCell> */}
                     </TableRow>
                   );
                 })}
@@ -136,8 +230,31 @@ class PollsResume extends Component {
         </Grid>
         <Grid item xs={12}>
           <Paper>
-            <Grid item xs={12}>Respuestas Registradas</Grid>
-            <Grid item xs={12}>Pregunta : {this.state.answers.length ? this.state.answers[0].pollsend.poll.question.title : "" }</Grid>
+            <Grid container>
+              <Grid item xs={6}>
+                <Typography variant="subtitle1" gutterBottom>
+                  Respuestas Registradas
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <CsvDownloader
+                  filename={`reporte-${this.state.selected}`}
+                  columns={columns}
+                  datas={this.state.csv}
+                >
+                  <Button disabled={this.state.answers.length ? false : true} variant="contained" size="small" className={classes.button}>
+                    <SaveIcon className={classNames(classes.leftIcon, classes.iconSmall)} />
+                    Descargar Respuestas
+                  </Button>
+                </CsvDownloader>
+              
+              </Grid>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="subtitle2" gutterBottom>
+                Pregunta : {this.state.answers.length ? this.state.answers[0].pollsend.poll.question.title : "" }
+              </Typography>
+            </Grid>
           </Paper>
         </Grid>
         <Grid item xs={12}>
