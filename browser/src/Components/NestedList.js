@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import Grid from "@material-ui/core/Grid";
@@ -21,7 +21,7 @@ import Home from "@material-ui/icons/Home";
 const styles = theme => ({
   root: {
     flex: 1,
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.background.paper
   },
   nested: {
     paddingLeft: theme.spacing.unit * 2
@@ -57,66 +57,7 @@ class NestedList extends React.Component {
                 <ListItemIcon>
                   <Home />
                 </ListItemIcon>
-                <ListItemText inset primary="Enviadas" />
-              </ListItem>
-            </Link>
-            {/* <Link to="/questions">
-              <ListItem button>
-                <ListItemIcon>
-                  <ADB />
-                </ListItemIcon>
-                <ListItemText inset primary="Preguntas" />
-              </ListItem>
-            </Link> */}
-            {/* <ListItem button onClick={this.handleClick("openPolls")}>
-              <ListItemIcon>
-                <ConfirmationNumber />
-              </ListItemIcon>
-              <ListItemText inset primary="Encuestas" />
-              {this.state.open ? <ExpandLess /> : <ExpandMore />}
-            </ListItem> */}
-            {/* <Collapse in={this.state.openPolls} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                <Link to="/">
-                  <ListItem button className={classes.nested}>
-                    <ListItemIcon>
-                      <StarBorder />
-                    </ListItemIcon>
-                    <ListItemText inset primary="Creadas" />
-                  </ListItem>
-                </Link>
-              </List>
-            </Collapse> */}
-            {/* <Collapse in={this.state.openPolls} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                <Link to="/questions">
-                  <ListItem button className={classes.nested}>
-                    <ListItemIcon>
-                      <StarBorder />
-                    </ListItemIcon>
-                    <ListItemText inset primary="Crear" />
-                  </ListItem>
-                </Link>
-              </List>
-            </Collapse> */}
-            {/* <Collapse in={this.state.openPolls} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                <Link to="/polls/send">
-                  <ListItem button className={classes.nested}>
-                    <ListItemIcon>
-                      <StarBorder />
-                    </ListItemIcon>
-                    <ListItemText inset primary="Enviar" />
-                  </ListItem>
-                </Link>
-              </List>
-            </Collapse> */}
-            <Link to="/questions">
-              <ListItem button>
-                <ListItemIcon>
-                  <ADB />
-                </ListItemIcon>
-                <ListItemText inset primary="Crear" />
+                <ListItemText inset primary="Inicio" />
               </ListItem>
             </Link>
             <Link to="/upload">
@@ -124,7 +65,15 @@ class NestedList extends React.Component {
                 <ListItemIcon>
                   <ADB />
                 </ListItemIcon>
-                <ListItemText inset primary="Carga" />
+                <ListItemText inset primary="Cargar Archivo" />
+              </ListItem>
+            </Link>
+            <Link to="/questions">
+              <ListItem button>
+                <ListItemIcon>
+                  <ADB />
+                </ListItemIcon>
+                <ListItemText inset primary="Preguntas" />
               </ListItem>
             </Link>
             <Link to="/files">
@@ -132,7 +81,7 @@ class NestedList extends React.Component {
                 <ListItemIcon>
                   <ADB />
                 </ListItemIcon>
-                <ListItemText inset primary="Enviar" />
+                <ListItemText inset primary="Enviar Encuesta" />
               </ListItem>
             </Link>
           </List>

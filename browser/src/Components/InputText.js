@@ -1,6 +1,6 @@
 import React from "react";
-import axios from 'axios';
-import { withRouter } from 'react-router-dom';
+import axios from "axios";
+import { withRouter } from "react-router-dom";
 import uuid from "uuid";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -118,11 +118,12 @@ class InputText extends React.Component {
   clickEnable = value => event => {
     event.preventDefault();
     //console.log('Ref : ', value );
-    axios.put("/api/questions/disable", { ref: value })
-    .then(res => res.data)
-    .then(data => {
-      this.props.getQuestionsDB();
-    });
+    axios
+      .put("/api/questions/disable", { ref: value })
+      .then(res => res.data)
+      .then(data => {
+        this.props.getQuestionsDB();
+      });
   };
 
   clickUpdate = value => event => {
@@ -137,16 +138,29 @@ class InputText extends React.Component {
       uid = uuid();
     }
     //console.log("Lo que viene : ", event.target.value);
-    this.setState(
-      {
-        question: {
-          ...this.state.question,
-          ref: uid,
-          [label]: event.target.value
-        }
-      },
-      () => this.props.storeQuestion(this.state.question)
-    );
+    if (label === "choices") {
+      if (this.state.choices.split(",").length <= 5) {
+        this.setState(
+          {
+            question: {
+              choices: event.target.value
+            }
+          },
+          () => this.props.storeQuestion(this.state.question)
+        );
+      }
+    } else {
+      this.setState(
+        {
+          question: {
+            ...this.state.question,
+            ref: uid,
+            [label]: event.target.value
+          }
+        },
+        () => this.props.storeQuestion(this.state.question)
+      );
+    }
   };
 
   handleSubmit = event => {
@@ -190,7 +204,7 @@ class InputText extends React.Component {
   }
 
   render() {
-    //console.log("State: ", this.state.questions);
+    //console.log("Choices: ", this.state.question.choices);
     //console.log('Questions: ', this.props.questions);
     const { classes, loggedUser, groups } = this.props;
     return !loggedUser.logged ? (
@@ -205,87 +219,87 @@ class InputText extends React.Component {
           </div>
         </Grid>
         <Grid item xs={12}>
-        <form className={classes.container} noValidate autoComplete="off">
-          <TextField
-            required
-            onChange={this.handleChange("title")}
-            id="title-required"
-            value={this.state.question.title}
-            label="Pregunta"
-            placeholder="Escriba aquí la pregunta"
-            className={classes.textField1}
-            margin="normal"
-            
-          />
-          <TextField
-            onChange={this.handleChange("description")}
-            id="desc"
-            value={this.state.question.description}
-            label="Aclaratoria"
-            placeholder="Escriba la aclaratoria para la pregunta"
-            className={classes.textField2}
-            margin="normal"
-          />
-          <Select
-            label={"group"}
-            name={"Categoría"}
-            value={this.state.question.group}
-            array={groups}
-            handleChange={this.handleChange}
-          />
-          <Select
-            label={"type"}
-            name={"Tipo"}
-            value={this.state.question.type}
-            array={types}
-            handleChange={this.handleChange}
-          />
-          {(this.state.question.type === "rating" || this.state.question.type === "opinion_scale") ? (
-            <div>
-              <Select
-                label={"shape"}
-                value={this.state.question.shape}
-                name={"Forma"}
-                array={shapes}
-                handleChange={this.handleChange}
-              />
-              <Select
-                label={"scale"}
-                value={this.state.question.scale}
-                name={"Escala"}
-                array={scale}
-                handleChange={this.handleChange}
-              />
-            </div>
-          ) : this.state.question.type === "multiple_choice" ? (
-            <div>
-              <TextField
-                label={"Opciones"}
-                value={this.state.question.choices}
-                onChange={this.handleChange("choices")}
-                className={classes.textField1}
-                placeholder="Ingrese las opciones separadas por comas"
-                helperText="Opción 1, Opción 2, Opción 3,..."
-                fullWidth
-                margin="normal"
-                variant="outlined"
-              />
-              <Select
-                label={"allow_multiple_selection"}
-                value={this.state.question.allow_multiple_selection}
-                name={"Seleccione"}
-                array={[
-                  { label: "Selección Multiple", value: true },
-                  { label: "Solo una opción", value: false }
-                ]}
-                handleChange={this.handleChange}
-              />
-            </div>
-          ) : (
-            <div />
-          )}
+          <form className={classes.container} noValidate autoComplete="off">
+            <TextField
+              required
+              onChange={this.handleChange("title")}
+              id="title-required"
+              value={this.state.question.title}
+              label="Pregunta"
+              placeholder="Escriba aquí la pregunta"
+              className={classes.textField1}
+              margin="normal"
+            />
+            <TextField
+              onChange={this.handleChange("description")}
+              id="desc"
+              value={this.state.question.description}
+              label="Aclaratoria"
+              placeholder="Escriba la aclaratoria para la pregunta"
+              className={classes.textField2}
+              margin="normal"
+            />
+            <Select
+              label={"group"}
+              name={"Categoría"}
+              value={this.state.question.group}
+              array={groups}
+              handleChange={this.handleChange}
+            />
+            <Select
+              label={"type"}
+              name={"Tipo"}
+              value={this.state.question.type}
+              array={types}
+              handleChange={this.handleChange}
+            />
+            {this.state.question.type === "rating" ||
+            this.state.question.type === "opinion_scale" ? (
+              <div>
+                <Select
+                  label={"shape"}
+                  value={this.state.question.shape}
+                  name={"Forma"}
+                  array={shapes}
+                  handleChange={this.handleChange}
+                />
+                <Select
+                  label={"scale"}
+                  value={this.state.question.scale}
+                  name={"Escala"}
+                  array={scale}
+                  handleChange={this.handleChange}
+                />
+              </div>
+            ) : this.state.question.type === "multiple_choice" ? (
+              <div>
+                <TextField
+                  label={"Opciones"}
+                  value={this.state.question.choices}
+                  onChange={this.handleChange("choices")}
+                  className={classes.textField1}
+                  placeholder="Ingrese las opciones separadas por comas"
+                  helperText="Opción 1, Opción 2, Opción 3,..."
+                  fullWidth
+                  margin="normal"
+                  variant="outlined"
+                />
+                <Select
+                  label={"allow_multiple_selection"}
+                  value={this.state.question.allow_multiple_selection}
+                  name={"Seleccione"}
+                  array={[
+                    { label: "Selección Multiple", value: true },
+                    { label: "Solo una opción", value: false }
+                  ]}
+                  handleChange={this.handleChange}
+                />
+              </div>
+            ) : (
+              <div />
+            )}
 
-          <PrimaryButton button={"Añadir"} handleClick={this.handleSubmit} />
+            <PrimaryButton button={"Añadir"} handleClick={this.handleSubmit} />
           </form>
         </Grid>
         <Grid item xs={12}>

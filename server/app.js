@@ -30,13 +30,14 @@ app.use("/", function(req, res, next) {
 });
 
 app.use((err, req, res, next) => {
-  console.log('Manejo el error: ', err);
+  console.log("Manejo el error: ", err);
   res.status(500).send(err);
 });
 
 db.sync({ force: false })
-.then(() =>
-  app.listen(process.env.SERVER_PORT, () =>
-    console.log(`Listening on PORT ${process.env.SERVER_PORT}`)
+  .then(() =>
+    app.listen(process.env.SERVER_PORT, () =>
+      console.log(`Listening on PORT ${process.env.SERVER_PORT}`)
+    )
   )
-).then(() => seed());
+  .then(() => seed());
