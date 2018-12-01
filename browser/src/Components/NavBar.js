@@ -8,6 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import LoginButton from "../Containers/LoginButton";
 import ChPassBtn from "../Containers/ChPassBtn";
 import MailServerButton from "../Components/MailServerButton";
+import UserCreateButton from "./UserCreateButton";
 
 const styles = theme => ({
   root: {
@@ -21,7 +22,7 @@ const styles = theme => ({
     marginRight: 20
   },
   button: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing.unit
   }
 });
 
@@ -35,8 +36,9 @@ function NavBar(props) {
             ENCUESTAS MEDILINK
           </Typography>
           <LoginButton />
-          {loggedUser.logged ? <ChPassBtn /> : <div></div>}
-          {loggedUser.logged ? <MailServerButton /> : <div></div>}
+          {loggedUser.logged ? <ChPassBtn /> : <div />}
+          {loggedUser.logged ? <MailServerButton /> : <div />}
+          {loggedUser.logged ? <UserCreateButton /> : <div />}
         </Toolbar>
       </AppBar>
     </div>

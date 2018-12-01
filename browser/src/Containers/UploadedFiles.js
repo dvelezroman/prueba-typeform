@@ -3,14 +3,10 @@ import axios from "axios";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-//import * as typeformEmbed from '@typeform/embed' // Typeform SDK
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import Checkbox from "@material-ui/core/Checkbox";
 import Grid from "@material-ui/core/Grid";
 import PrimaryButton from "../Components/PrimaryButton";
-//import Paper from "@material-ui/core/Paper";
-// import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
 import ShowOrders from "../Components/ShowOrders";
 
@@ -74,7 +70,8 @@ class UploadedFiles extends Component {
 
   async sendEmails() {
     let file = this.state.selectedFile;
-    let polls = this.state.selectedQuestions;
+    //let polls = this.state.selectedQuestions;
+    let polls = this.state.questions; // pongo todo no doy para que seleccionen nada
     let orders = this.state.orders;
     //console.log('Polls selected: ', polls);
     if (!file.ref) alert("Debes seleccionar un archivo cargado!");
@@ -83,7 +80,7 @@ class UploadedFiles extends Component {
       let server = await axios
         .get("/api/mailserver/selected")
         .then(res => res.data.data);
-      console.log("Server: ", server);
+      //console.log("Server: ", server);
       if (!server.id) {
         this.setState({
           selectedFile: {},
@@ -97,16 +94,29 @@ class UploadedFiles extends Component {
         let n_polls_by_group = _.countBy(polls, poll => poll.groupId);
         let polls_paired_with_clients = [];
         _.forEach(n_polls_by_group, function(value, key) {
-          for (let i = 0; i < value; i++) {
-            if (_.chunk(grouped_orders[key], value)[i]) {
-              polls_paired_with_clients.push({
-                groupId: key,
-                clients: _.chunk(grouped_orders[key], value)[i],
-                poll: grouped_polls[key][i]
-              });
+          if (n_polls_by_group[key] < 2) {
+            let data = {
+              groupId: key,
+              clients: _.chunk(grouped_orders[key], value),
+              poll: grouped_polls[key][0]
+            };
+            //console.log("Data : ", data);
+            polls_paired_with_clients.push(data);
+          } else {
+            for (let i = 0; i < value; i++) {
+              if (_.chunk(grouped_orders[key], value)[i]) {
+                polls_paired_with_clients.push({
+                  groupId: key,
+                  clients: _.chunk(grouped_orders[key], value)[i],
+                  poll: grouped_polls[key][i]
+                });
+              }
             }
           }
         });
+        //console.log("Grouped orders : ", grouped_orders);
+        //console.log("Polls by group: ", n_polls_by_group);
+        //console.log("Polls paired : ", polls_paired_with_clients);
         // primero vemos cuantas encuestas hay seleccionadas del mismo grupo
         // por cada formulario seleccionado, enviarle ese formulario a los clientes de la misma categoría del formulario
         let promises_to_send_emails = [];
@@ -208,7 +218,7 @@ class UploadedFiles extends Component {
             handleClick={() => this.sendEmails()}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={6}>
           <Grid item xs={12}>
             Lista de archivos que han sido cargados
           </Grid>
@@ -229,7 +239,7 @@ class UploadedFiles extends Component {
             ))}
           </Grid>
         </Grid>
-        <Grid item xs={8}>
+        {/* <Grid item xs={8}>
           <Grid item xs={12}>
             Lista de Encuestas Disponibles
           </Grid>
@@ -266,15 +276,15 @@ class UploadedFiles extends Component {
                           .map((choice, i) => `${i}. ${choice} - `)}`
                   }
                 />
-                {/* <ListItemSecondaryAction>
+                <ListItemSecondaryAction>
                     <IconButton aria-label="Comments">
                       <CommentIcon />
                     </IconButton>
-                  </ListItemSecondaryAction> */}
+                  </ListItemSecondaryAction>
               </ListItem>
             ))}
           </List>
-        </Grid>
+        </Grid> */}
         <Grid item xs={12}>
           {this.state.selectedFile.name
             ? `Ordenes contenidas en el archivo : ${

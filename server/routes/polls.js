@@ -75,14 +75,14 @@ router.post("/sendpolls", (req, res) => {
 
 // sends email to a group of emails belonging a one category
 router.post("/send", async (req, res, next) => {
-  //console.log('Params: ', req.body.array);
+  //console.log("Params: ", req.body);
   let params = req.body.array;
   // aqui va la accion de enviar mail con gmail
   let ref = uuid(); // genero un ref
   let server = req.body.server;
   let emails = params.clients.map(item => item.email);
   let file = params.fileId;
-  let names = params.clients;
+  let names = params.clients.map(item => item[0]);
   let url = params.url;
   let subject = params.subject;
   let greet = params.greet;
@@ -165,8 +165,9 @@ router.post("/new", function(req, res, next) {
   //console.log('PollData: ', req.body);
   let question = req.body.poll;
   let ref = req.body.ref;
+  let groupId = req.body.group;
   let url = req.body.url;
-  Group.findOne({ where: { id: Number(question.group) } }).then(group =>
+  Group.findOne({ where: { id: Number(groupId) } }).then(group =>
     Poll.create({
       ref: ref,
       url: url,
@@ -174,7 +175,7 @@ router.post("/new", function(req, res, next) {
       subject: question.subject,
       greet: question.greet
     }).then(poll =>
-      Question.findOne({ where: { ref: question.ref } }).then(question => {
+      Question.findOne({ where: { ref: ref } }).then(question => {
         poll.setGroup(group);
         poll.setQuestion(question);
         //poll.setFile(file);
@@ -214,7 +215,7 @@ router.get("/answer/:poll_id/:hcu/data/:value", (req, res) => {
         let question = await Question.findOne({
           where: { ref: poll.ref }
         }).then(question => question);
-        //console.log('Question : ', question);
+        //console.log("Question : ", question);
         Answer.findOrCreate({
           where: { clientId: client.id, pollsendId: pollsend.id },
           defaults: { type: question.type, value: params.value }
