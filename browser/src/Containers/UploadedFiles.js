@@ -97,10 +97,10 @@ class UploadedFiles extends Component {
           if (n_polls_by_group[key] < 2) {
             let data = {
               groupId: key,
-              clients: _.chunk(grouped_orders[key], value),
+              clients: grouped_orders[key],
               poll: grouped_polls[key][0]
             };
-            //console.log("Data : ", data);
+            //console.log("Data cuando solo es un cliente : ", data);
             polls_paired_with_clients.push(data);
           } else {
             for (let i = 0; i < value; i++) {
@@ -199,7 +199,7 @@ class UploadedFiles extends Component {
 
   render() {
     const { classes, loggedUser } = this.props;
-    const questions = this.state.questions.filter(question => question.enabled);
+    //const questions = this.state.questions.filter(question => question.enabled);
     //console.log('State : ', this.state);
     //console.log('Questions: ', questions);
     return !loggedUser.logged ? (

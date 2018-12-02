@@ -1,21 +1,23 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import axios from 'axios';
-import CsvDownloader from 'react-csv-downloader';
+import axios from "axios";
+import _ from "lodash";
+import CsvDownloader from "react-csv-downloader";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import classNames from 'classnames';
-import Button from '@material-ui/core/Button';
+import classNames from "classnames";
+import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
+import TextField from "@material-ui/core/TextField";
 import TableHead from "@material-ui/core/TableHead";
-import Typography from '@material-ui/core/Typography';
+import Typography from "@material-ui/core/Typography";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
-import SaveIcon from '@material-ui/icons/Save';
-import { getPollAnswers, getSendPolls } from '../actions/typeForm';
+import SaveIcon from "@material-ui/icons/Save";
+import { getPollAnswers, getSendPolls } from "../actions/typeForm";
 
 const CustomTableCell = withStyles(theme => ({
   head: {
@@ -42,145 +44,210 @@ const styles = theme => ({
     }
   },
   button: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing.unit
   },
   leftIcon: {
-    marginRight: theme.spacing.unit,
+    marginRight: theme.spacing.unit
   },
   rightIcon: {
-    marginLeft: theme.spacing.unit,
+    marginLeft: theme.spacing.unit
   },
   iconSmall: {
-    fontSize: 20,
-  },
+    fontSize: 20
+  }
 });
 
-const columns = [{
-  id: 'ref_poll',
-  displayName: 'Referencia de Encuesta Enviada'
-}, {
-  id: 'hcu',
-  displayName: 'HCU de cliente',
-},
-{
-  id: 'cliente',
-  displayName: 'Nombre Cliente',
-},
-{
-  id: 'email',
-  displayName: 'Email de Cliente',
-},
-{
-  id: 'fecha_envio',
-  displayName: 'Fecha de Envío',
-},
-{
-  id: 'pregunta',
-  displayName: 'Titulo de la Pregunta',
-},
-{
-  id: 'tipo',
-  displayName: 'Tipo de Pregunta',
-},
-{
-  id: 'aclaratoria',
-  displayName: 'Aclaratoria de la Pregunta',
-},
-{
-  id: 'ref_preg',
-  displayName: 'Referencia de la Pregunta',
-},
-{
-  id: 'escala',
-  displayName: 'Escala',
-},
-{
-  id: 'fecha_respuesta',
-  displayName: 'Fecha de la Respuesta',
-},
-{
-  id: 'valor',
-  displayName: 'Valor de la Respuesta',
-}];
+const columns = [
+  {
+    id: "ref_poll",
+    displayName: "Referencia de Encuesta Enviada"
+  },
+  {
+    id: "hcu",
+    displayName: "HCU de cliente"
+  },
+  {
+    id: "cliente",
+    displayName: "Nombre Cliente"
+  },
+  {
+    id: "email",
+    displayName: "Email de Cliente"
+  },
+  {
+    id: "fecha_envio",
+    displayName: "Fecha de Envío"
+  },
+  {
+    id: "pregunta",
+    displayName: "Titulo de la Pregunta"
+  },
+  {
+    id: "tipo",
+    displayName: "Tipo de Pregunta"
+  },
+  {
+    id: "aclaratoria",
+    displayName: "Aclaratoria de la Pregunta"
+  },
+  {
+    id: "ref_preg",
+    displayName: "Referencia de la Pregunta"
+  },
+  {
+    id: "escala",
+    displayName: "Escala"
+  },
+  {
+    id: "fecha_respuesta",
+    displayName: "Fecha de la Respuesta"
+  },
+  {
+    id: "valor",
+    displayName: "Valor de la Respuesta"
+  }
+];
+
+const formatDate = date => {
+  // let currentDate = new Date()
+  let day = date.getDate();
+  let month = date.getMonth() + 1;
+  let year = date.getFullYear();
+  if (day < 10) {
+    day = "0" + day;
+  }
+
+  if (month < 10) {
+    month = "0" + month;
+  }
+  return year + "-" + month + "-" + day;
+};
 
 class PollsResume extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       selected: "",
       polls: [],
       answers: [],
       csv: [],
+      from: "",
+      to: ""
     };
     this.showResume = this.showResume.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange = label => e => {
+    if (label === "to" && this.state.from) {
+      const from = this.state.from;
+      const to = e.target.value;
+      axios
+        .get(`/api/polls/sendpolls/from/${from}/to/${to}`)
+        .then(res => res.data)
+        .then(sendpolls => {
+          let polls = sendpolls.map(sendpoll => ({
+            clients: sendpoll.clients,
+            ref: sendpoll.ref,
+            question_ref: sendpoll.poll.question.question_ref,
+            date: sendpoll.createdAt.split("T")[0],
+            answers: sendpoll.answers,
+            id: sendpoll.id,
+            file: sendpoll.file.name,
+            name: sendpoll.poll.name,
+            group: sendpoll.poll.group.description
+          }));
+          //let grouped_polls1 = _.groupBy(polls, poll => poll.question_ref);
+          let grouped_polls2 = {};
+          for (let i = 0; i < polls.length; i++) {
+            let poll = polls[i].question_ref;
+            if (grouped_polls2[poll]) {
+              grouped_polls2[poll].clients += polls[i].clients;
+            } else {
+              grouped_polls2[poll] = {
+                ...polls[i],
+                clients: polls[i].clients
+              };
+            }
+          }
+          let grouped_polls3 = [];
+          _.forEach(grouped_polls2, (value, key) => {
+            grouped_polls3.push(value);
+          });
+          console.log("Grouped Polls : ", grouped_polls3);
+          this.setState({ polls: grouped_polls3, to });
+        });
+    } else {
+      this.setState({ [label]: e.target.value });
+    }
   };
 
   exportAnswers2Csv() {
     let answers = this.state.answers;
-    let data = answers.map(answer => (
-      {
-        ref_poll: this.state.selected,
-        hcu: answer.client.hcu,
-        cliente: answer.client.name,
-        email: answer.client.email,
-        fecha_envio: answer.pollsend.createdAt.split('T')[0],
-        pregunta: answer.pollsend.poll.question.title,
-        tipo: answer.pollsend.poll.question.type === 'opinion_scale' ? 'escala' : answer.pollsend.poll.question.type === 'yes_no' ? 'si-no' : 'seleccion',
-        aclaratoria: answer.pollsend.poll.question.description,
-        ref_preg: answer.pollsend.poll.question.ref,
-        escala: answer.pollsend.poll.question.type === 'opinion_scale' ? answer.pollsend.poll.question.scale : "no_aplica",
-        fecha_respuesta: answer.createdAt.split('T')[0],
-        valor: answer.value
-      }
-    ))
+    let data = answers.map(answer => ({
+      ref_poll: this.state.selected,
+      hcu: answer.client.hcu,
+      cliente: answer.client.name,
+      email: answer.client.email,
+      fecha_envio: answer.pollsend.createdAt.split("T")[0],
+      pregunta: answer.pollsend.poll.question.title,
+      tipo:
+        answer.pollsend.poll.question.type === "opinion_scale"
+          ? "escala"
+          : answer.pollsend.poll.question.type === "yes_no"
+          ? "si-no"
+          : "seleccion",
+      aclaratoria: answer.pollsend.poll.question.description,
+      ref_preg: answer.pollsend.poll.question.ref,
+      escala:
+        answer.pollsend.poll.question.type === "opinion_scale"
+          ? answer.pollsend.poll.question.scale
+          : "no_aplica",
+      fecha_respuesta: answer.createdAt.split("T")[0],
+      valor: answer.value
+    }));
     this.setState({ csv: data });
-  };
+  }
 
   showResume = pollsend => e => {
     //console.log('Ref: ', pollsendId);
-    axios.get(`/api/polls/answers/${pollsend.id}`)
-    .then(res => {
-      this.setState({ selected: pollsend.ref, answers: res.data }, () => this.exportAnswers2Csv())
+    axios.get(`/api/polls/answers/${pollsend.id}`).then(res => {
+      this.setState({ selected: pollsend.ref, answers: res.data }, () =>
+        this.exportAnswers2Csv()
+      );
     });
   };
 
   componentDidMount() {
+    let from = formatDate(new Date());
+    let to = formatDate(new Date());
+    this.setState({ from, to });
     // traer las refs de las encuestas que han sido enviadas y armar un array de refs []
-    axios.get('/api/polls/sendpolls').then(res => res.data).then(sendpolls => {
-      //console.log('SendPolls: ', sendpolls);
-      let polls = sendpolls.map(sendpoll => ({
-        clients: sendpoll.clients,
-        ref: sendpoll.ref,
-        date: sendpoll.createdAt.split('T')[0],
-        answers: sendpoll.answers,
-        id: sendpoll.id,
-        file: sendpoll.file.name,
-        name: sendpoll.poll.name,
-        group: sendpoll.poll.group.description
-      }));
-      this.setState({ polls })
-      //console.log('Polls: ', polls);
-      // for (let i = 0; i < polls.length; i++) { // recuperar las respuestas por cada encuesta enviada y preentar un resumen listo para descargar
-      //   this.props.getPollAnswers(polls[i].ref).then(answers => {
-      //     let data = {
-      //       ref: polls[0].ref,
-      //       answers: answers.items
-      //     };
-      //     //console.log('Data: ', data);
-      //     axios.post('/api/polls/sendpolls', data).then(() => this.props.getSendPolls());
-      //   })
-        
-      // }
-    });
-  };
+    // axios
+    //   .get("/api/polls/sendpolls")
+    //   .then(res => res.data)
+    //   .then(sendpolls => {
+    //     //console.log('SendPolls: ', sendpolls);
+    //     let polls = sendpolls.map(sendpoll => ({
+    //       clients: sendpoll.clients,
+    //       ref: sendpoll.ref,
+    //       date: sendpoll.createdAt.split("T")[0],
+    //       answers: sendpoll.answers,
+    //       id: sendpoll.id,
+    //       file: sendpoll.file.name,
+    //       name: sendpoll.poll.name,
+    //       group: sendpoll.poll.group.description
+    //     }));
+    //   });
+  }
 
   render() {
     const { classes, loggedUser } = this.props;
-    //console.log('CSV : ', this.state.csv);
+    //console.log("Polls : ", this.state.polls);
     return !loggedUser.logged ? (
       <div className={classes.root}>
         <Typography variant="h6" gutterBottom>
-              Necesitas loggearte para ver esta información
+          Necesitas loggearte para ver esta información
         </Typography>
       </div>
     ) : (
@@ -193,11 +260,35 @@ class PollsResume extends Component {
           </Paper>
         </Grid>
         <Grid item xs={12}>
+          <TextField
+            id="from"
+            label="Desde"
+            type="date"
+            value={this.state.from}
+            onChange={this.handleChange("from")}
+            className={classes.textField}
+            InputLabelProps={{
+              shrink: true
+            }}
+          />
+          <TextField
+            id="to"
+            label="Hasta"
+            type="date"
+            value={this.state.to}
+            onChange={this.handleChange("to")}
+            className={classes.textField}
+            InputLabelProps={{
+              shrink: true
+            }}
+          />
+        </Grid>
+        <Grid item xs={12}>
           <Paper className={classes.root}>
             <Table className={classes.table}>
               <TableHead>
                 <TableRow>
-                <CustomTableCell>Ref</CustomTableCell>
+                  <CustomTableCell>Ref</CustomTableCell>
                   <CustomTableCell>Formulario</CustomTableCell>
                   <CustomTableCell>Grupo</CustomTableCell>
                   <CustomTableCell>Archivo</CustomTableCell>
@@ -210,9 +301,16 @@ class PollsResume extends Component {
               <TableBody>
                 {this.state.polls.map(row => {
                   return (
-                    <TableRow className={classes.row} key={row.id} onClick={this.showResume({ ref: row.ref, id: row.id })}>
+                    <TableRow
+                      className={classes.row}
+                      key={row.id}
+                      onClick={this.showResume({
+                        ref: row.question_ref,
+                        id: row.id
+                      })}
+                    >
                       <CustomTableCell component="th" scope="row">
-                        {row.ref}
+                        {row.question_ref}
                       </CustomTableCell>
                       <CustomTableCell>{row.name}</CustomTableCell>
                       <CustomTableCell>{row.group}</CustomTableCell>
@@ -242,17 +340,29 @@ class PollsResume extends Component {
                   columns={columns}
                   datas={this.state.csv}
                 >
-                  <Button disabled={this.state.answers.length ? false : true} variant="contained" size="small" className={classes.button}>
-                    <SaveIcon className={classNames(classes.leftIcon, classes.iconSmall)} />
+                  <Button
+                    disabled={this.state.answers.length ? false : true}
+                    variant="contained"
+                    size="small"
+                    className={classes.button}
+                  >
+                    <SaveIcon
+                      className={classNames(
+                        classes.leftIcon,
+                        classes.iconSmall
+                      )}
+                    />
                     Descargar Respuestas
                   </Button>
                 </CsvDownloader>
-              
               </Grid>
             </Grid>
             <Grid item xs={12}>
               <Typography variant="subtitle2" gutterBottom>
-                Pregunta : {this.state.answers.length ? this.state.answers[0].pollsend.poll.question.title : "" }
+                Pregunta :{" "}
+                {this.state.answers.length
+                  ? this.state.answers[0].pollsend.poll.question.title
+                  : ""}
               </Typography>
             </Grid>
           </Paper>
@@ -262,7 +372,7 @@ class PollsResume extends Component {
             <Table className={classes.table}>
               <TableHead>
                 <TableRow>
-                <CustomTableCell>Id</CustomTableCell>
+                  <CustomTableCell>Id</CustomTableCell>
                   <CustomTableCell>Tipo</CustomTableCell>
                   <CustomTableCell>Valor</CustomTableCell>
                   <CustomTableCell>Cliente</CustomTableCell>
@@ -282,7 +392,9 @@ class PollsResume extends Component {
                       <CustomTableCell>{row.type}</CustomTableCell>
                       <CustomTableCell>{row.value}</CustomTableCell>
                       <CustomTableCell>{row.client.name}</CustomTableCell>
-                      <CustomTableCell>{row.createdAt.split('T')[0]}</CustomTableCell>
+                      <CustomTableCell>
+                        {row.createdAt.split("T")[0]}
+                      </CustomTableCell>
                       {/* <CustomTableCell numeric>{row.clients}</CustomTableCell>
                       <CustomTableCell numeric>{row.answers}</CustomTableCell>
                       <CustomTableCell numeric>{row.clients - row.answers}</CustomTableCell> */}
@@ -312,4 +424,7 @@ const mapDispatchToProps = dispatch => ({
   getSendPolls: () => dispatch(getSendPolls())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(PollsResume));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(PollsResume));
