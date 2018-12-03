@@ -149,6 +149,7 @@ class PollsResume extends Component {
           let polls = sendpolls.map(sendpoll => ({
             clients: sendpoll.clients,
             ref: sendpoll.ref,
+            categories: sendpoll.poll.question.categories,
             question_ref: sendpoll.poll.question.question_ref,
             date: sendpoll.createdAt.split("T")[0],
             answers: sendpoll.answers,
@@ -174,7 +175,7 @@ class PollsResume extends Component {
           _.forEach(grouped_polls2, (value, key) => {
             grouped_polls3.push(value);
           });
-          console.log("Grouped Polls : ", grouped_polls3);
+          //console.log("Grouped Polls : ", grouped_polls3);
           this.setState({ polls: grouped_polls3, to });
         });
     } else {
@@ -211,7 +212,8 @@ class PollsResume extends Component {
 
   showResume = pollsend => e => {
     //console.log('Ref: ', pollsendId);
-    axios.get(`/api/polls/answers/${pollsend.id}`).then(res => {
+    axios.get(`/api/polls/answers/${pollsend.ref}`).then(res => {
+      //console.log("Polls answers: ", res.data);
       this.setState({ selected: pollsend.ref, answers: res.data }, () =>
         this.exportAnswers2Csv()
       );
@@ -288,14 +290,14 @@ class PollsResume extends Component {
             <Table className={classes.table}>
               <TableHead>
                 <TableRow>
-                  <CustomTableCell>Ref</CustomTableCell>
+                  <CustomTableCell>Ref. Pregunta</CustomTableCell>
                   <CustomTableCell>Formulario</CustomTableCell>
                   <CustomTableCell>Grupo</CustomTableCell>
                   <CustomTableCell>Archivo</CustomTableCell>
                   <CustomTableCell>Enviado</CustomTableCell>
                   <CustomTableCell numeric>Clientes Enviados</CustomTableCell>
-                  {/* <CustomTableCell numeric>Contestados</CustomTableCell>
-                  <CustomTableCell numeric>Por Contestar</CustomTableCell> */}
+                  <CustomTableCell>Categorías</CustomTableCell>
+                  {/* <CustomTableCell numeric>Por Contestar</CustomTableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -317,8 +319,8 @@ class PollsResume extends Component {
                       <CustomTableCell>{row.file}</CustomTableCell>
                       <CustomTableCell>{row.date}</CustomTableCell>
                       <CustomTableCell numeric>{row.clients}</CustomTableCell>
-                      {/* <CustomTableCell numeric>{row.answers}</CustomTableCell>
-                      <CustomTableCell numeric>{row.clients - row.answers}</CustomTableCell> */}
+                      <CustomTableCell>{row.categories}</CustomTableCell>
+                      {/* <CustomTableCell numeric>{row.clients - row.answers}</CustomTableCell> */}
                     </TableRow>
                   );
                 })}
@@ -374,9 +376,9 @@ class PollsResume extends Component {
                 <TableRow>
                   <CustomTableCell>Id</CustomTableCell>
                   <CustomTableCell>Tipo</CustomTableCell>
-                  <CustomTableCell>Valor</CustomTableCell>
+                  <CustomTableCell>Respuesta</CustomTableCell>
                   <CustomTableCell>Cliente</CustomTableCell>
-                  <CustomTableCell>Fecha</CustomTableCell>
+                  <CustomTableCell>Fecha Respuesta</CustomTableCell>
                   {/* <CustomTableCell numeric>Clientes Enviados</CustomTableCell>
                   <CustomTableCell numeric>Contestados</CustomTableCell>
                   <CustomTableCell numeric>Por Contestar</CustomTableCell> */}

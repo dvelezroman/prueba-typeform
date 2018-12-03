@@ -53,14 +53,25 @@ router.get("/sendpolls", (req, res, next) => {
     .catch(err => res.status(404).json(err));
 });
 
-router.get("/answers/:pollsendId", (req, res) => {
+router.get("/answers/:question_ref", (req, res) => {
+  let question_ref = req.params.question_ref;
+  //console.log("Pollsends : ", question_ref);
+  // obtener las respuestas de todas las pollsend que pertenecen a una question_ref
   Answer.findAll({
-    where: { pollsendId: req.params.pollsendId },
     include: [
       { model: PollsSend, include: [{ model: Poll, include: [Question] }] },
       { model: Client }
     ]
-  }).then(answers => res.status(200).json(answers));
+  }).then(items => {
+    let answers = [];
+    //console.log("Items : ", items);
+    items.forEach(item => {
+      if (item.pollsend.poll.question.question_ref === question_ref) {
+        answers.push(item);
+      }
+    });
+    res.status(200).json(answers);
+  });
 });
 
 router.post("/sendpolls", (req, res) => {
