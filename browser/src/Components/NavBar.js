@@ -5,6 +5,8 @@ import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
+import Avatar from "@material-ui/core/Avatar";
+import deepOrange from "@material-ui/core/colors/deepOrange";
 import LoginButton from "../Containers/LoginButton";
 import ChPassBtn from "../Containers/ChPassBtn";
 import MailServerButton from "../Components/MailServerButton";
@@ -17,6 +19,11 @@ const styles = theme => ({
   grow: {
     flexGrow: 1
   },
+  orangeAvatar: {
+    margin: 10,
+    color: "#fff",
+    backgroundColor: deepOrange[500]
+  },
   menuButton: {
     marginLeft: -12,
     marginRight: 20
@@ -28,6 +35,7 @@ const styles = theme => ({
 
 function NavBar(props) {
   const { classes, loggedUser } = props;
+  //console.log("User : ", loggedUser);
   return (
     <div className={classes.root}>
       <AppBar position="static">
@@ -35,6 +43,16 @@ function NavBar(props) {
           <Typography variant="h6" color="inherit" className={classes.grow}>
             ENCUESTAS MEDILINK
           </Typography>
+          {loggedUser.logged ? (
+            <Avatar className={classes.orangeAvatar}>
+              {loggedUser.user.name.split(" ").length > 1
+                ? loggedUser.user.name.split(" ")[0][0] +
+                  loggedUser.user.name.split(" ")[1][0]
+                : loggedUser.user.name[0]}
+            </Avatar>
+          ) : (
+            <div />
+          )}
           <LoginButton />
           {loggedUser.logged ? <ChPassBtn /> : <div />}
           {loggedUser.logged ? <MailServerButton /> : <div />}

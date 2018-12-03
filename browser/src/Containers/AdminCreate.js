@@ -103,9 +103,19 @@ class AdminCreate extends React.Component {
         .then(res => res.data)
         .then(data => {
           if (!data.error) {
+            this.setState({
+              email: "",
+              name: "",
+              password: "",
+              password2: ""
+            });
             alert("El usuario se creó con éxito");
             this.props.setAdmin();
-            //this.setState({ redirect: true }, () => alert('El usuario administrador se creó con éxito'));
+            this.props.history.goBack(-1);
+            return this.props.history.push("/polls/resume");
+            // this.setState({ redirect: true }, () =>
+            //   alert("El usuario administrador se creó con éxito")
+            // );
           } else {
             alert("El usuario administrador no se creó");
           }
@@ -121,7 +131,7 @@ class AdminCreate extends React.Component {
     const { name, email, password, password2, redirect } = this.state;
     return redirect ? (
       <div>
-        <Redirect to="/polls/resume" />
+        <Redirect to="/login" />
       </div>
     ) : (
       <div>
