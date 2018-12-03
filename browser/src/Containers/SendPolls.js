@@ -42,10 +42,10 @@ const styles = theme => ({
     marginRight: theme.spacing.unit
   },
   group: {
-    margin: `${theme.spacing.unit}px 0`,
+    margin: `${theme.spacing.unit}px 0`
   },
   formControl: {
-    margin: theme.spacing.unit * 3,
+    margin: theme.spacing.unit * 3
   }
 });
 
@@ -82,10 +82,12 @@ class SendPolls extends React.Component {
     }
   };
 
-  handleSendPoll = async (e) => {
+  handleSendPoll = async e => {
     e.preventDefault();
-    let server = await axios.get("/api/mailserver/selected").then(res => res.data.data);
-    console.log('Server: ', server);
+    let server = await axios
+      .get("/api/mailserver/selected")
+      .then(res => res.data.data);
+    //console.log('Server: ', server);
     let polls = this.state.checked.map(item => ({
       fileId: item.fileId,
       groupId: item.groupId
@@ -109,10 +111,17 @@ class SendPolls extends React.Component {
           }
         });
         //console.log('Array: ', urlForm[i]);
-        arrays.push({ clients: array, formName: urlForm[i].name, urlForm: urlForm[i].url, subject: urlForm[i].subject, greet: urlForm[i].greet, body: this.state.body }); // aqui por cada formulario seleccionado debe crearse un elemento
+        arrays.push({
+          clients: array,
+          formName: urlForm[i].name,
+          urlForm: urlForm[i].url,
+          subject: urlForm[i].subject,
+          greet: urlForm[i].greet,
+          body: this.state.body
+        }); // aqui por cada formulario seleccionado debe crearse un elemento
       });
       let promises_for_sending_emails = [];
-      
+
       arrays.forEach(array => {
         if (array.clients.length > 0) {
           promises_for_sending_emails.push(
@@ -121,7 +130,7 @@ class SendPolls extends React.Component {
         }
       });
       Promise.all([...promises_for_sending_emails]).then(res => {
-        console.log('Recibe de la api : ', res.data);
+        console.log("Recibe de la api : ", res.data);
         if (res.length > 1) alert("Las encuestas se enviaron exitosamente");
         else alert("Las encuesta se envió exitosamente");
       });
@@ -211,7 +220,7 @@ class SendPolls extends React.Component {
                 </List>
               </Paper>
             </Grid>
-          </Grid>  
+          </Grid>
           {/* <Grid item xs={6}>
             <Grid item xs={12}>
               <Paper className={classes.paper}>

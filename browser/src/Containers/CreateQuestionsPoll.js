@@ -11,17 +11,12 @@ import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import Select from "../Components/Select";
 import PrimaryButton from "../Components/PrimaryButton";
-// import { createDataForm } from "../Forms/formParser";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import Checkbox from "@material-ui/core/Checkbox";
 import ListOfQuestionsWithoutCheck from "../Components/ListOfQuestionsWithoutCheck";
 import { getQuestionsDB } from "../actions/questionActions";
-
-// const shapes = [
-//   { label: "Circulo", value: "circle" },
-//   { label: "Nube", value: "cloud" },
-//   { label: "Corona", value: "crown" },
-//   { label: "Corazón", value: "heart" },
-//   { label: "Estrella", value: "star" }
-// ];
 
 const scale = [
   { label: 5, value: 5 },
@@ -77,18 +72,19 @@ class CreateQuestionsPoll extends Component {
       question: {
         subject: "",
         greet: "",
-        ref: "",
         url: "",
         title: "",
+        categories: "",
         type: "opinion_scale",
         description: "",
         speciality: "Medicina General",
         scale: 5,
         shape: "star",
         choices: "",
-        allow_multiple_selection: false,
-        group: 0
+        allow_multiple_selection: false
       },
+      question_ref: "",
+      checked: [],
       groups: [],
       alert: false
     };
@@ -107,59 +103,110 @@ class CreateQuestionsPoll extends Component {
     } else if (this.state.alert) {
       this.setState({ alert: false });
     }
-    let uid = this.state.question.ref;
-    if (this.state.question.ref === "") {
+    let uid = this.state.question_ref;
+    if (this.state.question_ref === "") {
       uid = uuid();
     }
     this.setState({
       question: {
         ...this.state.question,
-        ref: uid,
         [label]: event.target.value
-      }
+      },
+      question_ref: uid
     });
   };
 
   createPoll() {
-    let ref = this.state.question.ref;
-    let url = this.state.question.ref;
-    let choices = _.chunk(this.state.question.choices.split(","), 5)[0].join(
-      ","
-    );
-    const question = Object.assign({}, ...this.state.question, {
-      ...this.state.question,
-      choices,
-      url: url
-    });
-    const question_p = axios.post("/api/questions/new", { question });
-    const poll_p = axios.post("/api/polls/new", {
-      poll: this.state.question,
-      url,
-      ref
-    });
-    Promise.all([question_p, poll_p])
-      .then(async () => {
-        alert("Se creo encuesta...");
-        this.props.getQuestionsDB();
-        this.setState({
-          question: {
-            subject: "",
-            greet: "",
-            ref: "",
-            title: "",
-            type: "opinion_scale",
-            description: "",
-            speciality: "Medicina General",
-            scale: 5,
-            shape: "star",
-            choices: "",
-            allow_multiple_selection: false,
-            group: 1
-          }
+    let checked = this.state.checked;
+    if (!checked.length) {
+      alert("Debe seleccionar al menos una categoría");
+    } else {
+      let question_ref = this.state.question_ref;
+      //console.log("Categorias: ", categories);
+      let url = this.state.question.ref;
+      let choices = _.chunk(this.state.question.choices.split(","), 5)[0].join(
+        ","
+      );
+      // creo una pregunta y una encuesta por cada categoría seleccionada
+      // por cada iteracion lo que hago es cambiar el groupId de la question para enviar a crearla
+      let question_promises = [];
+      let poll_promises = [];
+      checked.forEach(element => {
+        let ref = uuid(); // un nuevo ref por cada question y poll que voy a crear
+        const question = Object.assign({}, ...this.state.question, {
+          ...this.state.question,
+          question_ref,
+          choices,
+          url,
+          ref,
+          group: element.value
         });
-      })
-      .catch(err => alert("No se creó encuesta en la BD"));
+        //console.log("La question a crear: ", question);
+        question_promises.push(axios.post("/api/questions/new", { question }));
+        poll_promises.push(
+          axios.post("/api/polls/new", {
+            poll: this.state.question,
+            url,
+            ref,
+            group: element.value
+          })
+        );
+      });
+      Promise.all(question_promises).then(questions => {
+        //console.log("Questions created: ", questions);
+        Promise.all(poll_promises).then(polls => {
+          //console.log("Polls created : ", polls);
+          alert("Se creo encuesta...");
+          this.props.getQuestionsDB();
+          this.setState({
+            question: {
+              subject: "",
+              greet: "",
+              ref: "",
+              title: "",
+              type: "opinion_scale",
+              categories: "",
+              description: "",
+              speciality: "Medicina General",
+              scale: 5,
+              shape: "star",
+              choices: "",
+              allow_multiple_selection: false
+            },
+            checked: [],
+            question_ref: ""
+          });
+        });
+      });
+    }
   }
+
+  handleToggle = item => () => {
+    // check de categorias
+    const { checked } = this.state;
+    const currentIndex = checked.indexOf(item);
+    const newChecked = [...checked];
+    let categories = "";
+
+    if (currentIndex === -1) {
+      // check
+      newChecked.push(item);
+    } else {
+      // uncheck
+      newChecked.splice(currentIndex, 1);
+    }
+    newChecked.forEach(category => {
+      if (categories === "") categories = categories + category.label;
+      else categories = categories + ", " + category.label;
+    });
+    this.setState({
+      checked: newChecked,
+      question: {
+        ...this.state.question,
+        categories
+      }
+    });
+  };
 
   handleSubmit = event => {
     event.preventDefault();
@@ -174,10 +221,11 @@ class CreateQuestionsPoll extends Component {
       //console.log('Respuesta de la creacion de la encuesta : ', data);
       // una vez que crea la encuesta, ahora guarda la pregunta en la base
     } else {
-      if (question.group) alert("Faltan datos para crear una encuesta");
+      if (this.state.checked.length)
+        alert("Faltan datos para crear una encuesta");
       else
         alert(
-          "No existen categorías seleccionadas, debebría cargar un archivo primero"
+          "No existen categorías seleccionadas, debe seleccionar una categoría al menos"
         );
     }
   };
@@ -204,7 +252,8 @@ class CreateQuestionsPoll extends Component {
   render() {
     const { classes, loggedUser } = this.props;
     if (loggedUser) {
-      //console.log("State: ", this.state);
+      //console.log("State: ", this.state.question);
+      //console.log("Checked: ", this.state.checked);
     }
     return !loggedUser.logged ? (
       <div className={classes.root}>
@@ -217,7 +266,7 @@ class CreateQuestionsPoll extends Component {
             <h3>Crear Pregunta y Encuesta</h3>
           </div>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={9}>
           <Grid container className={classes.container}>
             <Grid item xs={6}>
               <TextField
@@ -270,7 +319,7 @@ class CreateQuestionsPoll extends Component {
             </Grid>
           </Grid>
           <Grid container className={classes.container}>
-            <Grid item xs={2}>
+            {/* <Grid item xs={2}>
               <Select
                 label={"group"}
                 name={"Categoría"}
@@ -278,7 +327,7 @@ class CreateQuestionsPoll extends Component {
                 array={this.state.groups}
                 handleChange={this.handleChange}
               />
-            </Grid>
+            </Grid> */}
             <Grid item xs={2}>
               <Select
                 label={"type"}
@@ -292,13 +341,6 @@ class CreateQuestionsPoll extends Component {
               {this.state.question.type === "rating" ||
               this.state.question.type === "opinion_scale" ? (
                 <div>
-                  {/* <Select
-                      label={"shape"}
-                      value={this.state.question.shape}
-                      name={"Forma"}
-                      array={shapes}
-                      handleChange={this.handleChange}
-                    /> */}
                   <Select
                     label={"scale"}
                     value={this.state.question.scale}
@@ -320,28 +362,39 @@ class CreateQuestionsPoll extends Component {
                     margin="normal"
                     variant="outlined"
                   />
-                  {/* <Select
-                      label={"allow_multiple_selection"}
-                      value={this.state.question.allow_multiple_selection}
-                      name={"Seleccione"}
-                      array={[
-                        { label: "Selección Multiple", value: true },
-                        { label: "Solo una opción", value: false }
-                      ]}
-                      handleChange={this.handleChange}
-                    /> */}
                 </div>
               ) : (
                 <div />
               )}
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={4}>
               <PrimaryButton
                 button={"Crear Encuesta"}
                 handleClick={this.handleSubmit}
               />
             </Grid>
           </Grid>
+        </Grid>
+        <Grid item xs={3}>
+          Categorías
+          <List>
+            {this.state.groups.map((item, i) => (
+              <ListItem
+                key={i}
+                role={undefined}
+                dense
+                button
+                onClick={this.handleToggle(item)}
+              >
+                <Checkbox
+                  checked={this.state.checked.indexOf(item) !== -1}
+                  tabIndex={-1}
+                  disableRipple
+                />
+                <ListItemText primary={item.label} />
+              </ListItem>
+            ))}
+          </List>
         </Grid>
         <Grid item xs={12}>
           <Paper className={classes.root}>

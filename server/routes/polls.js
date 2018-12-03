@@ -2,6 +2,8 @@ const express = require("express");
 const nodemailer = require("nodemailer");
 const uuid = require("uuid");
 const router = express.Router();
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 const path = require("path");
 const models = require("../models");
 const Group = models.Group;
@@ -11,10 +13,35 @@ const PollsSend = models.PollsSend;
 const File = models.File;
 const Client = models.Client;
 const Answer = models.Answer;
+const Order = models.Order;
 const { html } = require("./html/email");
 
 router.get("/test", (req, res) => {
   res.status(200).json("OK");
+});
+
+router.get("/sendpolls/from/:from/to/:to", (req, res) => {
+  let from = req.params.from;
+  let to = req.params.to;
+  console.log("From: ", from, ", to: ", to);
+  PollsSend.findAll({
+    where: {
+      createdAt: {
+        [Op.between]: [from, to]
+      }
+    },
+    include: [
+      {
+        model: Poll,
+        include: [Question, Group]
+      },
+      {
+        model: File
+      }
+    ]
+  })
+    .then(polls => res.status(200).json(polls))
+    .catch(err => res.status(200).json({ error: true, data: err }));
 });
 
 router.get("/sendpolls", (req, res, next) => {
@@ -26,14 +53,25 @@ router.get("/sendpolls", (req, res, next) => {
     .catch(err => res.status(404).json(err));
 });
 
-router.get("/answers/:pollsendId", (req, res) => {
+router.get("/answers/:question_ref", (req, res) => {
+  let question_ref = req.params.question_ref;
+  //console.log("Pollsends : ", question_ref);
+  // obtener las respuestas de todas las pollsend que pertenecen a una question_ref
   Answer.findAll({
-    where: { pollsendId: req.params.pollsendId },
     include: [
       { model: PollsSend, include: [{ model: Poll, include: [Question] }] },
       { model: Client }
     ]
-  }).then(answers => res.status(200).json(answers));
+  }).then(items => {
+    let answers = [];
+    //console.log("Items : ", items);
+    items.forEach(item => {
+      if (item.pollsend.poll.question.question_ref === question_ref) {
+        answers.push(item);
+      }
+    });
+    res.status(200).json(answers);
+  });
 });
 
 router.post("/sendpolls", (req, res) => {
@@ -75,14 +113,14 @@ router.post("/sendpolls", (req, res) => {
 
 // sends email to a group of emails belonging a one category
 router.post("/send", async (req, res, next) => {
-  //console.log('Params: ', req.body.array);
+  //console.log("Params: ", req.body.array);
   let params = req.body.array;
   // aqui va la accion de enviar mail con gmail
   let ref = uuid(); // genero un ref
   let server = req.body.server;
   let emails = params.clients.map(item => item.email);
   let file = params.fileId;
-  let names = params.clients;
+  let names = params.clients.map(item => item);
   let url = params.url;
   let subject = params.subject;
   let greet = params.greet;
@@ -125,6 +163,7 @@ router.post("/send", async (req, res, next) => {
   let mail = "";
   let mail_success = [];
   let mail_unsuccess = [];
+  //console.log("Names : ", names);
   for (let i = 0; i < names.length; i++) {
     poll_html = html(ref, question, names[i]); // tengo que enviarle la pregunta, url, y el cliente
     mail = {
@@ -165,8 +204,9 @@ router.post("/new", function(req, res, next) {
   //console.log('PollData: ', req.body);
   let question = req.body.poll;
   let ref = req.body.ref;
+  let groupId = req.body.group;
   let url = req.body.url;
-  Group.findOne({ where: { id: Number(question.group) } }).then(group =>
+  Group.findOne({ where: { id: Number(groupId) } }).then(group =>
     Poll.create({
       ref: ref,
       url: url,
@@ -174,7 +214,7 @@ router.post("/new", function(req, res, next) {
       subject: question.subject,
       greet: question.greet
     }).then(poll =>
-      Question.findOne({ where: { ref: question.ref } }).then(question => {
+      Question.findOne({ where: { ref: ref } }).then(question => {
         poll.setGroup(group);
         poll.setQuestion(question);
         //poll.setFile(file);
@@ -214,7 +254,7 @@ router.get("/answer/:poll_id/:hcu/data/:value", (req, res) => {
         let question = await Question.findOne({
           where: { ref: poll.ref }
         }).then(question => question);
-        //console.log('Question : ', question);
+        //console.log("Question : ", question);
         Answer.findOrCreate({
           where: { clientId: client.id, pollsendId: pollsend.id },
           defaults: { type: question.type, value: params.value }

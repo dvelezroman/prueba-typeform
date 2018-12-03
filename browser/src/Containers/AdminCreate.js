@@ -1,7 +1,7 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
 import { withRouter } from "react-router";
-import axios from 'axios';
+import axios from "axios";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
@@ -87,26 +87,31 @@ class AdminCreate extends React.Component {
 
   handleSubmit(evt) {
     evt.preventDefault();
-    if (this.state.name && this.state.email && this.state.password === this.state.password2) {
-        const userInfo = {
-            email: this.state.email,
-            name: this.state.name,
-            password: this.state.password,
-            role: this.state.role
-        };
-        axios.post('/api/users/new', userInfo)
+    if (
+      this.state.name &&
+      this.state.email &&
+      this.state.password === this.state.password2
+    ) {
+      const userInfo = {
+        email: this.state.email,
+        name: this.state.name,
+        password: this.state.password,
+        role: this.state.role
+      };
+      axios
+        .post("/api/users/new", userInfo)
         .then(res => res.data)
         .then(data => {
-            if (!data.error) {
-              alert('El usuario se creó con éxito');
-              this.props.setAdmin();
-              //this.setState({ redirect: true }, () => alert('El usuario administrador se creó con éxito'));
-            }else {
-                alert('El usuario administrador no se creó');
-            };
-        })
-    }else {
-        alert('Faltan datos para crear usuario, o las claves no coinciden');
+          if (!data.error) {
+            alert("El usuario se creó con éxito");
+            this.props.setAdmin();
+            //this.setState({ redirect: true }, () => alert('El usuario administrador se creó con éxito'));
+          } else {
+            alert("El usuario administrador no se creó");
+          }
+        });
+    } else {
+      alert("Faltan datos para crear usuario, o las claves no coinciden");
     }
   }
 
@@ -116,11 +121,11 @@ class AdminCreate extends React.Component {
     const { name, email, password, password2, redirect } = this.state;
     return redirect ? (
       <div>
-        <Redirect to="/login" />
+        <Redirect to="/polls/resume" />
       </div>
     ) : (
       <div>
-        <h2 className={classes.title}>Creación inicial del Usuario Administrador</h2>
+        <h2 className={classes.title}>Creación de Usuario Administrador</h2>
         <Grid container spacing={16} justify="center">
           <Grid item md={5}>
             <div>

@@ -24,14 +24,14 @@ Poll.belongsTo(Group); // por ahora solo voy a usar esta relacion para guardar c
 Poll.belongsTo(Question); // asocia con la pregunta con la cual se creo la encuesta
 Poll.belongsTo(File); // se le coloca una referencia a cada formulario creado, a que archivo cargado pertenecen cuando lo crean
 Question.belongsTo(Group); // esta voy a utilzar para guardar las preguntas que voy creando
-Order.belongsTo(File, { 
-  onDelete: 'cascade',
-  hooks: true, 
+Order.belongsTo(File, {
+  onDelete: "cascade",
+  hooks: true
 }); // cada orden tiene un fileId que indica a que archivo cargado pertenece
 // cada respuesta se relaciona con la encuesta enviada a la que pertenece
 Answer.belongsTo(PollsSend);
 Answer.belongsTo(Client);
-PollsSend.hasMany(Answer, {as: 'Resps'}); 
+PollsSend.hasMany(Answer, { as: "Resps" });
 Client.hasMany(Answer); // cada respuesta se relaciona con la persona que la respondió
 
 module.exports = {

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Route, Switch } from "react-router-dom";
-import axios from 'axios';
+import axios from "axios";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import PropTypes from "prop-types";
@@ -8,8 +8,6 @@ import { connect } from "react-redux";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { withStyles } from "@material-ui/core";
 import NavBar from "../Components/NavBar";
-//import InputText from "../Components/InputText";
-//import CircularIndeterminated from "../Components/CircularIndeterminated";
 import NestedList from "../Components/NestedList";
 import CreatePoll from "./CreatePoll";
 import ContainedButton from "../Components/ContainedButton";
@@ -41,17 +39,19 @@ const styles = theme => ({
 class Main extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
-  };
+    this.state = {};
+  }
 
   componentDidMount() {
-    axios.get('/api/users').then(res => res.data).then(data => {
-      if (data.msg.length) {
-        this.props.setAdmin();
-      };
-    })
-  };
+    axios
+      .get("/api/users")
+      .then(res => res.data)
+      .then(data => {
+        if (data.msg.length) {
+          this.props.setAdmin();
+        }
+      });
+  }
 
   render() {
     const { classes, existAdmin } = this.props;
@@ -59,15 +59,15 @@ class Main extends Component {
       //console.log('No hay usuario', existAdmin);
       return (
         <div className={classes.root}>
-        <CssBaseline />
+          <CssBaseline />
           <Grid container spacing={8}>
             <Grid item xs={12}>
               <AdminCreate />
             </Grid>
           </Grid>
         </div>
-      )
-    }else {
+      );
+    } else {
       //console.log('hay usuario');
       return (
         <div className={classes.root}>
@@ -85,7 +85,7 @@ class Main extends Component {
               <Grid item xs={10}>
                 <Paper className={classes.paper}>
                   <Switch>
-                  <Route
+                    <Route
                       exact
                       path="/login/password/recover"
                       render={() => (
@@ -94,7 +94,7 @@ class Main extends Component {
                         </Grid>
                       )}
                     />
-                  <Route
+                    <Route
                       exact
                       path="/login/password/change"
                       render={() => (
@@ -124,9 +124,7 @@ class Main extends Component {
                     <Route
                       exact
                       path="/questions"
-                      render={() => (
-                          <CreateQuestionsPoll />
-                      )}
+                      render={() => <CreateQuestionsPoll />}
                     />
                     <Route
                       exact
@@ -183,6 +181,15 @@ class Main extends Component {
                           <Grid item xs={12}>
                             <MailConfigForm />
                           </Grid>
+                        </Grid>
+                      )}
+                    />
+                    <Route
+                      exact
+                      path="/user/create"
+                      render={() => (
+                        <Grid container>
+                          <AdminCreate />
                         </Grid>
                       )}
                     />
