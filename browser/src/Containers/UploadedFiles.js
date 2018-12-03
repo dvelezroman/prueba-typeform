@@ -121,6 +121,7 @@ class UploadedFiles extends Component {
         // por cada formulario seleccionado, enviarle ese formulario a los clientes de la misma categoría del formulario
         let promises_to_send_emails = [];
         polls_paired_with_clients.forEach(item => {
+          let ref = item.poll.ref;
           let group = item.groupId;
           let clients = item.clients;
           let url = item.poll.url;
@@ -135,6 +136,7 @@ class UploadedFiles extends Component {
           let choices = item.poll.choices;
           let allow_multiple_selection = item.poll.allow_multiple_selection;
           let body = {
+            ref,
             group,
             clients,
             subject,
@@ -194,14 +196,13 @@ class UploadedFiles extends Component {
         item.createdAt.split("T")[1].split(".")[0]
       } `
     }));
+    questions = questions.filter(question => question.enabled);
     this.setState({ files: files, questions: questions });
   }
 
   render() {
     const { classes, loggedUser } = this.props;
-    //const questions = this.state.questions.filter(question => question.enabled);
-    //console.log('State : ', this.state);
-    //console.log('Questions: ', questions);
+    //console.log("Questions : ", this.state.questions);
     return !loggedUser.logged ? (
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta informacion</h1>
