@@ -8,7 +8,7 @@ router.get("/test", (req, res, next) => {
   res.status(200).json("Todo OK..");
 });
 router.post("/new", function(req, res, next) {
-  console.log("QuestionBody: ", req.body);
+  //console.log("QuestionBody: ", req.body);
   let question = req.body.question;
   const newQuestion = {
     question_ref: question.question_ref,

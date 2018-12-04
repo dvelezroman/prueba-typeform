@@ -23,7 +23,7 @@ router.get("/test", (req, res) => {
 router.get("/sendpolls/from/:from/to/:to", (req, res) => {
   let from = req.params.from;
   let to = req.params.to;
-  console.log("From: ", from, ", to: ", to);
+  //console.log("From: ", from, ", to: ", to);
   PollsSend.findAll({
     where: {
       createdAt: {
@@ -117,6 +117,7 @@ router.post("/send", async (req, res, next) => {
   let params = req.body.array;
   // aqui va la accion de enviar mail con gmail
   let ref = uuid(); // genero un ref
+  let question_ref = params.ref;
   let server = req.body.server;
   let emails = params.clients.map(item => item.email);
   let file = params.fileId;
@@ -176,28 +177,29 @@ router.post("/send", async (req, res, next) => {
       mail_success.push({ client: names[i], form: url });
     });
   }
-  Poll.update({ send: true }, { returning: true, where: { url: url } }).then(
-    ([rowsUpdate, [updatedPoll]]) => {
-      if (updatedPoll) {
-        let time = new Date();
-        time = time.getTime() + 2 * (24 * (1000 * 60 * 60));
-        PollsSend.create({
-          ref,
-          sendtime: time,
-          clients: emails.length,
-          answers: 0
-        }).then(sendPoll => {
-          sendPoll.setPoll(updatedPoll);
-          File.findById(file).then(file => {
-            sendPoll.setFile(file);
-          });
+  Poll.update(
+    { send: true },
+    { returning: true, where: { ref: question_ref } }
+  ).then(([rowsUpdate, [updatedPoll]]) => {
+    if (updatedPoll) {
+      let time = new Date();
+      time = time.getTime() + 2 * (24 * (1000 * 60 * 60));
+      PollsSend.create({
+        ref,
+        sendtime: time,
+        clients: emails.length,
+        answers: 0
+      }).then(sendPoll => {
+        sendPoll.setPoll(updatedPoll);
+        File.findById(file).then(file => {
+          sendPoll.setFile(file);
         });
-      }
-      res
-        .status(201)
-        .json({ error: false, mail_success, mail_unsuccess, msg: "OK" });
+      });
     }
-  );
+    res
+      .status(201)
+      .json({ error: false, mail_success, mail_unsuccess, msg: "OK" });
+  });
 });
 
 router.post("/new", function(req, res, next) {
@@ -268,7 +270,7 @@ router.get("/answer/:poll_id/:hcu/data/:value", (req, res) => {
         });
       } else {
         // la encuesta ya no está activa
-        console.log("Encuesta ya no está activa");
+        //console.log("Encuesta ya no está activa");
         res.sendFile(unsuccessFilePath);
       }
       //console.log('Poll: ', pollsend);
