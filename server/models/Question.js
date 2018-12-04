@@ -38,7 +38,7 @@ const Question = db.define("question", {
     type: Sequelize.STRING
   },
   categories: {
-    type: Sequelize.STRING
+    type: Sequelize.TEXT
   },
   subject: {
     type: Sequelize.STRING,

@@ -34,7 +34,7 @@ app.use((err, req, res, next) => {
   res.status(500).send(err);
 });
 
-db.sync({ force: false })
+db.sync({ force: true })
   .then(() =>
     app.listen(process.env.SERVER_PORT, () =>
       console.log(`Listening on PORT ${process.env.SERVER_PORT}`)
