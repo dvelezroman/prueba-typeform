@@ -48,6 +48,14 @@ const styles = theme => ({
   root: {
     flexGrow: 1
   },
+  cats: {
+    width: "100%",
+    maxWidth: 360,
+    backgroundColor: theme.palette.background.paper,
+    position: "relative",
+    overflow: "auto",
+    maxHeight: 500
+  },
   container: {
     display: "flex",
     flexWrap: "wrap"
@@ -211,12 +219,7 @@ class CreateQuestionsPoll extends Component {
   handleSubmit = event => {
     event.preventDefault();
     let question = this.state.question;
-    if (
-      question.group &&
-      question.subject &&
-      question.greet &&
-      question.title
-    ) {
+    if (question.subject && question.greet && question.title) {
       this.createPoll();
       //console.log('Respuesta de la creacion de la encuesta : ', data);
       // una vez que crea la encuesta, ahora guarda la pregunta en la base
@@ -252,7 +255,7 @@ class CreateQuestionsPoll extends Component {
   render() {
     const { classes, loggedUser } = this.props;
     if (loggedUser) {
-      //console.log("State: ", this.state.question);
+      //console.log("State: ", this.state);
       //console.log("Checked: ", this.state.checked);
     }
     return !loggedUser.logged ? (
@@ -374,10 +377,17 @@ class CreateQuestionsPoll extends Component {
               />
             </Grid>
           </Grid>
+          <Grid container>
+            <Grid item xs={12}>
+              <Paper className={classes.root}>
+                <ListOfQuestionsWithoutCheck />
+              </Paper>
+            </Grid>
+          </Grid>
         </Grid>
         <Grid item xs={3}>
           Categorías
-          <List>
+          <List className={classes.cats}>
             {this.state.groups.map((item, i) => (
               <ListItem
                 key={i}
@@ -395,11 +405,6 @@ class CreateQuestionsPoll extends Component {
               </ListItem>
             ))}
           </List>
-        </Grid>
-        <Grid item xs={12}>
-          <Paper className={classes.root}>
-            <ListOfQuestionsWithoutCheck />
-          </Paper>
         </Grid>
       </Grid>
     );
