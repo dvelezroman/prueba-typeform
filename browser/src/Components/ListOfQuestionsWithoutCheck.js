@@ -28,6 +28,12 @@ const styles = theme => ({
   ul: {
     backgroundColor: "inherit",
     padding: 0
+  },
+  enabled: {
+    backgroundColor: "auto"
+  },
+  disabled: {
+    backgroundColor: "#ef5350"
   }
 });
 
@@ -64,6 +70,7 @@ class ListOfQuestionsWithoutCheck extends Component {
         {array.map(question => (
           <ListItem key={question.id}>
             <ListItemText
+              className={question.enabled ? classes.enabled : classes.disabled}
               primary={
                 question.enabled
                   ? `${question.title} -- Categorías: ${question.categories}`
