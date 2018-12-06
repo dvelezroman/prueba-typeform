@@ -42,14 +42,14 @@ class ChPassBtn extends React.Component {
     //var isLogged = Object.keys(loggedUser).length;
     return (
       <div>
-          <Button
-            className={classes.buttonLogin}
-            size="small"
-            component={Link}
-            to={"/login/password/change"}
-          >
-            Contraseña
-          </Button>
+        <Button
+          className={classes.buttonLogin}
+          size="small"
+          component={Link}
+          to={"/login/password/change"}
+        >
+          Cambiar Contraseña
+        </Button>
       </div>
     );
   }

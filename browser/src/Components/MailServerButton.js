@@ -21,22 +21,21 @@ class MailServerButton extends Component {
     const { classes } = this.props;
     return (
       <div>
-          <Button
-            className={classes.buttonLogin}
-            size="small"
-            component={Link}
-            to={"/mailserver"}
-          >
-            <MailIcon />
-          </Button>
+        <Button
+          className={classes.buttonLogin}
+          size="small"
+          component={Link}
+          to={"/mailserver"}
+        >
+          Configurar Servidor Mail
+        </Button>
       </div>
     );
   }
 }
 
 MailServerButton.propTypes = {
-    classes: PropTypes.object.isRequired,
-  };
-  
+  classes: PropTypes.object.isRequired
+};
 
 export default withStyles(styles)(MailServerButton);

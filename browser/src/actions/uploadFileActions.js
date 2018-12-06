@@ -27,7 +27,7 @@ export const clearRegs = () => ({
 });
 
 export const uploadFile = file => dispatch => {
-  dispatch(loadingFile()); //sets loading to true
+  //dispatch(loadingFile()); //sets loading to true
   const url = "/api/upload";
   const formData = new FormData();
   formData.append("file", file);
@@ -39,8 +39,8 @@ export const uploadFile = file => dispatch => {
   return axios.post(url, formData, config).then(res => {
     //console.log("Respuesta luego de subir archivo : ", res.data);
     let fileName = file.name.split(".")[0];
-    dispatch(storeRegs(fileName));
-    dispatch(loadingFile()); // sets loading to false
+    //dispatch(storeRegs(fileName));
+    //dispatch(loadingFile()); // sets loading to false
     return res.data;
   });
 };

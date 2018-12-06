@@ -9,8 +9,10 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
+import CircularIndeterminated from "./CircularIndeterminated";
 
-const sortArray = array => array.sort((a,b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
+const sortArray = array =>
+  array.sort((a, b) => (a.id > b.id ? 1 : b.id > a.id ? -1 : 0));
 
 const CustomTableCell = withStyles(theme => ({
   head: {
@@ -39,15 +41,40 @@ const styles = theme => ({
 });
 
 class ShowOrders extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      items: this.props.items.slice(0, 1),
+      loading: true
+    };
+  }
+
+  recursive = () => {
+    setTimeout(() => {
+      let hasMore = this.state.items.length + 50 < this.props.items.length;
+      this.setState((prev, props) => ({
+        items: props.items.slice(0, prev.items.length + 1)
+      }));
+      if (hasMore) this.recursive();
+      else this.setState({ loading: false });
+    }, 0);
+  };
+
+  componentDidMount() {
+    this.recursive();
+  }
+
   render() {
     const { classes, orders, loggedUser } = this.props;
     let orders_sorted = orders.length ? sortArray(orders) : [];
     //console.log('Orders: ', orders);
-    return (
-      !loggedUser.logged ? (
-        <div className={classes.root}>
-          <h1>Necesitas loggearte para ver esta informacion</h1>
-      </div> ) : (
+    return !loggedUser.logged ? (
+      <div className={classes.root}>
+        <h1>Necesitas loggearte para ver esta informacion</h1>
+      </div>
+    ) : this.state.loading ? (
+      <CircularIndeterminated />
+    ) : (
       <Grid container>
         <Grid item xs={12}>
           <Paper className={classes.root}>
@@ -88,7 +115,7 @@ class ShowOrders extends Component {
             </Table>
           </Paper>
         </Grid>
-      </Grid>)
+      </Grid>
     );
   }
 }

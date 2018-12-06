@@ -35,18 +35,23 @@ class ContainedButton extends Component {
     };
   }
 
-  onFormSubmit = async (event) => {
+  onFormSubmit = async event => {
     event.preventDefault(); // Stop form submit
     if (this.state.file) {
-      let response = await this.props.uploadFile(this.state.file).then(res => res);
-      //console.log(`Response: ${response}`);
-      if (response.error_code) alert(response.message)
-      else {
-        
+      let response = await this.props
+        .uploadFile(this.state.file)
+        .then(res => res);
+      //console.log(`Response: `, response.err_desc);
+      if (response.error_code === 1) alert(response.message);
+      else if (response.error_code === 2) {
+        alert(
+          "Las cabeceras del archivo no estan correctas!...\n deben ser: HCU - Paciente - Orden	- Clasificacion	- Categoria	- Convenio - Empresa -Medico -Grupo - Servicio - Fecha (DD/MM/AAAA)	- Sucursal - cont	- email"
+        );
+      } else {
         // let { data } = await axios.get(`/api/files/${response.data}/orders`)
         // .then(res => res.data);
         // this.setState({ orders: data });
-        alert('El archivo cargó completamente');
+        alert("El archivo cargó completamente");
         this.props.history.push("/files");
       }
     } else {
@@ -61,7 +66,7 @@ class ContainedButton extends Component {
 
   componentWillUnmount() {
     this.props.clearRegs();
-  };
+  }
 
   render() {
     const { classes, loggedUser, loading } = this.props;
