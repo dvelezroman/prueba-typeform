@@ -27,7 +27,7 @@ class UserCreateButton extends Component {
           component={Link}
           to={"/user/create"}
         >
-          <CreateIcon />
+          Crear Usuario
         </Button>
       </div>
     );

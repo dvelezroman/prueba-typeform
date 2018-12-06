@@ -9,7 +9,7 @@ import Grid from "@material-ui/core/Grid";
 import PrimaryButton from "../Components/PrimaryButton";
 import ListItemText from "@material-ui/core/ListItemText";
 import ShowOrders from "../Components/ShowOrders";
-
+import CircularIndeterminated from "../Components/CircularIndeterminated";
 import _ from "lodash";
 
 const styles = theme => ({
@@ -30,26 +30,51 @@ const styles = theme => ({
   },
   list: {
     overflow: "auto"
+  },
+  orders: {
+    width: "100%",
+    backgroundColor: theme.palette.background.paper,
+    position: "relative",
+    overflow: "auto",
+    maxHeight: 500
   }
 });
 
 class UploadedFiles extends Component {
-  state = {
-    selectedFile: {},
-    files: [],
-    orders: [],
-    questions: [],
-    polls: [],
-    selectedQuestions: []
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedFile: {},
+      files: [],
+      orders: [],
+      questions: [],
+      polls: [],
+      selectedQuestions: []
+    };
+    this.handleListItemClick = this.handleListItemClick.bind(this);
+  }
 
   handleListItemClick = async (event, file) => {
-    let { data } = await axios
+    axios
       .get(`/api/files/${file.id}/orders`)
-      .then(res => res.data);
-    //console.log('Orders : ',data);
-    if (!data.error) this.setState({ selectedFile: file, orders: data });
-    else this.setState({ selectedFile: file });
+      .then(res => res.data)
+      .then(data => {
+        //console.log('Orders : ',data);
+        if (!data.error) {
+          //console.log("Ya los traje: ", data.data);
+          this.setState({
+            selectedFile: file,
+            orders: data.data
+          });
+        } else {
+          this.setState({ selectedFile: file });
+          alert("Este archivo no tiene registros o esta corrupto");
+        }
+      });
+    // let { data } = await axios.get(`/api/files/${file.id}/orders`).then(res => {
+    //   this.setState({ loading: false });
+    //   return res.data;
+    // });
   };
 
   handlePollCheck = value => () => {
@@ -202,7 +227,7 @@ class UploadedFiles extends Component {
 
   render() {
     const { classes, loggedUser } = this.props;
-    //console.log("Questions : ", this.state.questions);
+    //console.log("Loading : ", this.state.loading);
     return !loggedUser.logged ? (
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta informacion</h1>
@@ -240,64 +265,16 @@ class UploadedFiles extends Component {
             ))}
           </Grid>
         </Grid>
-        {/* <Grid item xs={8}>
-          <Grid item xs={12}>
-            Lista de Encuestas Disponibles
-          </Grid>
-          <List>
-            {questions.map((value, i) => (
-              <ListItem
-                key={i}
-                role={undefined}
-                dense
-                button
-                onClick={this.handlePollCheck(value)}
-                className={classes.listItem}
-              >
-                <Checkbox
-                  checked={this.state.selectedQuestions.indexOf(value) !== -1}
-                  tabIndex={-1}
-                  disableRipple
-                />
-                <ListItemText
-                  primary={`Encuesta: ${value.subject} - Cuerpo: ${
-                    value.greet
-                  } - Categoría: ${value.group.description}`}
-                  secondary={
-                    value.type === "opinion_scale"
-                      ? `Pregunta: ${
-                          value.title
-                        } - tipo: Escala - escala: 1 al ${value.scale}`
-                      : value.type === "yes_no"
-                      ? `Pregunta: ${value.title} - tipo: Si o No`
-                      : `Pregunta: ${
-                          value.title
-                        } - tipo: Selección - Opciones: ${value.choices
-                          .split(",")
-                          .map((choice, i) => `${i}. ${choice} - `)}`
-                  }
-                />
-                <ListItemSecondaryAction>
-                    <IconButton aria-label="Comments">
-                      <CommentIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-              </ListItem>
-            ))}
-          </List>
-        </Grid> */}
-        <Grid item xs={12}>
-          {this.state.selectedFile.name
-            ? `Ordenes contenidas en el archivo : ${
-                this.state.selectedFile.name
-              }`
-            : `Selecciona un archivo para ver las ordenes contenidas`}
-        </Grid>
         <Grid item xs={12}>
           {this.state.selectedFile.name ? (
-            <ShowOrders orders={this.state.orders} />
+            <Grid item xs={12} className={classes.orders}>
+              <ShowOrders
+                orders={this.state.orders}
+                items={this.state.orders}
+              />
+            </Grid>
           ) : (
-            ""
+            `Selecciona un archivo para ver las ordenes contenidas`
           )}
         </Grid>
       </Grid>

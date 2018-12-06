@@ -52,24 +52,38 @@ router.post("/", function(req, res) {
         },
         async function(err, result) {
           if (err) {
-            return res.status(200).json({ error_code: 1, err_desc: err, data: 'Error en la conversion a json' });
+            return res.status(200).json({
+              error_code: 1,
+              err_desc: err,
+              data: "Error en la conversion a json"
+            });
           }
           // here we must store in DataBase
           const dataArray = getDataInArrays(result);
+          if (!dataArray) {
+            res.status(200).json({ error_code: 2 });
+          }
           // promises to create the data in database
           let ref = uuid();
           let fileName = req.file.originalname.split(".")[0];
           // stores file uploaded
-          let promises_file = File.findOrCreate({ where: { name: fileName }, defaults: { ref: ref } });
+          let promises_file = File.findOrCreate({
+            where: { name: fileName },
+            defaults: { ref: ref }
+          });
           // stores the clients contained in the file uploaded
           let clients = _.uniqBy(dataArray.clients, client => client.hcu); // deletes repeated clients
           let promises_clients = clients.map(client =>
             Client.findOrCreate({
-              where: { hcu: client.hcu }, defaults: { name: client.name, email: client.email }
+              where: { hcu: client.hcu },
+              defaults: { name: client.name, email: client.email }
             })
           );
           // stores the offices contained in the orders of the file uploaded
-          let offices = _.uniqBy(dataArray.offices, office => office.description); // deletes repeated offices
+          let offices = _.uniqBy(
+            dataArray.offices,
+            office => office.description
+          ); // deletes repeated offices
           let promises_offices = offices.map(office =>
             Office.findOrCreate({ where: { description: office.description } })
           );
@@ -79,18 +93,21 @@ router.post("/", function(req, res) {
             Doctor.findOrCreate({ where: { name: doctor.name } })
           );
           // stores the groups contained the orders of the file uploaded
-          let groups = _.uniqBy(dataArray.groups, group => group.description);  // deletes repeated categories
+          let groups = _.uniqBy(dataArray.groups, group => group.description); // deletes repeated categories
           let promises_groups = groups.map(group =>
             Group.findOrCreate({ where: { description: group.description } })
           );
           // stores the services of the orders in the file uploaded
-          let services = _.uniqBy(dataArray.services, service => service.description); // deletes repeated services
+          let services = _.uniqBy(
+            dataArray.services,
+            service => service.description
+          ); // deletes repeated services
           let promises_services = services.map(service =>
             Service.findOrCreate({
               where: { description: service.description }
             })
-          );          
-          // set the orders to be stored in the db
+          );
+          //set the orders to be stored in the db
           let promises_orders = dataArray.orders.map(order =>
             Client.findOne({ where: { hcu: order.hcu } }).then(client => {
               Doctor.findOne({ where: { name: order.doctor } }).then(doctor =>
@@ -103,8 +120,13 @@ router.post("/", function(req, res) {
                         where: { description: order.office }
                       }).then(office =>
                         File.findOne({ where: { ref: ref } }).then(file =>
-                          Order.findOrCreate({ where: { ref: order.ref, attended: order.attended, description: "Atendido" } })
-                          .then(([orderCreated, created]) => {
+                          Order.findOrCreate({
+                            where: {
+                              ref: order.ref,
+                              attended: order.attended,
+                              description: "Atendido"
+                            }
+                          }).then(([orderCreated, created]) => {
                             if (created) {
                               orderCreated.setClient(client);
                               orderCreated.setDoctor(doctor);
@@ -122,8 +144,16 @@ router.post("/", function(req, res) {
             })
           );
           // run the promises from above
-          await storeInDataBase(promises_file, promises_clients, promises_doctors, promises_groups, promises_offices, promises_services, promises_orders)
-            .then(array => {
+          await storeInDataBase(
+            promises_file,
+            promises_clients,
+            promises_doctors,
+            promises_groups,
+            promises_offices,
+            promises_services,
+            promises_orders
+          )
+            .then(() => {
               const response = {
                 error_code: 0,
                 err_desc: null,
@@ -133,6 +163,7 @@ router.post("/", function(req, res) {
               res.status(201).json(response);
             })
             .catch(err => {
+              //console.log("Error cargando datos : ", err);
               const response = {
                 error_code: 1,
                 err_desc: err,

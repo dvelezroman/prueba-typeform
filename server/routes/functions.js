@@ -7,15 +7,16 @@ const storeInDataBase = (
   pservices,
   porders
 ) =>
-  Promise.all([ // ejecutar por cada array mejor
+  Promise.all([
+    // ejecutar por cada array mejor
     pfile,
     ...pclients,
     ...pdoctors,
     ...pgroups,
     ...poffices,
-    ...pservices,
-    ...porders
-  ]);
+    ...pservices
+    //...porders
+  ]).then(() => Promise.all(porders));
 
 const getDataInArrays = rawData => {
   let data = {
@@ -28,33 +29,47 @@ const getDataInArrays = rawData => {
   };
   //console.log('Como llega la data: ', rawData);
   rawData.map(reg => {
-    data = Object.assign(
-      {},
-      {
-        clients: [
-          ...data.clients,
-          { hcu: reg.hcu, email: reg.email, name: reg.paciente }
-        ],
-        offices: [...data.offices, { description: reg.sucursal }],
-        orders: [
-          ...data.orders,
-          {
-            ref: reg.orden,
-            attended: reg.fecha,
-            hcu: reg.hcu,
-            doctor: reg.medico,
-            group: reg.grupo,
-            service: reg.servicio,
-            office: reg.sucursal
-          }
-        ],
-        doctors: [...data.doctors, { name: reg.medico }],
-        groups: [...data.groups, { description: reg.grupo }], // aqui revisar con lodash
-        services: [...data.services, { description: reg.servicio }]
-      }
-    );
+    if (
+      reg.hcu &&
+      reg.paciente &&
+      reg.email &&
+      reg.sucursal &&
+      reg.orden &&
+      reg.fecha &&
+      reg.medico &&
+      reg.grupo &&
+      reg.servicio
+    ) {
+      data = Object.assign(
+        {},
+        {
+          clients: [
+            ...data.clients,
+            { hcu: reg.hcu, email: reg.email, name: reg.paciente }
+          ],
+          offices: [...data.offices, { description: reg.sucursal }],
+          orders: [
+            ...data.orders,
+            {
+              ref: reg.orden,
+              attended: reg.fecha,
+              hcu: reg.hcu,
+              doctor: reg.medico,
+              group: reg.grupo,
+              service: reg.servicio,
+              office: reg.sucursal
+            }
+          ],
+          doctors: [...data.doctors, { name: reg.medico }],
+          groups: [...data.groups, { description: reg.grupo }], // aqui revisar con lodash
+          services: [...data.services, { description: reg.servicio }]
+        }
+      );
+      //console.log("Como se va la data en array: ", data);
+    } else {
+      return false;
+    }
   });
-  //console.log("Como se va la data en array: ", data);
   return data;
 };
 
