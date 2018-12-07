@@ -119,6 +119,7 @@ router.post("/send", async (req, res, next) => {
   let ref = uuid(); // genero un ref
   let question_ref = params.ref;
   let server = req.body.server;
+  //console.log("Clientes: ", params.clients);
   let emails = params.clients.map(item => item.email);
   let file = params.fileId;
   let names = params.clients.map(item => item);
