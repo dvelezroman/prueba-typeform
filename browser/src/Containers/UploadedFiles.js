@@ -6,10 +6,11 @@ import { withStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Grid from "@material-ui/core/Grid";
-import PrimaryButton from "../Components/PrimaryButton";
+//import PrimaryButton from "../Components/PrimaryButton";
 import ListItemText from "@material-ui/core/ListItemText";
 import ShowOrders from "../Components/ShowOrders";
-import CircularIndeterminated from "../Components/CircularIndeterminated";
+//import CircularIndeterminated from "../Components/CircularIndeterminated";
+import LinearIndeterminated from "../Components/LinearIndeterminated";
 import _ from "lodash";
 
 const styles = theme => ({
@@ -49,7 +50,8 @@ class UploadedFiles extends Component {
       orders: [],
       questions: [],
       polls: [],
-      selectedQuestions: []
+      selectedQuestions: [],
+      sending: false
     };
     this.handleListItemClick = this.handleListItemClick.bind(this);
   }
@@ -115,6 +117,7 @@ class UploadedFiles extends Component {
         });
         alert("No ha configurado ningún servidor de correos");
       } else {
+        this.setState({ sending: true });
         let grouped_orders = _.groupBy(orders, order => order.groupId);
         //console.log("Orders grouped by Group: ", grouped_orders);
         let grouped_polls = _.groupBy(polls, poll => poll.groupId);
@@ -162,40 +165,42 @@ class UploadedFiles extends Component {
         // por cada formulario seleccionado, enviarle ese formulario a los clientes de la misma categoría del formulario
         let promises_to_send_emails = [];
         polls_paired_with_clients.forEach(item => {
-          let ref = item.poll.ref;
-          let group = item.groupId;
-          let clients = item.clients;
-          let url = item.poll.url;
-          let subject = item.poll.subject;
-          let greet = item.poll.greet;
-          let fileId = file.id;
-          let scale = item.poll.scale;
-          let shape = item.poll.shape;
-          let title = item.poll.title;
-          let type = item.poll.type;
-          let description = item.poll.description;
-          let choices = item.poll.choices;
-          let allow_multiple_selection = item.poll.allow_multiple_selection;
-          let body = {
-            ref,
-            group,
-            clients,
-            subject,
-            greet,
-            url,
-            scale,
-            shape,
-            title,
-            type,
-            description,
-            choices,
-            allow_multiple_selection,
-            fileId
-          };
-          // console.log("envio a /api/polls/send", body);
-          promises_to_send_emails.push(
-            axios.post("/api/polls/send", { array: body, server })
-          );
+          if (item.clients) {
+            let ref = item.poll.ref;
+            let group = item.groupId;
+            let clients = item.clients;
+            let url = item.poll.url;
+            let subject = item.poll.subject;
+            let greet = item.poll.greet;
+            let fileId = file.id;
+            let scale = item.poll.scale;
+            let shape = item.poll.shape;
+            let title = item.poll.title;
+            let type = item.poll.type;
+            let description = item.poll.description;
+            let choices = item.poll.choices;
+            let allow_multiple_selection = item.poll.allow_multiple_selection;
+            let body = {
+              ref,
+              group,
+              clients,
+              subject,
+              greet,
+              url,
+              scale,
+              shape,
+              title,
+              type,
+              description,
+              choices,
+              allow_multiple_selection,
+              fileId
+            };
+            // console.log("envio a /api/polls/send", body);
+            promises_to_send_emails.push(
+              axios.post("/api/polls/send", { array: body, server })
+            );
+          }
         });
         Promise.all(promises_to_send_emails).then(res => {
           // enviar a guardar a la base de datos las encuestas enviadas
@@ -211,8 +216,11 @@ class UploadedFiles extends Component {
               orders: [],
               selectedQuestions: []
             });
-            if (res.length > 1) alert("Las encuestas se enviaron exitosamente");
-            else alert("Las encuesta se envió exitosamente");
+            if (res.length > 1) {
+              this.setState({ sending: false }, () =>
+                alert("Las encuestas se enviaron exitosamente")
+              );
+            } else alert("Las encuesta se envió exitosamente");
           }
         });
       }
@@ -248,6 +256,14 @@ class UploadedFiles extends Component {
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta informacion</h1>
       </div>
+    ) : this.state.sending ? (
+      <Grid container>
+        <Grid item xs={2} />
+        <Grid item xs={8}>
+          <LinearIndeterminated />
+        </Grid>
+        <Grid item xs={2} />
+      </Grid>
     ) : (
       <Grid container className={classes.root}>
         <Grid item xs={6}>
