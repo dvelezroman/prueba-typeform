@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
+import PrimaryButton from "../Components/PrimaryButton";
 import { withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -60,14 +61,22 @@ class ShowOrders extends Component {
     }, 0);
   };
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.orders !== this.props.orders) {
+      //Perform some operation
+      this.setState({ loading: true });
+      this.recursive();
+    }
+  }
+
   componentDidMount() {
     this.recursive();
   }
 
   render() {
-    const { classes, orders, loggedUser } = this.props;
+    const { classes, orders, loggedUser, sendEmails } = this.props;
     let orders_sorted = orders.length ? sortArray(orders) : [];
-    //console.log('Orders: ', orders);
+    //console.log("Loading: ", this.state.loading);
     return !loggedUser.logged ? (
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta informacion</h1>
@@ -76,6 +85,12 @@ class ShowOrders extends Component {
       <CircularIndeterminated />
     ) : (
       <Grid container>
+        <Grid item xs={12}>
+          <PrimaryButton
+            button={"Enviar Encuesta"}
+            handleClick={() => sendEmails()}
+          />
+        </Grid>
         <Grid item xs={12}>
           <Paper className={classes.root}>
             <Table className={classes.table}>

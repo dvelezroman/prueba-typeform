@@ -55,6 +55,7 @@ class UploadedFiles extends Component {
   }
 
   handleListItemClick = async (event, file) => {
+    this.setState({ orders: [] });
     axios
       .get(`/api/files/${file.id}/orders`)
       .then(res => res.data)
@@ -93,7 +94,7 @@ class UploadedFiles extends Component {
     });
   };
 
-  async sendEmails() {
+  sendEmails = async () => {
     let file = this.state.selectedFile;
     //let polls = this.state.selectedQuestions;
     let polls = this.state.questions; // pongo todo no doy para que seleccionen nada
@@ -115,8 +116,10 @@ class UploadedFiles extends Component {
         alert("No ha configurado ningún servidor de correos");
       } else {
         let grouped_orders = _.groupBy(orders, order => order.groupId);
+        //console.log("Orders grouped by Group: ", grouped_orders);
         let grouped_polls = _.groupBy(polls, poll => poll.groupId);
         let n_polls_by_group = _.countBy(polls, poll => poll.groupId);
+        //console.log("Polls by group : ", n_polls_by_group);
         let polls_paired_with_clients = [];
         _.forEach(n_polls_by_group, function(value, key) {
           if (n_polls_by_group[key] < 2) {
@@ -128,11 +131,24 @@ class UploadedFiles extends Component {
             //console.log("Data cuando solo es un cliente : ", data);
             polls_paired_with_clients.push(data);
           } else {
+            //console.log("La key con la que busca en grouped orders: ", key);
+            // console.log(
+            //   "El value con el que chunkea el grouped_orders: ",
+            //   value
+            // );
+            // console.log(
+            //   "Chunkea en : ",
+            //   _.chunk(
+            //     grouped_orders[key],
+            //     Math.floor(grouped_orders[key].length / value)
+            //   )
+            // );
+            let chunks = Math.ceil(grouped_orders[key].length / value);
             for (let i = 0; i < value; i++) {
-              if (_.chunk(grouped_orders[key], value)[i]) {
+              if (_.chunk(grouped_orders[key], chunks)[i]) {
                 polls_paired_with_clients.push({
                   groupId: key,
-                  clients: _.chunk(grouped_orders[key], value)[i],
+                  clients: _.chunk(grouped_orders[key], chunks)[i],
                   poll: grouped_polls[key][i]
                 });
               }
@@ -176,7 +192,7 @@ class UploadedFiles extends Component {
             allow_multiple_selection,
             fileId
           };
-          //console.log("envio a /api/polls/send", body);
+          // console.log("envio a /api/polls/send", body);
           promises_to_send_emails.push(
             axios.post("/api/polls/send", { array: body, server })
           );
@@ -201,7 +217,7 @@ class UploadedFiles extends Component {
         });
       }
     }
-  }
+  };
 
   fetchPolls = () => axios.get("/api/polls").then(res => res.data);
 
@@ -234,16 +250,6 @@ class UploadedFiles extends Component {
       </div>
     ) : (
       <Grid container className={classes.root}>
-        <Grid item xs={12}>
-          <PrimaryButton
-            button={
-              this.state.selectedQuestions.length > 1
-                ? "Enviar Encuestas"
-                : "Enviar Encuesta"
-            }
-            handleClick={() => this.sendEmails()}
-          />
-        </Grid>
         <Grid item xs={6}>
           <Grid item xs={12}>
             Lista de archivos que han sido cargados
@@ -271,6 +277,7 @@ class UploadedFiles extends Component {
               <ShowOrders
                 orders={this.state.orders}
                 items={this.state.orders}
+                sendEmails={this.sendEmails}
               />
             </Grid>
           ) : (
