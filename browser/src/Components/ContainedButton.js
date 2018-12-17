@@ -45,7 +45,7 @@ class ContainedButton extends Component {
       if (response.error_code === 1) alert(response.message);
       else if (response.error_code === 2) {
         alert(
-          "Las cabeceras del archivo no estan correctas!...\n deben ser: HCU - Paciente - Orden	- Clasificacion	- Categoria	- Convenio - Empresa -Medico -Grupo - Servicio - Fecha (DD/MM/AAAA)	- Sucursal - cont	- email"
+          "Las cabeceras del archivo no estan correctas!...\n deben ser: HCU - Paciente - Orden	- Clasificacion	- Categoria	- Convenio - Empresa -Medico -Grupo - Servicio - Fecha	- Sucursal - cont	- email"
         );
       } else {
         // let { data } = await axios.get(`/api/files/${response.data}/orders`)

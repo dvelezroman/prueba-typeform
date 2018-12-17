@@ -74,7 +74,7 @@ class ShowOrders extends Component {
   }
 
   render() {
-    const { classes, orders, loggedUser, sendEmails } = this.props;
+    const { classes, orders, loggedUser, send, sendEmails } = this.props;
     let orders_sorted = orders.length ? sortArray(orders) : [];
     //console.log("Loading: ", this.state.loading);
     return !loggedUser.logged ? (
@@ -85,12 +85,17 @@ class ShowOrders extends Component {
       <CircularIndeterminated />
     ) : (
       <Grid container>
-        <Grid item xs={12}>
-          <PrimaryButton
-            button={"Enviar Encuesta"}
-            handleClick={() => sendEmails()}
-          />
-        </Grid>
+        {send ? (
+          <Grid item xs={12}>
+            <PrimaryButton
+              button={"Enviar Encuesta"}
+              handleClick={() => sendEmails()}
+            />
+          </Grid>
+        ) : (
+          ""
+        )}
+
         <Grid item xs={12}>
           <Paper className={classes.root}>
             <Table className={classes.table}>

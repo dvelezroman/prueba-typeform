@@ -84,6 +84,14 @@ class NestedList extends React.Component {
                 <ListItemText inset primary="Enviar Encuesta" />
               </ListItem>
             </Link>
+            <Link to="/adminfiles">
+              <ListItem button>
+                <ListItemIcon>
+                  <ADB />
+                </ListItemIcon>
+                <ListItemText inset primary="Administrar Archivos" />
+              </ListItem>
+            </Link>
           </List>
         </Grid>
       </Grid>

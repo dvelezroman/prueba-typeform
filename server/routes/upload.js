@@ -59,9 +59,11 @@ router.post("/", function(req, res) {
             });
           }
           // here we must store in DataBase
+          //console.log("Result: ", result);
           const dataArray = getDataInArrays(result);
-          if (!dataArray) {
-            res.status(200).json({ error_code: 2 });
+          //console.log("DataArray: ", dataArray);
+          if (!dataArray.orders.length) {
+            return res.status(200).json({ error_code: 2 });
           }
           // promises to create the data in database
           let ref = uuid();

@@ -23,6 +23,7 @@ import UpdateQuestion from "../Components/UpdateQuestion";
 import { setAdmin } from "../actions/adminActions";
 import CreateQuestionsPoll from "./CreateQuestionsPoll";
 import MailConfigForm from "./MailConfigForm";
+import FilesAdmin from "./FilesAdmin";
 
 const styles = theme => ({
   root: {
@@ -150,6 +151,15 @@ class Main extends Component {
                       render={() => (
                         <Grid container>
                           <CreatePoll />
+                        </Grid>
+                      )}
+                    />
+                    <Route
+                      exact
+                      path="/adminfiles"
+                      render={() => (
+                        <Grid container>
+                          <FilesAdmin />
                         </Grid>
                       )}
                     />
