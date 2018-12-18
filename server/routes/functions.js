@@ -29,6 +29,7 @@ const getDataInArrays = rawData => {
   };
   //console.log('Como llega la data: ', rawData);
   rawData.map(reg => {
+    //console.log("Reg: ", reg);
     if (
       reg.hcu &&
       reg.paciente &&
