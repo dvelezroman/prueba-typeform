@@ -119,6 +119,7 @@ router.post("/send", async (req, res, next) => {
   let ref = uuid(); // genero un ref
   let question_ref = params.ref;
   let server = req.body.server;
+  let days = req.body.days;
   //console.log("Clientes: ", params.clients);
   let emails = params.clients.map(item => item.email);
   let file = params.fileId;
@@ -184,7 +185,8 @@ router.post("/send", async (req, res, next) => {
   ).then(([rowsUpdate, [updatedPoll]]) => {
     if (updatedPoll) {
       let time = new Date();
-      time = time.getTime() + 2 * (24 * (1000 * 60 * 60));
+      // aqui cambiar por la selección que haga del tiempo de vida de la encuesta
+      time = time.getTime() + days * (24 * (1000 * 60 * 60));
       PollsSend.create({
         ref,
         sendtime: time,

@@ -141,7 +141,7 @@ class UploadedFiles extends Component {
       </Grid>
     ) : (
       <Grid container className={classes.root}>
-        <Grid item xs={6}>
+        <Grid item xs={12}>
           <Grid item xs={12}>
             Lista de archivos que han sido cargados
           </Grid>
@@ -149,13 +149,12 @@ class UploadedFiles extends Component {
             {this.state.files.map(item => (
               <List key={item.id} component="nav">
                 <ListItem selected={this.state.selectedFile.id === item.id}>
-                  <ListItemAvatar
+                  <IconButton
+                    aria-label="Ver Ordenes"
                     onClick={event => this.handleListItemClick(event, item)}
                   >
-                    <Avatar>
-                      <FolderIcon />
-                    </Avatar>
-                  </ListItemAvatar>
+                    <FolderIcon />
+                  </IconButton>
                   <ListItemText
                     primary={`Archivo : ${item.name}`}
                     secondary={`Fecha de carga: ${item.uploaded}`}

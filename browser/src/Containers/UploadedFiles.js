@@ -1,17 +1,50 @@
 import React, { Component } from "react";
 import axios from "axios";
+import classNames from "classnames";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Grid from "@material-ui/core/Grid";
-//import PrimaryButton from "../Components/PrimaryButton";
+import TextField from "@material-ui/core/TextField";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import MenuItem from "@material-ui/core/MenuItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ShowOrders from "../Components/ShowOrders";
-//import CircularIndeterminated from "../Components/CircularIndeterminated";
 import LinearIndeterminated from "../Components/LinearIndeterminated";
 import _ from "lodash";
+
+const ranges = [
+  {
+    value: 1,
+    label: 1
+  },
+  {
+    value: 2,
+    label: 2
+  },
+  {
+    value: 3,
+    label: 3
+  },
+  {
+    value: 4,
+    label: 4
+  },
+  {
+    value: 5,
+    label: 5
+  },
+  {
+    value: 6,
+    label: 6
+  },
+  {
+    value: 7,
+    label: 7
+  }
+];
 
 const styles = theme => ({
   root: {
@@ -51,7 +84,8 @@ class UploadedFiles extends Component {
       questions: [],
       polls: [],
       selectedQuestions: [],
-      sending: false
+      sending: false,
+      days: 2
     };
     this.handleListItemClick = this.handleListItemClick.bind(this);
   }
@@ -78,6 +112,10 @@ class UploadedFiles extends Component {
     //   this.setState({ loading: false });
     //   return res.data;
     // });
+  };
+
+  handleChange = prop => event => {
+    this.setState({ [prop]: event.target.value });
   };
 
   handlePollCheck = value => () => {
@@ -197,8 +235,9 @@ class UploadedFiles extends Component {
               fileId
             };
             // console.log("envio a /api/polls/send", body);
+            let days = this.state.days;
             promises_to_send_emails.push(
-              axios.post("/api/polls/send", { array: body, server })
+              axios.post("/api/polls/send", { array: body, server, days })
             );
           }
         });
@@ -220,7 +259,11 @@ class UploadedFiles extends Component {
               this.setState({ sending: false }, () =>
                 alert("Las encuestas se enviaron exitosamente")
               );
-            } else alert("Las encuesta se envió exitosamente");
+            } else {
+              this.setState({ sending: false }, () =>
+                alert("La encuesta se envió exitosamente")
+              );
+            }
           }
         });
       }
@@ -251,7 +294,7 @@ class UploadedFiles extends Component {
 
   render() {
     const { classes, loggedUser } = this.props;
-    //console.log("Loading : ", this.state.loading);
+    //console.log("Dias validez: ", this.state.days);
     return !loggedUser.logged ? (
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta informacion</h1>
@@ -287,10 +330,36 @@ class UploadedFiles extends Component {
             ))}
           </Grid>
         </Grid>
+        <Grid item xs={6}>
+          <Grid item xs={12}>
+            Seleccione numero de días de validez que tendrá la encuesta
+          </Grid>
+          <Grid>
+            <TextField
+              select
+              label="Seleccione"
+              className={classNames(classes.margin, classes.textField)}
+              value={this.state.days}
+              onChange={this.handleChange("days")}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">Días</InputAdornment>
+                )
+              }}
+            >
+              {ranges.map(option => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+        </Grid>
         <Grid item xs={12}>
           {this.state.selectedFile.name ? (
             <Grid item xs={12} className={classes.orders}>
               <ShowOrders
+                send={true}
                 orders={this.state.orders}
                 items={this.state.orders}
                 sendEmails={this.sendEmails}
