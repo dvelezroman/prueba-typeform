@@ -88,7 +88,7 @@ class UploadedFiles extends Component {
       let files = this.state.files;
       if (files.length > 1) {
         files = _.remove(files, function(file) {
-          return file.id === item.id;
+          return file.id != item.id;
         });
       } else {
         files = [];
