@@ -10,10 +10,10 @@ const styles = {
 };
 
 function LinearIndeterminate(props) {
-  const { classes } = props;
+  const { classes, msg } = props;
   return (
     <div className={classes.root}>
-      <div>Enviando...</div>
+      <div>{msg}</div>
       <div>
         <LinearProgress />
       </div>

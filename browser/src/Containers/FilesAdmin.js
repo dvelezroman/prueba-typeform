@@ -86,9 +86,13 @@ class UploadedFiles extends Component {
     if (!response.error) {
       // borrar el archivo de array files con lodash
       let files = this.state.files;
-      files = _.remove(files, function(file) {
-        return file.id === 1;
-      });
+      if (files.length > 1) {
+        files = _.remove(files, function(file) {
+          return file.id === item.id;
+        });
+      } else {
+        files = [];
+      }
       this.setState({ orders: [], files }, () => alert("Archivo borrado"));
     }
   };
@@ -126,7 +130,7 @@ class UploadedFiles extends Component {
 
   render() {
     const { classes, loggedUser } = this.props;
-    //console.log("Loading : ", this.state.loading);
+    //console.log("Files : ", this.state.files);
     return !loggedUser.logged ? (
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta informacion</h1>
@@ -135,7 +139,7 @@ class UploadedFiles extends Component {
       <Grid container>
         <Grid item xs={2} />
         <Grid item xs={8}>
-          <LinearIndeterminated />
+          <LinearIndeterminated msg={"Cargando"} />
         </Grid>
         <Grid item xs={2} />
       </Grid>

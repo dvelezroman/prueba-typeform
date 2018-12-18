@@ -303,7 +303,7 @@ class UploadedFiles extends Component {
       <Grid container>
         <Grid item xs={2} />
         <Grid item xs={8}>
-          <LinearIndeterminated />
+          <LinearIndeterminated msg={"Enviando Correos ...."} />
         </Grid>
         <Grid item xs={2} />
       </Grid>

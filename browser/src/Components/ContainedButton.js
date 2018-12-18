@@ -1,18 +1,15 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-//import { Redirect } from "react-router-dom";
 import { withRouter } from "react-router";
 import PropTypes from "prop-types";
-//import axios from "axios";
 import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
-// import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import Chip from "@material-ui/core/Chip";
-// import ShowOrders from "./ShowOrders";
 import CircularIndeterminated from "./CircularIndeterminated";
 import { clearRegs, uploadFile } from "../actions/uploadFileActions";
+import LinearIndeterminated from "./LinearIndeterminated";
 
 const styles = theme => ({
   button: {
@@ -31,13 +28,15 @@ class ContainedButton extends Component {
     super();
     this.state = {
       file: null,
-      orders: []
+      orders: [],
+      loading: false
     };
   }
 
   onFormSubmit = async event => {
     event.preventDefault(); // Stop form submit
     if (this.state.file) {
+      this.setState({ loading: true });
       let response = await this.props
         .uploadFile(this.state.file)
         .then(res => res);
@@ -51,7 +50,9 @@ class ContainedButton extends Component {
         // let { data } = await axios.get(`/api/files/${response.data}/orders`)
         // .then(res => res.data);
         // this.setState({ orders: data });
-        alert("El archivo cargó completamente");
+        this.setState({ loading: false }, () =>
+          alert("El archivo cargó completamente")
+        );
         this.props.history.push("/files");
       }
     } else {
@@ -74,6 +75,14 @@ class ContainedButton extends Component {
       <div className={classes.root}>
         <h1>Necesitas loggearte para ver esta informacion</h1>
       </div>
+    ) : this.state.loading ? (
+      <Grid container>
+        <Grid item xs={2} />
+        <Grid item xs={8}>
+          <LinearIndeterminated msg={"Cargando"} />
+        </Grid>
+        <Grid item xs={2} />
+      </Grid>
     ) : (
       <div>
         <Grid container>
