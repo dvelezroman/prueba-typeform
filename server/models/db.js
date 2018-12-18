@@ -20,7 +20,7 @@ const db = new Sequelize(process.env.URI_DB, {
     max: 30,
     min: 0,
     acquire: 300000,
-    idle: 10000
+    idle: 100000
   }
 });
 
