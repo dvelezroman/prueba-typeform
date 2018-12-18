@@ -79,7 +79,9 @@ class ContainedButton extends Component {
       <Grid container>
         <Grid item xs={2} />
         <Grid item xs={8}>
-          <LinearIndeterminated msg={"Cargando"} />
+          <LinearIndeterminated
+            msg={"Subiendo los datos al servidor... espere"}
+          />
         </Grid>
         <Grid item xs={2} />
       </Grid>

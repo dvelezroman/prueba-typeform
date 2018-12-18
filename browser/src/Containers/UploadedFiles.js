@@ -85,6 +85,7 @@ class UploadedFiles extends Component {
       polls: [],
       selectedQuestions: [],
       sending: false,
+      loading: true,
       days: 2
     };
     this.handleListItemClick = this.handleListItemClick.bind(this);
@@ -289,7 +290,7 @@ class UploadedFiles extends Component {
       } `
     }));
     questions = questions.filter(question => question.enabled);
-    this.setState({ files: files, questions: questions });
+    this.setState({ files: files, questions: questions, loading: false });
   }
 
   render() {
@@ -303,7 +304,19 @@ class UploadedFiles extends Component {
       <Grid container>
         <Grid item xs={2} />
         <Grid item xs={8}>
-          <LinearIndeterminated msg={"Enviando Correos ...."} />
+          <LinearIndeterminated
+            msg={
+              "Enviando los correos, por favor espere mientras se completa el envío..."
+            }
+          />
+        </Grid>
+        <Grid item xs={2} />
+      </Grid>
+    ) : this.state.loading ? (
+      <Grid container>
+        <Grid item xs={2} />
+        <Grid item xs={8}>
+          <LinearIndeterminated msg={"Cargando los archivos ...."} />
         </Grid>
         <Grid item xs={2} />
       </Grid>
