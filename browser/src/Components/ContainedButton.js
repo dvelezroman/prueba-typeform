@@ -44,8 +44,16 @@ class ContainedButton extends Component {
       //console.log(`Response: `, response.err_desc);
       if (response.error_code === 1) alert(response.message);
       else if (response.error_code === 2) {
-        alert(
-          "Las cabeceras del archivo no estan correctas!...\n deben ser: HCU - Paciente - Orden	- Clasificacion	- Categoria	- Convenio - Empresa -Medico -Grupo - Servicio - Fecha	- Sucursal - cont	- email"
+        this.setState({ loading: false }, () =>
+          alert(
+            "Las cabeceras del archivo no estan correctas!...\n deben ser: HCU - Paciente - Orden	- Clasificacion	- Categoria	- Convenio - Empresa -Medico -Grupo - Servicio - Fecha	- Sucursal - cont	- email"
+          )
+        );
+      } else if (response.error_code === 3) {
+        this.setState({ loading: false }, () =>
+          alert(
+            "El archivo seleccionado, contiene mas de 1000 registros, para un mejor resultado y procesamiento de la información, seleccione archivos con menos registros, o divida el archivo en varios de menor tamaño"
+          )
         );
       } else {
         // let { data } = await axios.get(`/api/files/${response.data}/orders`)
