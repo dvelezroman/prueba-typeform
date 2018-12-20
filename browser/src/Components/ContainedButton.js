@@ -35,7 +35,8 @@ class ContainedButton extends Component {
 
   onFormSubmit = async event => {
     event.preventDefault(); // Stop form submit
-    if (this.state.file) {
+    //console.log("File", this.state.file);
+    if (this.state.file && this.state.file.name.split(".")[1] === "xlsx") {
       this.setState({ loading: true });
       let response = await this.props
         .uploadFile(this.state.file)
@@ -56,7 +57,7 @@ class ContainedButton extends Component {
         this.props.history.push("/files");
       }
     } else {
-      alert("Debe seleccionar un archivo");
+      alert("Debe seleccionar un archivo con extensión de Excel .xlsx");
     }
   };
 
@@ -103,6 +104,7 @@ class ContainedButton extends Component {
               <form onSubmit={this.onFormSubmit}>
                 <input
                   type="file"
+                  accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                   id="contained-button-file"
                   onChange={this.onChange}
                 />
