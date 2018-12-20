@@ -1,4 +1,5 @@
 const express = require("express");
+const Promise = require("bluebird");
 var fs = require("fs");
 const router = express.Router();
 const _ = require("lodash");
@@ -21,6 +22,7 @@ const File = models.File;
 router.post("/", function(req, res) {
   let exceltojson; //Initialization
   upload(req, res, function(err) {
+    //console.log("Archivo: ", req.file);
     if (err) {
       res.json({ error_code: 1, err_desc: err });
       return;
@@ -175,12 +177,12 @@ router.post("/", function(req, res) {
             });
         }
       );
-      try {
-        // code to delete the file after the convertion and store of the data
-        fs.unlinkSync(req.file.path);
-      } catch (e) {
-        //error deleting the file
-      }
+      // try {
+      //   // code to delete the file after the convertion and store of the data
+      //   //fs.unlinkSync(req.file.path);
+      // } catch (e) {
+      //   //error deleting the file
+      // }
     } catch (e) {
       res.json({ error_code: 1, err_desc: "Corrupted excel file" });
     }
