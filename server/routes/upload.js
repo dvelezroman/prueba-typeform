@@ -67,6 +67,9 @@ router.post("/", function(req, res) {
           if (!dataArray.orders.length) {
             return res.status(200).json({ error_code: 2 });
           }
+          if (dataArray.orders.length > 1000) {
+            return res.status(200).json({ error_code: 3 });
+          }
           // promises to create the data in database
           let ref = uuid();
           let fileName = req.file.originalname.split(".")[0];
