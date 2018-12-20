@@ -126,7 +126,9 @@ router.post("/", function(req, res) {
                         File.findOne({ where: { ref: ref } }).then(file =>
                           Order.findOrCreate({
                             where: {
-                              ref: order.ref,
+                              ref: order.ref
+                            },
+                            defaults: {
                               attended: order.attended,
                               description: "Atendido"
                             }
