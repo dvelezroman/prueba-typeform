@@ -18,9 +18,9 @@ const db = new Sequelize(process.env.URI_DB, {
   dialect: "postgres",
   pool: {
     max: 30,
-    min: 0,
-    acquire: 300000,
-    idle: 100000
+    min: 1,
+    acquire: 20000,
+    idle: 20000
   }
 });
 
