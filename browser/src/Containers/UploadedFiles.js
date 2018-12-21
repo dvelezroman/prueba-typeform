@@ -226,37 +226,38 @@ class UploadedFiles extends Component {
               fileId
             };
             console.log("envio a /api/polls/send", body);
-            // let days = this.state.days;
-            // promises_to_send_emails.push(
-            //   axios.post("/api/polls/send", { array: body, server, days })
-            // );
+            let days = this.state.days;
+            promises_to_send_emails.push(
+              axios.post("/api/polls/send", { array: body, server, days })
+            );
           }
         });
-        // Promise.all(promises_to_send_emails).then(res => {
-        //   // enviar a guardar a la base de datos las encuestas enviadas
-        //   //console.log('res : ', res);
-        //   let send_forms = res.length;
-        //   for (let i = 0; i < res.length; i++) {
-        //     if (!res[i].data.error) send_forms--;
-        //   }
-        //   if (send_forms) alert("Algunas encuestas no se enviaron");
-        //   else {
-        //     this.setState({
-        //       selectedFile: {},
-        //       orders: [],
-        //       selectedQuestions: []
-        //     });
-        //     if (res.length > 1) {
-        //       this.setState({ sending: false }, () =>
-        //         alert("Las encuestas se enviaron exitosamente")
-        //       );
-        //     } else {
-        //       this.setState({ sending: false }, () =>
-        //         alert("La encuesta se envió exitosamente")
-        //       );
-        //     }
-        //   }
-        // });
+        Promise.all(promises_to_send_emails).then(res => {
+          console.log("Se enviaron las encuestas");
+          // enviar a guardar a la base de datos las encuestas enviadas
+          //console.log('res : ', res);
+          let send_forms = res.length;
+          for (let i = 0; i < res.length; i++) {
+            if (!res[i].data.error) send_forms--;
+          }
+          if (send_forms) alert("Algunas encuestas no se enviaron");
+          else {
+            this.setState({
+              selectedFile: {},
+              orders: [],
+              selectedQuestions: []
+            });
+            if (res.length > 1) {
+              this.setState({ sending: false }, () =>
+                alert("Las encuestas se enviaron exitosamente")
+              );
+            } else {
+              this.setState({ sending: false }, () =>
+                alert("La encuesta se envió exitosamente")
+              );
+            }
+          }
+        });
       }
     }
   };
