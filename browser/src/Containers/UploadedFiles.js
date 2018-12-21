@@ -173,20 +173,8 @@ class UploadedFiles extends Component {
             //console.log("Data cuando solo es un cliente : ", data);
             polls_paired_with_clients.push(data);
           } else {
-            //console.log("La key con la que busca en grouped orders: ", key);
-            // console.log(
-            //   "El value con el que chunkea el grouped_orders: ",
-            //   value
-            // );
-            // console.log(
-            //   "Chunkea en : ",
-            //   _.chunk(
-            //     grouped_orders[key],
-            //     Math.floor(grouped_orders[key].length / value)
-            //   )
-            // );
-            if (!grouped_orders[key].length) {
-              let chunks = Math.ceil(grouped_orders[key].length / value); // parece que cuando no hay gente en un grupo va vacio
+            if (grouped_orders[key]) {
+              let chunks = Math.ceil(grouped_orders[key].length / value);
               for (let i = 0; i < value; i++) {
                 if (_.chunk(grouped_orders[key], chunks)[i]) {
                   polls_paired_with_clients.push({
