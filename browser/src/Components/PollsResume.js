@@ -154,7 +154,7 @@ class PollsResume extends Component {
             date: sendpoll.createdAt.split("T")[0],
             answers: sendpoll.answers,
             id: sendpoll.id,
-            file: sendpoll.file.name,
+            file: sendpoll.file.name, // cuando aqui falla algo revisar la tabla los fileId
             name: sendpoll.poll.name,
             group: sendpoll.poll.group.description
           }));

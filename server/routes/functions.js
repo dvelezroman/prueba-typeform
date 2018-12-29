@@ -18,7 +18,7 @@ const storeInDataBase = (
     ...poffices,
     ...pservices
     //...porders
-  ]).then(() => Promise.all(porders));
+  ]).then(() => Promise.each(porders, porder => porder)); //Promise.all(porders));
 
 const getDataInArrays = rawData => {
   let data = {
