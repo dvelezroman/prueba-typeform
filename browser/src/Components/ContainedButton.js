@@ -42,8 +42,10 @@ class ContainedButton extends Component {
         .uploadFile(this.state.file)
         .then(res => res);
       //console.log(`Response: `, response.err_desc);
-      if (response.error_code === 1) alert(response.message);
-      else if (response.error_code === 2) {
+      if (response.error_code === 1) {
+        console.log("Error : ", response.err_desc);
+        alert(response.message);
+      } else if (response.error_code === 2) {
         this.setState({ loading: false }, () =>
           alert(
             "Las cabeceras del archivo no estan correctas!...\n deben ser: HCU - Paciente - Orden	- Clasificacion	- Categoria	- Convenio - Empresa -Medico -Grupo - Servicio - Fecha	- Sucursal - cont	- email"
