@@ -189,7 +189,7 @@ class UploadedFiles extends Component {
         });
         //console.log("Grouped orders : ", grouped_orders);
         //console.log("Polls by group: ", n_polls_by_group);
-        //console.log("Polls paired : ", polls_paired_with_clients);
+        console.log("Polls paired : ", polls_paired_with_clients);
         // primero vemos cuantas encuestas hay seleccionadas del mismo grupo
         // por cada formulario seleccionado, enviarle ese formulario a los clientes de la misma categoría del formulario
         let promises_to_send_emails = [];
@@ -225,7 +225,7 @@ class UploadedFiles extends Component {
               allow_multiple_selection,
               fileId
             };
-            // console.log("envio a /api/polls/send", body);
+            console.log("envio a /api/polls/send", body);
             let days = this.state.days;
             promises_to_send_emails.push(
               axios.post("/api/polls/send", { array: body, server, days })
@@ -233,6 +233,7 @@ class UploadedFiles extends Component {
           }
         });
         Promise.all(promises_to_send_emails).then(res => {
+          console.log("Se enviaron las encuestas");
           // enviar a guardar a la base de datos las encuestas enviadas
           //console.log('res : ', res);
           let send_forms = res.length;

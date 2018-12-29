@@ -9,7 +9,9 @@ const { storeInDataBase, getDataInArrays } = require("./functions");
 const xlstojson = require("xls-to-json-lc");
 const xlsxtojson = require("xlsx-to-json-lc");
 const models = require("../models");
+const Sequelize = require("sequelize");
 
+const Op = Sequelize.Op;
 const Client = models.Client;
 const Office = models.Office;
 const Order = models.Order;
@@ -135,16 +137,20 @@ router.post("/", function(req, res) {
                               attended: order.attended,
                               description: "Atendido"
                             }
-                          }).then(([orderCreated, created]) => {
-                            if (created) {
-                              orderCreated.setClient(client);
-                              orderCreated.setDoctor(doctor);
-                              orderCreated.setGroup(group);
-                              orderCreated.setService(service);
-                              orderCreated.setOffice(office);
-                              orderCreated.setFile(file);
-                            }
                           })
+                            .then(([orderCreated, created]) => {
+                              if (created) {
+                                orderCreated.setClient(client);
+                                orderCreated.setDoctor(doctor);
+                                orderCreated.setGroup(group);
+                                orderCreated.setService(service);
+                                orderCreated.setOffice(office);
+                                orderCreated.setFile(file);
+                              } else {
+                                throw `Registro repetido : ${orderCreated.ref}`;
+                              }
+                            })
+                            .catch(err => console.log(err))
                         )
                       )
                     )
@@ -176,18 +182,18 @@ router.post("/", function(req, res) {
               const response = {
                 error_code: 1,
                 err_desc: err,
-                message: "No se grabaron todos los datos"
+                message: "Hubieron errores al cargar los datos"
               };
               res.status(200).json(response);
             });
         }
       );
-      // try {
-      //   // code to delete the file after the convertion and store of the data
-      //   //fs.unlinkSync(req.file.path);
-      // } catch (e) {
-      //   //error deleting the file
-      // }
+      try {
+        // code to delete the file after the convertion and store of the data
+        //fs.unlinkSync(req.file.path);
+      } catch (e) {
+        //error deleting the file
+      }
     } catch (e) {
       res.json({ error_code: 1, err_desc: "Corrupted excel file" });
     }

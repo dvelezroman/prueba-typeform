@@ -43,12 +43,13 @@ const getDataInArrays = rawData => {
       reg.grupo &&
       reg.servicio
     ) {
+      //console.log("Tipo de dato hcu :", typeof reg.hcu);
       data = Object.assign(
         {},
         {
           clients: [
             ...data.clients,
-            { hcu: reg.hcu, email: reg.email, name: reg.paciente }
+            { hcu: reg.hcu, email: reg.email, name: reg.paciente.trim() }
           ],
           offices: [...data.offices, { description: reg.sucursal }],
           orders: [
