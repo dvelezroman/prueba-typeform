@@ -20,413 +20,432 @@ import SaveIcon from "@material-ui/icons/Save";
 import { getPollAnswers, getSendPolls } from "../actions/typeForm";
 
 const CustomTableCell = withStyles(theme => ({
-  head: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white
-  },
-  body: {
-    fontSize: 10
-  }
+	head: {
+		backgroundColor: theme.palette.common.black,
+		color: theme.palette.common.white
+	},
+	body: {
+		fontSize: 10
+	}
 }))(TableCell);
 
 const styles = theme => ({
-  root: {
-    width: "100%",
-    marginTop: theme.spacing.unit * 3,
-    overflowX: "auto"
-  },
-  table: {
-    minWidth: 700
-  },
-  row: {
-    "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.background.default
-    }
-  },
-  button: {
-    margin: theme.spacing.unit
-  },
-  leftIcon: {
-    marginRight: theme.spacing.unit
-  },
-  rightIcon: {
-    marginLeft: theme.spacing.unit
-  },
-  iconSmall: {
-    fontSize: 20
-  }
+	root: {
+		width: "100%",
+		marginTop: theme.spacing.unit * 3,
+		overflowX: "auto"
+	},
+	table: {
+		minWidth: 700
+	},
+	row: {
+		"&:nth-of-type(odd)": {
+			backgroundColor: theme.palette.background.default
+		}
+	},
+	button: {
+		margin: theme.spacing.unit
+	},
+	leftIcon: {
+		marginRight: theme.spacing.unit
+	},
+	rightIcon: {
+		marginLeft: theme.spacing.unit
+	},
+	iconSmall: {
+		fontSize: 20
+	}
 });
 
 const columns = [
-  {
-    id: "ref_poll",
-    displayName: "Referencia de Encuesta Enviada"
-  },
-  {
-    id: "hcu",
-    displayName: "HCU de cliente"
-  },
-  {
-    id: "cliente",
-    displayName: "Nombre Cliente"
-  },
-  {
-    id: "email",
-    displayName: "Email de Cliente"
-  },
-  {
-    id: "fecha_envio",
-    displayName: "Fecha de Envío"
-  },
-  {
-    id: "pregunta",
-    displayName: "Titulo de la Pregunta"
-  },
-  {
-    id: "tipo",
-    displayName: "Tipo de Pregunta"
-  },
-  {
-    id: "aclaratoria",
-    displayName: "Aclaratoria de la Pregunta"
-  },
-  {
-    id: "ref_preg",
-    displayName: "Referencia de la Pregunta"
-  },
-  {
-    id: "escala",
-    displayName: "Escala"
-  },
-  {
-    id: "fecha_respuesta",
-    displayName: "Fecha de la Respuesta"
-  },
-  {
-    id: "valor",
-    displayName: "Valor de la Respuesta"
-  }
+	{
+		id: "ref_poll",
+		displayName: "Referencia de Encuesta Enviada"
+	},
+	{
+		id: "ref",
+		displayName: "Orden"
+	},
+	{
+		id: "office",
+		displayName: "Sucursal"
+	},
+	{
+		id: "hcu",
+		displayName: "HCU de cliente"
+	},
+	{
+		id: "cliente",
+		displayName: "Nombre Cliente"
+	},
+	{
+		id: "email",
+		displayName: "Email de Cliente"
+	},
+	{
+		id: "attended",
+		displayName: "Fecha de Atención"
+	},
+	{
+		id: "fecha_envio",
+		displayName: "Fecha de Envío"
+	},
+	{
+		id: "pregunta",
+		displayName: "Titulo de la Pregunta"
+	},
+	{
+		id: "tipo",
+		displayName: "Tipo de Pregunta"
+	},
+	{
+		id: "aclaratoria",
+		displayName: "Aclaratoria de la Pregunta"
+	},
+	{
+		id: "ref_preg",
+		displayName: "Referencia de la Pregunta"
+	},
+	{
+		id: "escala",
+		displayName: "Escala"
+	},
+	{
+		id: "fecha_respuesta",
+		displayName: "Fecha de la Respuesta"
+	},
+	{
+		id: "valor",
+		displayName: "Valor de la Respuesta"
+	}
 ];
 
 const formatDate = date => {
-  // let currentDate = new Date()
-  let day = date.getDate();
-  let month = date.getMonth() + 1;
-  let year = date.getFullYear();
-  if (day < 10) {
-    day = "0" + day;
-  }
+	// let currentDate = new Date()
+	let day = date.getDate();
+	let month = date.getMonth() + 1;
+	let year = date.getFullYear();
+	if (day < 10) {
+		day = "0" + day;
+	}
 
-  if (month < 10) {
-    month = "0" + month;
-  }
-  return year + "-" + month + "-" + day;
+	if (month < 10) {
+		month = "0" + month;
+	}
+	return year + "-" + month + "-" + day;
 };
 
 class PollsResume extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selected: "",
-      polls: [],
-      answers: [],
-      csv: [],
-      from: "",
-      to: ""
-    };
-    this.showResume = this.showResume.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-  }
+	constructor(props) {
+		super(props);
+		this.state = {
+			selected: "",
+			polls: [],
+			answers: [],
+			csv: [],
+			from: "",
+			to: ""
+		};
+		this.showResume = this.showResume.bind(this);
+		this.handleChange = this.handleChange.bind(this);
+	}
 
-  handleChange = label => e => {
-    if (label === "to" && this.state.from) {
-      const from = this.state.from;
-      const to = e.target.value;
-      axios
-        .get(`/api/polls/sendpolls/from/${from}/to/${to}`)
-        .then(res => res.data)
-        .then(sendpolls => {
-          let polls = sendpolls.map(sendpoll => ({
-            clients: sendpoll.clients,
-            ref: sendpoll.ref,
-            categories: sendpoll.poll.question.categories,
-            question_ref: sendpoll.poll.question.question_ref,
-            date: sendpoll.createdAt.split("T")[0],
-            answers: sendpoll.answers,
-            id: sendpoll.id,
-            file: sendpoll.file.name, // cuando aqui falla algo revisar la tabla los fileId
-            name: sendpoll.poll.name,
-            group: sendpoll.poll.group.description
-          }));
-          //let grouped_polls1 = _.groupBy(polls, poll => poll.question_ref);
-          let grouped_polls2 = {};
-          for (let i = 0; i < polls.length; i++) {
-            let poll = polls[i].question_ref;
-            if (grouped_polls2[poll]) {
-              grouped_polls2[poll].clients += polls[i].clients;
-            } else {
-              grouped_polls2[poll] = {
-                ...polls[i],
-                clients: polls[i].clients
-              };
-            }
-          }
-          let grouped_polls3 = [];
-          _.forEach(grouped_polls2, (value, key) => {
-            grouped_polls3.push(value);
-          });
-          //console.log("Grouped Polls : ", grouped_polls3);
-          this.setState({ polls: grouped_polls3, to });
-        });
-    } else {
-      this.setState({ [label]: e.target.value });
-    }
-  };
+	handleChange = label => e => {
+		if (label === "to" && this.state.from) {
+			const from = this.state.from;
+			const to = e.target.value;
+			axios
+				.get(`/api/polls/sendpolls/from/${from}/to/${to}`)
+				.then(res => res.data)
+				.then(sendpolls => {
+					let polls = sendpolls.map(sendpoll => ({
+						clients: sendpoll.clients,
+						ref: sendpoll.ref,
+						categories: sendpoll.poll.question.categories,
+						question_ref: sendpoll.poll.question.question_ref,
+						date: sendpoll.createdAt.split("T")[0],
+						answers: sendpoll.answers,
+						id: sendpoll.id,
+						file: sendpoll.file.name, // cuando aqui falla algo revisar la tabla los fileId
+						name: sendpoll.poll.name,
+						group: sendpoll.poll.group.description
+					}));
+					//let grouped_polls1 = _.groupBy(polls, poll => poll.question_ref);
+					let grouped_polls2 = {};
+					for (let i = 0; i < polls.length; i++) {
+						let poll = polls[i].question_ref;
+						if (grouped_polls2[poll]) {
+							grouped_polls2[poll].clients += polls[i].clients;
+						} else {
+							grouped_polls2[poll] = {
+								...polls[i],
+								clients: polls[i].clients
+							};
+						}
+					}
+					let grouped_polls3 = [];
+					_.forEach(grouped_polls2, (value, key) => {
+						grouped_polls3.push(value);
+					});
+					//console.log("Grouped Polls : ", grouped_polls3);
+					this.setState({ polls: grouped_polls3, to });
+				});
+		} else {
+			this.setState({ [label]: e.target.value });
+		}
+	};
 
-  exportAnswers2Csv() {
-    let answers = this.state.answers;
-    let data = answers.map(answer => ({
-      ref_poll: this.state.selected,
-      hcu: answer.client.hcu,
-      cliente: answer.client.name,
-      email: answer.client.email,
-      fecha_envio: answer.pollsend.createdAt.split("T")[0],
-      pregunta: answer.pollsend.poll.question.title,
-      tipo:
-        answer.pollsend.poll.question.type === "opinion_scale"
-          ? "escala"
-          : answer.pollsend.poll.question.type === "yes_no"
-          ? "si-no"
-          : "seleccion",
-      aclaratoria: answer.pollsend.poll.question.description,
-      ref_preg: answer.pollsend.poll.question.ref,
-      escala:
-        answer.pollsend.poll.question.type === "opinion_scale"
-          ? answer.pollsend.poll.question.scale
-          : "no_aplica",
-      fecha_respuesta: answer.createdAt.split("T")[0],
-      valor: answer.value
-    }));
-    this.setState({ csv: data });
-  }
+	exportAnswers2Csv() {
+		let answers = this.state.answers;
+		let data = answers.map(answer => ({
+			ref_poll: this.state.selected,
+			ref: answer.ref,
+			office: answer.office,
+			hcu: answer.client.hcu,
+			cliente: answer.client.name,
+			email: answer.client.email,
+			attended: answer.attended,
+			fecha_envio: answer.pollsend.createdAt.split("T")[0],
+			pregunta: answer.pollsend.poll.question.title,
+			tipo:
+				answer.pollsend.poll.question.type === "opinion_scale"
+					? "escala"
+					: answer.pollsend.poll.question.type === "yes_no"
+					? "si-no"
+					: "seleccion",
+			aclaratoria: answer.pollsend.poll.question.description,
+			ref_preg: answer.pollsend.poll.question.ref,
+			escala:
+				answer.pollsend.poll.question.type === "opinion_scale"
+					? answer.pollsend.poll.question.scale
+					: "no_aplica",
+			fecha_respuesta: answer.createdAt.split("T")[0],
+			valor: answer.value
+		}));
+		this.setState({ csv: data });
+	}
 
-  showResume = pollsend => e => {
-    //console.log('Ref: ', pollsendId);
-    axios.get(`/api/polls/answers/${pollsend.ref}`).then(res => {
-      //console.log("Polls answers: ", res.data);
-      this.setState({ selected: pollsend.ref, answers: res.data }, () =>
-        this.exportAnswers2Csv()
-      );
-    });
-  };
+	showResume = pollsend => e => {
+		//console.log('Ref: ', pollsendId);
+		axios.get(`/api/polls/answers/${pollsend.ref}`).then(res => {
+			//console.log("Polls answers: ", res.data);
+			this.setState({ selected: pollsend.ref, answers: res.data }, () =>
+				this.exportAnswers2Csv()
+			);
+		});
+	};
 
-  componentDidMount() {
-    let from = formatDate(new Date());
-    let to = formatDate(new Date());
-    this.setState({ from, to });
-    // traer las refs de las encuestas que han sido enviadas y armar un array de refs []
-    // axios
-    //   .get("/api/polls/sendpolls")
-    //   .then(res => res.data)
-    //   .then(sendpolls => {
-    //     //console.log('SendPolls: ', sendpolls);
-    //     let polls = sendpolls.map(sendpoll => ({
-    //       clients: sendpoll.clients,
-    //       ref: sendpoll.ref,
-    //       date: sendpoll.createdAt.split("T")[0],
-    //       answers: sendpoll.answers,
-    //       id: sendpoll.id,
-    //       file: sendpoll.file.name,
-    //       name: sendpoll.poll.name,
-    //       group: sendpoll.poll.group.description
-    //     }));
-    //   });
-  }
+	componentDidMount() {
+		let from = formatDate(new Date());
+		let to = formatDate(new Date());
+		this.setState({ from, to });
+		// traer las refs de las encuestas que han sido enviadas y armar un array de refs []
+		// axios
+		//   .get("/api/polls/sendpolls")
+		//   .then(res => res.data)
+		//   .then(sendpolls => {
+		//     //console.log('SendPolls: ', sendpolls);
+		//     let polls = sendpolls.map(sendpoll => ({
+		//       clients: sendpoll.clients,
+		//       ref: sendpoll.ref,
+		//       date: sendpoll.createdAt.split("T")[0],
+		//       answers: sendpoll.answers,
+		//       id: sendpoll.id,
+		//       file: sendpoll.file.name,
+		//       name: sendpoll.poll.name,
+		//       group: sendpoll.poll.group.description
+		//     }));
+		//   });
+	}
 
-  render() {
-    const { classes, loggedUser } = this.props;
-    //console.log("Polls : ", this.state.polls);
-    return !loggedUser.logged ? (
-      <div className={classes.root}>
-        <Typography variant="h6" gutterBottom>
-          Necesitas loggearte para ver esta información
-        </Typography>
-      </div>
-    ) : (
-      <Grid container>
-        <Grid item xs={12}>
-          <Paper>
-            <Typography variant="h6" gutterBottom>
-              Cuadro de Estado de las Encuestas que han sido enviadas
-            </Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            id="from"
-            label="Desde"
-            type="date"
-            value={this.state.from}
-            onChange={this.handleChange("from")}
-            className={classes.textField}
-            InputLabelProps={{
-              shrink: true
-            }}
-          />
-          <TextField
-            id="to"
-            label="Hasta"
-            type="date"
-            value={this.state.to}
-            onChange={this.handleChange("to")}
-            className={classes.textField}
-            InputLabelProps={{
-              shrink: true
-            }}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <Paper className={classes.root}>
-            <Table className={classes.table}>
-              <TableHead>
-                <TableRow>
-                  <CustomTableCell>Ref. Pregunta</CustomTableCell>
-                  <CustomTableCell>Formulario</CustomTableCell>
-                  <CustomTableCell>Grupo</CustomTableCell>
-                  <CustomTableCell>Archivo</CustomTableCell>
-                  <CustomTableCell>Enviado</CustomTableCell>
-                  <CustomTableCell numeric>Clientes Enviados</CustomTableCell>
-                  <CustomTableCell>Categorías</CustomTableCell>
-                  {/* <CustomTableCell numeric>Por Contestar</CustomTableCell> */}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {this.state.polls.map(row => {
-                  return (
-                    <TableRow
-                      className={classes.row}
-                      key={row.id}
-                      onClick={this.showResume({
-                        ref: row.question_ref,
-                        id: row.id
-                      })}
-                    >
-                      <CustomTableCell component="th" scope="row">
-                        {row.question_ref}
-                      </CustomTableCell>
-                      <CustomTableCell>{row.name}</CustomTableCell>
-                      <CustomTableCell>{row.group}</CustomTableCell>
-                      <CustomTableCell>{row.file}</CustomTableCell>
-                      <CustomTableCell>{row.date}</CustomTableCell>
-                      <CustomTableCell numeric>{row.clients}</CustomTableCell>
-                      <CustomTableCell>{row.categories}</CustomTableCell>
-                      {/* <CustomTableCell numeric>{row.clients - row.answers}</CustomTableCell> */}
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </Paper>
-        </Grid>
-        <Grid item xs={12}>
-          <Paper>
-            <Grid container>
-              <Grid item xs={6}>
-                <Typography variant="subtitle1" gutterBottom>
-                  Respuestas Registradas
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <CsvDownloader
-                  filename={`reporte-${this.state.selected}`}
-                  columns={columns}
-                  datas={this.state.csv}
-                >
-                  <Button
-                    disabled={this.state.answers.length ? false : true}
-                    variant="contained"
-                    size="small"
-                    className={classes.button}
-                  >
-                    <SaveIcon
-                      className={classNames(
-                        classes.leftIcon,
-                        classes.iconSmall
-                      )}
-                    />
-                    Descargar Respuestas
-                  </Button>
-                </CsvDownloader>
-              </Grid>
-            </Grid>
-            <Grid item xs={12}>
-              <Typography variant="subtitle2" gutterBottom>
-                Pregunta :{" "}
-                {this.state.answers.length
-                  ? this.state.answers[0].pollsend.poll.question.title
-                  : ""}
-              </Typography>
-            </Grid>
-          </Paper>
-        </Grid>
-        <Grid item xs={12}>
-          <Paper className={classes.root}>
-            <Table className={classes.table}>
-              <TableHead>
-                <TableRow>
-                  <CustomTableCell>Id</CustomTableCell>
-                  <CustomTableCell>Tipo</CustomTableCell>
-                  <CustomTableCell>Respuesta</CustomTableCell>
-                  <CustomTableCell>Cliente</CustomTableCell>
-                  <CustomTableCell>Fecha Respuesta</CustomTableCell>
-                  {/* <CustomTableCell numeric>Clientes Enviados</CustomTableCell>
+	render() {
+		const { classes, loggedUser } = this.props;
+		//console.log("Answers : ", this.state.answers);
+		return !loggedUser.logged ? (
+			<div className={classes.root}>
+				<Typography variant="h6" gutterBottom>
+					Necesitas loggearte para ver esta información
+				</Typography>
+			</div>
+		) : (
+			<Grid container>
+				<Grid item xs={12}>
+					<Paper>
+						<Typography variant="h6" gutterBottom>
+							Cuadro de Estado de las Encuestas que han sido enviadas
+						</Typography>
+					</Paper>
+				</Grid>
+				<Grid item xs={12}>
+					<TextField
+						id="from"
+						label="Desde"
+						type="date"
+						value={this.state.from}
+						onChange={this.handleChange("from")}
+						className={classes.textField}
+						InputLabelProps={{
+							shrink: true
+						}}
+					/>
+					<TextField
+						id="to"
+						label="Hasta"
+						type="date"
+						value={this.state.to}
+						onChange={this.handleChange("to")}
+						className={classes.textField}
+						InputLabelProps={{
+							shrink: true
+						}}
+					/>
+				</Grid>
+				<Grid item xs={12}>
+					<Paper className={classes.root}>
+						<Table className={classes.table}>
+							<TableHead>
+								<TableRow>
+									<CustomTableCell>Ref. Pregunta</CustomTableCell>
+									<CustomTableCell>Formulario</CustomTableCell>
+									<CustomTableCell>Grupo</CustomTableCell>
+									<CustomTableCell>Archivo</CustomTableCell>
+									<CustomTableCell>Enviado</CustomTableCell>
+									<CustomTableCell numeric>Clientes Enviados</CustomTableCell>
+									<CustomTableCell>Categorías</CustomTableCell>
+									{/* <CustomTableCell numeric>Por Contestar</CustomTableCell> */}
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{this.state.polls.map(row => {
+									return (
+										<TableRow
+											className={classes.row}
+											key={row.id}
+											onClick={this.showResume({
+												ref: row.question_ref,
+												id: row.id
+											})}
+										>
+											<CustomTableCell component="th" scope="row">
+												{row.question_ref}
+											</CustomTableCell>
+											<CustomTableCell>{row.name}</CustomTableCell>
+											<CustomTableCell>{row.group}</CustomTableCell>
+											<CustomTableCell>{row.file}</CustomTableCell>
+											<CustomTableCell>{row.date}</CustomTableCell>
+											<CustomTableCell numeric>{row.clients}</CustomTableCell>
+											<CustomTableCell>{row.categories}</CustomTableCell>
+											{/* <CustomTableCell numeric>{row.clients - row.answers}</CustomTableCell> */}
+										</TableRow>
+									);
+								})}
+							</TableBody>
+						</Table>
+					</Paper>
+				</Grid>
+				<Grid item xs={12}>
+					<Paper>
+						<Grid container>
+							<Grid item xs={6}>
+								<Typography variant="subtitle1" gutterBottom>
+									Respuestas Registradas
+								</Typography>
+							</Grid>
+							<Grid item xs={6}>
+								<CsvDownloader
+									filename={`reporte-${this.state.selected}`}
+									columns={columns}
+									datas={this.state.csv}
+								>
+									<Button
+										disabled={this.state.answers.length ? false : true}
+										variant="contained"
+										size="small"
+										className={classes.button}
+									>
+										<SaveIcon
+											className={classNames(
+												classes.leftIcon,
+												classes.iconSmall
+											)}
+										/>
+										Descargar Respuestas
+									</Button>
+								</CsvDownloader>
+							</Grid>
+						</Grid>
+						<Grid item xs={12}>
+							<Typography variant="subtitle2" gutterBottom>
+								Pregunta :{" "}
+								{this.state.answers.length
+									? this.state.answers[0].pollsend.poll.question.title
+									: ""}
+							</Typography>
+						</Grid>
+					</Paper>
+				</Grid>
+				<Grid item xs={12}>
+					<Paper className={classes.root}>
+						<Table className={classes.table}>
+							<TableHead>
+								<TableRow>
+									<CustomTableCell>Id</CustomTableCell>
+									<CustomTableCell>Tipo</CustomTableCell>
+									<CustomTableCell>Orden</CustomTableCell>
+									<CustomTableCell>Sucursal</CustomTableCell>
+									<CustomTableCell>Respuesta</CustomTableCell>
+									<CustomTableCell>Cliente</CustomTableCell>
+									<CustomTableCell>Fecha Respuesta</CustomTableCell>
+									{/* <CustomTableCell numeric>Clientes Enviados</CustomTableCell>
                   <CustomTableCell numeric>Contestados</CustomTableCell>
                   <CustomTableCell numeric>Por Contestar</CustomTableCell> */}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {this.state.answers.map(row => {
-                  return (
-                    <TableRow className={classes.row} key={row.id}>
-                      <CustomTableCell component="th" scope="row">
-                        {row.id}
-                      </CustomTableCell>
-                      <CustomTableCell>{row.type}</CustomTableCell>
-                      <CustomTableCell>{row.value}</CustomTableCell>
-                      <CustomTableCell>{row.client.name}</CustomTableCell>
-                      <CustomTableCell>
-                        {row.createdAt.split("T")[0]}
-                      </CustomTableCell>
-                      {/* <CustomTableCell numeric>{row.clients}</CustomTableCell>
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{this.state.answers.map(row => {
+									return (
+										<TableRow className={classes.row} key={row.id}>
+											<CustomTableCell component="th" scope="row">
+												{row.id}
+											</CustomTableCell>
+											<CustomTableCell>{row.type}</CustomTableCell>
+											<CustomTableCell>{row.ref || ""}</CustomTableCell>
+											<CustomTableCell>{row.office || ""}</CustomTableCell>
+											<CustomTableCell>{row.value}</CustomTableCell>
+											<CustomTableCell>{row.client.name}</CustomTableCell>
+											<CustomTableCell>
+												{row.createdAt.split("T")[0]}
+											</CustomTableCell>
+											{/* <CustomTableCell numeric>{row.clients}</CustomTableCell>
                       <CustomTableCell numeric>{row.answers}</CustomTableCell>
                       <CustomTableCell numeric>{row.clients - row.answers}</CustomTableCell> */}
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </Paper>
-        </Grid>
-      </Grid>
-    );
-  }
+										</TableRow>
+									);
+								})}
+							</TableBody>
+						</Table>
+					</Paper>
+				</Grid>
+			</Grid>
+		);
+	}
 }
 
 PollsResume.propTypes = {
-  classes: PropTypes.object.isRequired
+	classes: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-  loggedUser: state.userReducer,
-  sendPolls: state.typeFormReducer.sendPolls
+	loggedUser: state.userReducer,
+	sendPolls: state.typeFormReducer.sendPolls
 });
 
 const mapDispatchToProps = dispatch => ({
-  getPollAnswers: ref => dispatch(getPollAnswers(ref)),
-  getSendPolls: () => dispatch(getSendPolls())
+	getPollAnswers: ref => dispatch(getPollAnswers(ref)),
+	getSendPolls: () => dispatch(getSendPolls())
 });
 
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(withStyles(styles)(PollsResume));
