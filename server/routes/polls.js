@@ -246,7 +246,7 @@ router.get(
 	(req, res) => {
 		// registrar respuestas
 		let params = req.params;
-		//console.log('Params: ', params);
+		//console.log("Params: ", params);
 		const successFilePath = path.resolve(
 			path.join(`${__dirname}/html/success.html`)
 		);
@@ -280,7 +280,11 @@ router.get(
 						}).then(question => question);
 						//console.log("Question : ", question);
 						Answer.findOrCreate({
-							where: { clientId: client.id, pollsendId: pollsend.id },
+							where: {
+								clientId: client.id,
+								pollsendId: pollsend.id
+								//ref: params.order
+							},
 							defaults: {
 								type: question.type,
 								value: params.value,
