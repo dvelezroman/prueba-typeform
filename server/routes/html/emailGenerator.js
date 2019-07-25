@@ -1,7 +1,8 @@
-const emailGenerator = (poll_id, question, client) => { // recibe el id de la encuesta y los datos de la pregunta para construir el body
-    //console.log('question : ', question);
-    //console.log('poll_id : ', poll_id);
-    const head = `
+const emailGenerator = (poll_id, question, client) => {
+	// recibe el id de la encuesta y los datos de la pregunta para construir el body
+	//console.log('question : ', question);
+	//console.log('poll_id : ', poll_id);
+	const head = `
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
         <html xmlns="http://www.w3.org/1999/xhtml">
         <head>
@@ -23,18 +24,26 @@ const emailGenerator = (poll_id, question, client) => { // recibe el id de la en
                         <table border="0" cellpadding="0" cellspacing="0" width="100%">
                             <tr bgcolor="#9494b0">
                                 <td style="padding: 5px;">
-                                    <div style="color: #ffffff; font-family: Arial, sans-serif; border-radius:5px 5px 5px 5px; font-size: 12px; line-height: 14px">Estimado(a): ${client.name}</div>
-                                    <div style="color: #ffffff; font-family: Arial, sans-serif; border-radius:5px 5px 5px 5px; font-size: 12px; line-height: 14px">Especialidad atendida: ${client.group}</div>
+                                    <div style="color: #ffffff; font-family: Arial, sans-serif; border-radius:5px 5px 5px 5px; font-size: 12px; line-height: 14px">Estimado(a): ${
+																			client.name
+																		}</div>
+                                    <div style="color: #ffffff; font-family: Arial, sans-serif; border-radius:5px 5px 5px 5px; font-size: 12px; line-height: 14px">Especialidad atendida: ${
+																			client.group
+																		}</div>
                                 </td>
                             </tr>
                             <tr bgcolor="#9494b0">
                                 <td style="padding: 5px;">
-                                    <div style="color: #ffffff; font-family: Arial, sans-serif; border-radius:5px 5px 5px 5px; font-size: 12px; line-height: 14px">${question.title}</div>
+                                    <div style="color: #ffffff; font-family: Arial, sans-serif; border-radius:5px 5px 5px 5px; font-size: 12px; line-height: 14px">${
+																			question.title
+																		}</div>
                                 </td>
                             </tr>
                             <tr bgcolor="#9494b0">
                                 <td style="padding: 5px;">
-                                    <div style="color: #ffffff; font-family: Arial, sans-serif; border-radius:5px 5px 5px 5px; font-size: 10px; line-height: 12px">${question.description}</div>
+                                    <div style="color: #ffffff; font-family: Arial, sans-serif; border-radius:5px 5px 5px 5px; font-size: 10px; line-height: 12px">${
+																			question.description
+																		}</div>
                                 </td>
                             </tr>
                         </table>
@@ -45,7 +54,7 @@ const emailGenerator = (poll_id, question, client) => { // recibe el id de la en
                         <div style="vertical-align: top; display: inline-block; direction: ltr; font-size: 13px; text-align: left; width: 100%;">
                             <table border="0" cellpadding="0" cellspacing="0" width="100%">
     `;
-    const footer = `
+	const footer = `
                             </table>
                         </div>
                     </td>
@@ -82,31 +91,39 @@ const emailGenerator = (poll_id, question, client) => { // recibe el id de la en
         </footer>
         </html> 
     `;
-    let questions = '';
-    if (question.type === 'opinion_scale') {
-        for (let x=1; x <= question.scale; x++) {
-            questions = questions.concat(`
+	let questions = "";
+	if (question.type === "opinion_scale") {
+		for (let x = 1; x <= question.scale; x++) {
+			questions = questions.concat(`
                 <tr> 
                     <td style="word-wrap:break-word;font-size:0px;padding:5px;" align="center"> 
                         <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse: separate; width: 100%; border-spacing: 0px;" align="center" border="0" width="100%">
                             <tr> 
                                 <td style="border:none;border-bottom:1px solid #8b9cb1;border-left:1px solid #8b9cb1;border-radius:5px 5px 5px 5px;border-top:1px solid #8b9cb1;color:#8b9cb1;cursor:auto;padding:0px;" align="center" valign="middle" bgcolor="#fdfbf5">
-                                    <a href="http://medilink.caffeinasw.com/api/polls/answer/${poll_id}/${client.hcu}/data/${x}" style="text-decoration:none;background:#8b9cb1;color:#ffffff;font-family:Font, 'Karla', Helvetica, Arial;font-size:12px;font-weight:normal;line-height:4;text-transform:none;margin:0;padding:0;display:block;" target="_blank">${x}</a>
+                                    <a href="http://medilink.caffeinasw.com/api/polls/answer/${poll_id}/${
+				client.hcu
+			}/data/${x}/office/${client.office}/order/${
+				client.ref
+			}" style="text-decoration:none;background:#8b9cb1;color:#ffffff;font-family:Font, 'Karla', Helvetica, Arial;font-size:12px;font-weight:normal;line-height:4;text-transform:none;margin:0;padding:0;display:block;" target="_blank">${x}</a>
                                 </td>
                             </tr>
                         </table>
                     </td>
                 </tr>
             `);
-        };
-    }else if (question.type === 'yes_no') {
-        questions = questions.concat(`
+		}
+	} else if (question.type === "yes_no") {
+		questions = questions.concat(`
             <tr> 
                 <td style="word-wrap:break-word;font-size:0px;padding:10px;" align="center"> 
                     <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse: separate; width: 100%; border-spacing: 0px;" align="center" border="0" width="100%">
                         <tr> 
                             <td style="border:none;border-bottom:1px solid #8b9cb1;border-left:1px solid #8b9cb1;border-radius:5px 5px 5px 5px;border-top:1px solid #8b9cb1;color:#8b9cb1;cursor:auto;padding:0px;" align="center" valign="middle" bgcolor="#fdfbf5">
-                                <a href="http://medilink.caffeinasw.com/api/polls/answer/${poll_id}/${client.hcu}/data/1" style="text-decoration:none;background:#8b9cb1;color:#ffffff;font-family:Font, 'Karla', Helvetica, Arial;font-size:12px;font-weight:normal;line-height:4;text-transform:none;margin:0;padding:0;display:block;" target="_blank">SI</a>
+                                <a href="http://medilink.caffeinasw.com/api/polls/answer/${poll_id}/${
+			client.hcu
+		}/data/1/office/${client.office}/order/${
+			client.ref
+		}" style="text-decoration:none;background:#8b9cb1;color:#ffffff;font-family:Font, 'Karla', Helvetica, Arial;font-size:12px;font-weight:normal;line-height:4;text-transform:none;margin:0;padding:0;display:block;" target="_blank">SI</a>
                             </td>
                         </tr>
                     </table>
@@ -117,34 +134,43 @@ const emailGenerator = (poll_id, question, client) => { // recibe el id de la en
                     <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse: separate; width: 100%; border-spacing: 0px;" align="center" border="0" width="100%">
                         <tr> 
                             <td style="border:none;border-bottom:1px solid #8b9cb1;border-left:1px solid #8b9cb1;border-radius:5px 5px 5px 5px;border-top:1px solid #8b9cb1;color:#8b9cb1;cursor:auto;padding:0px;" align="center" valign="middle" bgcolor="#fdfbf5">
-                                <a href="http://medilink.caffeinasw.com/api/polls/answer/${poll_id}/${client.hcu}/data/0" style="text-decoration:none;background:#8b9cb1;color:#ffffff;font-family:Font, 'Karla', Helvetica, Arial;font-size:12px;font-weight:normal;line-height:4;text-transform:none;margin:0;padding:0;display:block;" target="_blank">NO</a>
+                                <a href="http://medilink.caffeinasw.com/api/polls/answer/${poll_id}/${
+			client.hcu
+		}/data/0/office/${client.office}/order/${
+			client.ref
+		}" style="text-decoration:none;background:#8b9cb1;color:#ffffff;font-family:Font, 'Karla', Helvetica, Arial;font-size:12px;font-weight:normal;line-height:4;text-transform:none;margin:0;padding:0;display:block;" target="_blank">NO</a>
                             </td>
                         </tr>
                     </table>
                 </td>
             </tr>
         `);
-    }else {
-        let choices = question.choices.split(',');
-        for (let x=0; x < choices.length; x++) {
-            questions = questions.concat(`
+	} else {
+		let choices = question.choices.split(",");
+		for (let x = 0; x < choices.length; x++) {
+			questions = questions.concat(`
                 <tr> 
                     <td style="word-wrap:break-word;font-size:0px;padding:5px;" align="center"> 
                         <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse: separate; width: 100%; border-spacing: 0px;" align="center" border="0" width="100%">
                             <tr> 
                                 <td style="border:none;border-bottom:1px solid #8b9cb1;border-left:1px solid #8b9cb1;border-radius:5px 5px 5px 5px;border-top:1px solid #8b9cb1;color:#8b9cb1;cursor:auto;padding:0px;" align="center" valign="middle" bgcolor="#fdfbf5">
-                                    <a href="http://medilink.caffeinasw.com/api/polls/answer/${poll_id}/${client.hcu}/data/${x}" style="text-decoration:none;background:#8b9cb1;color:#ffffff;font-family:Font, 'Karla', Helvetica, Arial;font-size:12px;font-weight:normal;line-height:4;text-transform:none;margin:0;padding:0;display:block;" target="_blank">${choices[x]}</a>
+                                    <a href="http://medilink.caffeinasw.com/api/polls/answer/${poll_id}/${
+				client.hcu
+			}/data/${x}/office/${client.office}/order/${
+				client.ref
+			}" style="text-decoration:none;background:#8b9cb1;color:#ffffff;font-family:Font, 'Karla', Helvetica, Arial;font-size:12px;font-weight:normal;line-height:4;text-transform:none;margin:0;padding:0;display:block;" target="_blank">${
+				choices[x]
+			}</a>
                                 </td>
                             </tr>
                         </table>
                     </td>
                 </tr>
             `);
-        };
-    };
+		}
+	}
 
-    
-    return head.concat(questions, footer);
+	return head.concat(questions, footer);
 };
 
 module.exports = emailGenerator;
