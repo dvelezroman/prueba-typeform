@@ -23,9 +23,9 @@ process.env.TOKEN_SEED = process.env.TOKEN_SEED || "develop";
 // URI CONECTIONS
 // =========================
 let uriDB =
-  process.env.NODE_ENV === "dev"
-    ? "postgres://postgres:password@localhost:5432/typeform"
-    : process.env.DATABASE_URL;
+	process.env.NODE_ENV === "dev"
+		? "postgres://postgres:postgres2019@localhost:5432/typeform"
+		: process.env.DATABASE_URL;
 
 process.env.URI_DB = uriDB;
 

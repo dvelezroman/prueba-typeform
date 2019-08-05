@@ -1,6 +1,7 @@
 const express = require("express");
 const nodemailer = require("nodemailer");
 const Promise = require("bluebird");
+const moment = require("moment");
 const uuid = require("uuid");
 const router = express.Router();
 const Sequelize = require("sequelize");
@@ -56,11 +57,35 @@ router.get("/sendpolls", (req, res, next) => {
 		.catch(err => res.status(404).json(err));
 });
 
-router.get("/answers/:question_ref", (req, res) => {
+// get the difference between Sended and Answered Polls
+router.get("/answers/sended", async (req, res) => {
+	const pollsSend = await PollsSend.findAll({
+		include: [
+			{
+				model: Answer,
+				as: "Resps",
+				include: [{ model: Client }]
+			},
+			{
+				model: File
+			}
+		]
+	});
+	const results = pollsSend.map(item => ({
+		id: item.id,
+		ref: item.ref,
+		sendtime: moment(item.sendtime).format("DD/MM/YYYY"),
+		number_of_clients: item.clients,
+		number_answers: item.Resps.length
+	}));
+	res.status(200).json({ status: true, results });
+});
+
+router.get("/answers/:question_ref", async (req, res) => {
 	let question_ref = req.params.question_ref;
 	//console.log("Pollsends : ", question_ref);
 	// obtener las respuestas de todas las pollsend que pertenecen a una question_ref
-	Answer.findAll({
+	const answersRaw = await Answer.findAll({
 		attributes: [
 			"id",
 			"type",
@@ -71,19 +96,27 @@ router.get("/answers/:question_ref", (req, res) => {
 			"attended"
 		],
 		include: [
-			{ model: PollsSend, include: [{ model: Poll, include: [Question] }] },
-			{ model: Client }
-		]
-	}).then(items => {
-		let answers = [];
-		//console.log("Items : ", items);
-		items.forEach(item => {
-			if (item.pollsend.poll.question.question_ref === question_ref) {
-				answers.push(item);
+			{
+				model: PollsSend,
+				include: [
+					{
+						model: Poll,
+						include: [Question]
+					}
+				]
+			},
+			{
+				model: Client
 			}
-		});
-		res.status(200).json(answers);
+		]
 	});
+	const answers = [];
+	answersRaw.forEach(item => {
+		if (item.pollsend.poll.question.question_ref === question_ref) {
+			answers.push(item);
+		}
+	});
+	res.status(200).json(answers);
 });
 
 router.post("/sendpolls", (req, res) => {

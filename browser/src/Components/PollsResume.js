@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import axios from "axios";
-import _ from "lodash";
+import { forEach } from "lodash";
 import CsvDownloader from "react-csv-downloader";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
@@ -84,7 +84,7 @@ const columns = [
 	},
 	{
 		id: "attended",
-		displayName: "Fecha de Atención"
+		displayName: "Fecha de Atención (mm/dd/aaaa)"
 	},
 	{
 		id: "fecha_envio",
@@ -184,7 +184,7 @@ class PollsResume extends Component {
 						}
 					}
 					let grouped_polls3 = [];
-					_.forEach(grouped_polls2, (value, key) => {
+					forEach(grouped_polls2, (value, key) => {
 						grouped_polls3.push(value);
 					});
 					//console.log("Grouped Polls : ", grouped_polls3);
@@ -195,34 +195,53 @@ class PollsResume extends Component {
 		}
 	};
 
-	exportAnswers2Csv() {
-		let answers = this.state.answers;
-		let data = answers.map(answer => ({
-			ref_poll: this.state.selected,
-			ref: answer.ref,
-			office: answer.office,
-			hcu: answer.client.hcu,
-			cliente: answer.client.name,
-			email: answer.client.email,
-			attended: answer.attended,
-			fecha_envio: answer.pollsend.createdAt.split("T")[0],
-			pregunta: answer.pollsend.poll.question.title,
-			tipo:
-				answer.pollsend.poll.question.type === "opinion_scale"
-					? "escala"
-					: answer.pollsend.poll.question.type === "yes_no"
-					? "si-no"
-					: "seleccion",
-			aclaratoria: answer.pollsend.poll.question.description,
-			ref_preg: answer.pollsend.poll.question.ref,
-			escala:
-				answer.pollsend.poll.question.type === "opinion_scale"
-					? answer.pollsend.poll.question.scale
-					: "no_aplica",
-			fecha_respuesta: answer.createdAt.split("T")[0],
-			valor: answer.value
-		}));
-		this.setState({ csv: data });
+	async addAttendedDateToAnswers(answers) {
+		const answersWithAttendedDate = await Promise.all(
+			answers.map(async answer => {
+				const { data } = await axios.get(
+					`/api/polls/answers/sended/${answer.pollsend.id}`
+				);
+				data.result.orders.map(order => {
+					if (order.clientId === answer.client.id) {
+						answer.attended = order.attended;
+					}
+				});
+				const parsedAnswer = {
+					ref_poll: this.state.selected,
+					ref: answer.ref,
+					office: answer.office,
+					hcu: answer.client.hcu,
+					cliente: answer.client.name,
+					email: answer.client.email,
+					attended: answer.attended,
+					fecha_envio: answer.pollsend.createdAt.split("T")[0],
+					pregunta: answer.pollsend.poll.question.title,
+					tipo:
+						answer.pollsend.poll.question.type === "opinion_scale"
+							? "escala"
+							: answer.pollsend.poll.question.type === "yes_no"
+							? "si-no"
+							: "seleccion",
+					aclaratoria: answer.pollsend.poll.question.description,
+					ref_preg: answer.pollsend.poll.question.ref,
+					escala:
+						answer.pollsend.poll.question.type === "opinion_scale"
+							? answer.pollsend.poll.question.scale
+							: "no_aplica",
+					fecha_respuesta: answer.createdAt.split("T")[0],
+					valor: answer.value
+				};
+				return parsedAnswer;
+			})
+		);
+		return answersWithAttendedDate;
+	}
+
+	async exportAnswers2Csv() {
+		const { answers } = this.state;
+		const csv = await this.addAttendedDateToAnswers(answers);
+		console.log({ csv });
+		this.setState({ csv });
 	}
 
 	showResume = pollsend => e => {
@@ -239,28 +258,11 @@ class PollsResume extends Component {
 		let from = formatDate(new Date());
 		let to = formatDate(new Date());
 		this.setState({ from, to });
-		// traer las refs de las encuestas que han sido enviadas y armar un array de refs []
-		// axios
-		//   .get("/api/polls/sendpolls")
-		//   .then(res => res.data)
-		//   .then(sendpolls => {
-		//     //console.log('SendPolls: ', sendpolls);
-		//     let polls = sendpolls.map(sendpoll => ({
-		//       clients: sendpoll.clients,
-		//       ref: sendpoll.ref,
-		//       date: sendpoll.createdAt.split("T")[0],
-		//       answers: sendpoll.answers,
-		//       id: sendpoll.id,
-		//       file: sendpoll.file.name,
-		//       name: sendpoll.poll.name,
-		//       group: sendpoll.poll.group.description
-		//     }));
-		//   });
 	}
 
 	render() {
 		const { classes, loggedUser } = this.props;
-		//console.log("Answers : ", this.state.answers);
+		console.log(this.state);
 		return !loggedUser.logged ? (
 			<div className={classes.root}>
 				<Typography variant="h6" gutterBottom>
