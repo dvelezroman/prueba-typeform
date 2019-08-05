@@ -58,6 +58,22 @@ router.get("/sendpolls", (req, res, next) => {
 });
 
 // get the difference between Sended and Answered Polls
+// {
+// 	"pollSendId": 138,
+// 	"pollSendRef": "db426c64-577b-4a8c-a915-8497eed5d59f",
+// 	"sendtime": "15/12/2018",
+// 	"number_of_clients": 2,
+// 	"number_answers": 0,
+// 	"group": "Procedimiento Interno",
+// 	"pollId": 174,
+// 	"description": "Formulario de Encuesta",
+// 	"name": "Servicio al Cliente MediLink",
+// 	"subject": "Servicio al Cliente MediLink",
+// 	"greet": "Estimado Usuario, en nuestro camino a la excelencia solicitamos de su ayuda para conocer su experiencia.",
+// 	"question": "¿Cómo califica la atención al comunicarse con contact center para agendar su cita medica?",
+// 	"type": "opinion_scale",
+// 	"scale": 5
+//   },
 router.get("/answers/sended", async (req, res) => {
 	const pollsSend = await PollsSend.findAll({
 		include: [
@@ -68,17 +84,30 @@ router.get("/answers/sended", async (req, res) => {
 			},
 			{
 				model: File
+			},
+			{
+				model: Poll,
+				include: [{ model: Group }, { model: Question }]
 			}
 		]
 	});
 	const results = pollsSend.map(item => ({
-		id: item.id,
-		ref: item.ref,
+		pollSendId: item.id,
+		pollSendRef: item.ref,
 		sendtime: moment(item.sendtime).format("DD/MM/YYYY"),
 		number_of_clients: item.clients,
-		number_answers: item.Resps.length
+		number_answers: item.Resps.length,
+		group: item.poll.group.description,
+		pollId: item.poll.id,
+		description: item.poll.description,
+		name: item.poll.name,
+		subject: item.poll.subject,
+		greet: item.poll.greet,
+		question: item.poll.question.title,
+		type: item.poll.question.type,
+		scale: item.poll.question.scale
 	}));
-	res.status(200).json({ status: true, results });
+	res.status(200).json({ status: true, result: { results } });
 });
 
 router.get("/answers/:question_ref", async (req, res) => {
