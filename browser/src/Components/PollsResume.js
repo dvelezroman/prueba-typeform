@@ -57,6 +57,65 @@ const styles = theme => ({
 	}
 });
 
+const sendedPollsColumns = [
+	{
+		id: "pollSendId",
+		displayName: "Id Encuesta Enviada"
+	},
+	{
+		id: "pollSendRef",
+		displayName: "Codigo Referencia"
+	},
+	{
+		id: "sendtime",
+		displayName: "Fecha envio"
+	},
+	{
+		id: "number_of_clients",
+		displayName: "Clientes encuestados"
+	},
+	{
+		id: "number_answers",
+		displayName: "Respuestas recibidas"
+	},
+	{
+		id: "group",
+		displayName: "Grupo"
+	},
+	{
+		id: "pollId",
+		displayName: "Id Encuesta"
+	},
+	{
+		id: "description",
+		displayName: "Descripcion"
+	},
+	{
+		id: "name",
+		displayName: "Nombre de la Encuesta"
+	},
+	{
+		id: "subject",
+		displayName: "Titulo del correo enviado"
+	},
+	{
+		id: "greet",
+		displayName: "Saludo en el correo"
+	},
+	{
+		id: "question",
+		displayName: "Contenido de la pregunta"
+	},
+	{
+		id: "type",
+		displayName: "Tipo de Pregunta"
+	},
+	{
+		id: "scale",
+		displayName: "Escala"
+	}
+];
+
 const columns = [
 	{
 		id: "ref_poll",
@@ -143,6 +202,7 @@ class PollsResume extends Component {
 			polls: [],
 			answers: [],
 			csv: [],
+			sendedPollsResume: [],
 			from: "",
 			to: ""
 		};
@@ -254,15 +314,19 @@ class PollsResume extends Component {
 		});
 	};
 
-	componentDidMount() {
-		let from = formatDate(new Date());
-		let to = formatDate(new Date());
-		this.setState({ from, to });
+	async componentDidMount() {
+		const {
+			data: {
+				result: { results }
+			}
+		} = await axios.get("/api/polls/answers/sended");
+		const from = formatDate(new Date());
+		const to = formatDate(new Date());
+		this.setState({ from, to, sendedPollsResume: results });
 	}
 
 	render() {
 		const { classes, loggedUser } = this.props;
-		console.log(this.state);
 		return !loggedUser.logged ? (
 			<div className={classes.root}>
 				<Typography variant="h6" gutterBottom>
@@ -348,12 +412,34 @@ class PollsResume extends Component {
 				<Grid item xs={12}>
 					<Paper>
 						<Grid container>
-							<Grid item xs={6}>
+							<Grid item xs={4}>
+								<CsvDownloader
+									filename={`reporte-encuestas-respuestas`}
+									columns={sendedPollsColumns}
+									datas={this.state.sendedPollsResume}
+								>
+									<Button
+										//disabled={this.state.answers.length ? false : true}
+										variant="contained"
+										size="small"
+										className={classes.button}
+									>
+										<SaveIcon
+											className={classNames(
+												classes.leftIcon,
+												classes.iconSmall
+											)}
+										/>
+										Descargar Resumen Encuestas Enviadas
+									</Button>
+								</CsvDownloader>
+							</Grid>
+							<Grid item xs={4}>
 								<Typography variant="subtitle1" gutterBottom>
 									Respuestas Registradas
 								</Typography>
 							</Grid>
-							<Grid item xs={6}>
+							<Grid item xs={4}>
 								<CsvDownloader
 									filename={`reporte-${this.state.selected}`}
 									columns={columns}
