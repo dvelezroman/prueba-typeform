@@ -99,10 +99,6 @@ const sendedPollsColumns = [
 		displayName: "Titulo del correo enviado"
 	},
 	{
-		id: "greet",
-		displayName: "Saludo en el correo"
-	},
-	{
 		id: "question",
 		displayName: "Contenido de la pregunta"
 	},
