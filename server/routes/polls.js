@@ -86,7 +86,6 @@ router.post('/answers/sended', async (req, res) => {
 	const orders = await Order.findAll({
 		include: [{ model: File, where: { id: { [Op.or]: ids } } }]
 	});
-	console.log(orders.length);
 	res.status(200).json({ result: { orders }, status: true });
 });
 

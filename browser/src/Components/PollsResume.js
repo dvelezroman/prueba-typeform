@@ -259,7 +259,6 @@ class PollsResume extends Component {
 			}
 		} = await axios.post('/api/polls/answers/sended', { fileIds });
 		const orders_grouped_by_fileId = groupBy(orders, 'fileId');
-		console.log(orders_grouped_by_fileId);
 		const answersWithAttendedDate = answers.map(answer => {
 			// const index = findIndex(
 			// 	orders_grouped_by_fileId[answer.pollsend.fileId],
