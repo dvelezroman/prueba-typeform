@@ -269,7 +269,9 @@ class PollsResume extends Component {
 			const index = findIndex(orders_to_search, o => {
 				return o.clientId === answer.client.id;
 			});
-			answer.attended = orders_to_search[index] ? orders_to_search[index].attended : 'N/D';
+			console.log(index);
+			answer.attended =
+				index > -1 && orders_to_search[index] ? orders_to_search[index].attended : 'N/D';
 			const parsedAnswer = {
 				ref_poll: this.state.selected,
 				ref: answer.ref,
