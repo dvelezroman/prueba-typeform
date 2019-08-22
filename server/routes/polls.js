@@ -77,10 +77,10 @@ router.get('/sendpolls', (req, res, next) => {
 
 router.post('/answers/sended', async (req, res) => {
 	const fileIds = _.groupBy(req.body.fileIds);
-	const ids = _.keys(fileIds).map(key => {
+	const ids = [];
+	_.keys(fileIds).forEach(key => {
 		if (key !== null) {
-			if (isNaN(key)) return parseInt(key);
-			return 0;
+			if (!isNaN(key)) ids.push(parseInt(key));
 		}
 	});
 	console.log(ids);
