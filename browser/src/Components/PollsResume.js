@@ -265,7 +265,9 @@ class PollsResume extends Component {
 				orders_grouped_by_fileId[answer.pollsend.fileId],
 				o => o.clientId === answer.client.id
 			);
-			answer.attended = orders_grouped_by_fileId[answer.pollsend.fileId][index].attended;
+			answer.attended = index
+				? orders_grouped_by_fileId[answer.pollsend.fileId][index].attended
+				: 'N/D';
 			const parsedAnswer = {
 				ref_poll: this.state.selected,
 				ref: answer.ref,
