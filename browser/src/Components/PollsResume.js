@@ -261,13 +261,15 @@ class PollsResume extends Component {
 		const orders_grouped_by_fileId = groupBy(orders, 'fileId');
 		console.log(orders_grouped_by_fileId);
 		const answersWithAttendedDate = answers.map(answer => {
-			const index = findIndex(
-				orders_grouped_by_fileId[answer.pollsend.fileId],
-				o => o.clientId === answer.client.id
-			);
-			answer.attended = index
-				? orders_grouped_by_fileId[answer.pollsend.fileId][index].attended
-				: 'N/D';
+			// const index = findIndex(
+			// 	orders_grouped_by_fileId[answer.pollsend.fileId],
+			// 	o => o.clientId === answer.client.id
+			// );
+			const orders_to_search = orders_grouped_by_fileId[answer.pollsend.fileId];
+			const index = findIndex(orders_to_search, o => {
+				return o.clientId === answer.client.id;
+			});
+			answer.attended = orders_to_search[index] ? orders_to_search[index].attended : 'N/D';
 			const parsedAnswer = {
 				ref_poll: this.state.selected,
 				ref: answer.ref,
