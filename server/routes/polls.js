@@ -83,10 +83,10 @@ router.post('/answers/sended', async (req, res) => {
 			if (!isNaN(key)) ids.push(parseInt(key));
 		}
 	});
-	console.log(ids);
 	const orders = await Order.findAll({
 		include: [{ model: File, where: { id: { [Op.or]: ids } } }]
 	});
+	console.log(orders.length);
 	res.status(200).json({ result: { orders }, status: true });
 });
 
