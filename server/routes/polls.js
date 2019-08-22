@@ -76,8 +76,10 @@ router.get('/sendpolls', (req, res, next) => {
 //   },
 
 router.post('/answers/sended', async (req, res) => {
+	const fileIds = _.groupBy(req.body.fileIds);
+	console.log(fileIds);
 	const orders = await Order.findAll({
-		include: [{ model: File, where: { id: { [Op.or]: req.body.fileIds } } }]
+		include: [{ model: File, where: { id: { [Op.or]: [1, 2] } } }]
 	});
 	res.status(200).json({ result: { orders }, status: true });
 });
