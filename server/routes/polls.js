@@ -79,7 +79,8 @@ router.post('/answers/sended', async (req, res) => {
 	const fileIds = _.groupBy(req.body.fileIds);
 	const ids = _.keys(fileIds).map(key => {
 		if (key !== null) {
-			return parseInt(key);
+			if (isNaN(key)) return parseInt(key);
+			return 0;
 		}
 	});
 	console.log(ids);
