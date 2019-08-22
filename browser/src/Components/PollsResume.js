@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import { forEach } from 'lodash';
+import { forEach, groupBy, findIndex } from 'lodash';
 import CsvDownloader from 'react-csv-downloader';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -252,44 +252,46 @@ class PollsResume extends Component {
 	};
 
 	async addAttendedDateToAnswers(answers) {
-		const answersWithAttendedDate = await Promise.all(
-			answers.map(async answer => {
-				const {
-					data: { result }
-				} = await axios.get(`/api/polls/answers/sended/${answer.pollsend.fileId}`);
-				result.orders.map(order => {
-					if (order.clientId === answer.client.id) {
-						answer.attended = order.attended;
-					}
-				});
-				const parsedAnswer = {
-					ref_poll: this.state.selected,
-					ref: answer.ref,
-					office: answer.office,
-					hcu: answer.client.hcu,
-					cliente: answer.client.name,
-					email: answer.client.email,
-					attended: answer.attended,
-					fecha_envio: answer.pollsend.createdAt.split('T')[0],
-					pregunta: answer.pollsend.poll.question.title,
-					tipo:
-						answer.pollsend.poll.question.type === 'opinion_scale'
-							? 'escala'
-							: answer.pollsend.poll.question.type === 'yes_no'
-							? 'si-no'
-							: 'seleccion',
-					aclaratoria: answer.pollsend.poll.question.description,
-					ref_preg: answer.pollsend.poll.question.ref,
-					escala:
-						answer.pollsend.poll.question.type === 'opinion_scale'
-							? answer.pollsend.poll.question.scale
-							: 'no_aplica',
-					fecha_respuesta: answer.createdAt.split('T')[0],
-					valor: answer.value
-				};
-				return parsedAnswer;
-			})
-		);
+		const fileIds = answers.map(answer => answer.pollsend.fileId);
+		const {
+			data: {
+				result: { orders }
+			}
+		} = await axios.post('/api/polls/answers/sended', { fileIds });
+		const orders_grouped_by_fileId = groupBy(orders, 'fileId');
+		const answersWithAttendedDate = answers.map(answer => {
+			const index = findIndex(
+				orders_grouped_by_fileId[answer.pollsend.fileId],
+				o => o.clientId === answer.client.id
+			);
+			answer.attended = orders_grouped_by_fileId[answer.pollsend.fileId][index].attended;
+			const parsedAnswer = {
+				ref_poll: this.state.selected,
+				ref: answer.ref,
+				office: answer.office,
+				hcu: answer.client.hcu,
+				cliente: answer.client.name,
+				email: answer.client.email,
+				attended: answer.attended,
+				fecha_envio: answer.pollsend.createdAt.split('T')[0],
+				pregunta: answer.pollsend.poll.question.title,
+				tipo:
+					answer.pollsend.poll.question.type === 'opinion_scale'
+						? 'escala'
+						: answer.pollsend.poll.question.type === 'yes_no'
+						? 'si-no'
+						: 'seleccion',
+				aclaratoria: answer.pollsend.poll.question.description,
+				ref_preg: answer.pollsend.poll.question.ref,
+				escala:
+					answer.pollsend.poll.question.type === 'opinion_scale'
+						? answer.pollsend.poll.question.scale
+						: 'no_aplica',
+				fecha_respuesta: answer.createdAt.split('T')[0],
+				valor: answer.value
+			};
+			return parsedAnswer;
+		});
 		return answersWithAttendedDate;
 	}
 

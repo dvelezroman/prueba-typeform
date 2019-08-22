@@ -75,9 +75,9 @@ router.get('/sendpolls', (req, res, next) => {
 // 	"scale": 5
 //   },
 
-router.get('/answers/sended/:id', async (req, res) => {
+router.post('/answers/sended', async (req, res) => {
 	const orders = await Order.findAll({
-		include: [{ model: File, where: { id: req.params.id } }]
+		include: [{ model: File, where: { id: { [Op.or]: req.body.fileIds } } }]
 	});
 	res.status(200).json({ result: { orders }, status: true });
 });
