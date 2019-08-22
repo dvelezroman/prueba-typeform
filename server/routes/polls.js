@@ -1,14 +1,14 @@
-const express = require("express");
-const nodemailer = require("nodemailer");
-const Promise = require("bluebird");
-const moment = require("moment");
-const uuid = require("uuid");
+const express = require('express');
+const nodemailer = require('nodemailer');
+const Promise = require('bluebird');
+const moment = require('moment');
+const uuid = require('uuid');
 const router = express.Router();
-const Sequelize = require("sequelize");
-const _ = require("lodash");
+const Sequelize = require('sequelize');
+const _ = require('lodash');
 const Op = Sequelize.Op;
-const path = require("path");
-const models = require("../models");
+const path = require('path');
+const models = require('../models');
 const Group = models.Group;
 const Poll = models.Poll;
 const Question = models.Question;
@@ -18,13 +18,13 @@ const Office = models.Office;
 const Client = models.Client;
 const Answer = models.Answer;
 const Order = models.Order;
-const { html } = require("./html/email");
+const { html } = require('./html/email');
 
-router.get("/test", (req, res) => {
-	res.status(200).json("OK");
+router.get('/test', (req, res) => {
+	res.status(200).json('OK');
 });
 
-router.get("/sendpolls/from/:from/to/:to", (req, res) => {
+router.get('/sendpolls/from/:from/to/:to', (req, res) => {
 	let from = req.params.from;
 	let to = req.params.to;
 	//console.log("From: ", from, ", to: ", to);
@@ -48,7 +48,7 @@ router.get("/sendpolls/from/:from/to/:to", (req, res) => {
 		.catch(err => res.status(200).json({ error: true, data: err }));
 });
 
-router.get("/sendpolls", (req, res, next) => {
+router.get('/sendpolls', (req, res, next) => {
 	// obtiene las encuestas que han sido enviadas a  correos
 	PollsSend.findAll({
 		include: [{ model: Poll, include: [Group] }, { model: File }]
@@ -74,12 +74,20 @@ router.get("/sendpolls", (req, res, next) => {
 // 	"type": "opinion_scale",
 // 	"scale": 5
 //   },
-router.get("/answers/sended", async (req, res) => {
+
+router.get('/answers/sended/:id', async (req, res) => {
+	const orders = await Order.findAll({
+		include: [{ model: File, where: { id: req.params.id } }]
+	});
+	res.status(200).json({ result: { orders }, status: true });
+});
+
+router.get('/sended/answers', async (req, res) => {
 	const pollsSend = await PollsSend.findAll({
 		include: [
 			{
 				model: Answer,
-				as: "Resps",
+				as: 'Resps',
 				include: [{ model: Client }]
 			},
 			{
@@ -94,7 +102,7 @@ router.get("/answers/sended", async (req, res) => {
 	const results = pollsSend.map(item => ({
 		pollSendId: item.id,
 		pollSendRef: item.ref,
-		sendtime: moment(item.sendtime).format("DD/MM/YYYY"),
+		sendtime: moment(item.sendtime).format('DD/MM/YYYY'),
 		number_of_clients: item.clients,
 		number_answers: item.Resps.length,
 		group: item.poll.group.description,
@@ -110,20 +118,12 @@ router.get("/answers/sended", async (req, res) => {
 	res.status(200).json({ status: true, result: { results } });
 });
 
-router.get("/answers/:question_ref", async (req, res) => {
+router.get('/answers/:question_ref', async (req, res) => {
 	let question_ref = req.params.question_ref;
 	//console.log("Pollsends : ", question_ref);
 	// obtener las respuestas de todas las pollsend que pertenecen a una question_ref
 	const answersRaw = await Answer.findAll({
-		attributes: [
-			"id",
-			"type",
-			"value",
-			"createdAt",
-			"office",
-			"ref",
-			"attended"
-		],
+		attributes: ['id', 'type', 'value', 'createdAt', 'office', 'ref', 'attended'],
 		include: [
 			{
 				model: PollsSend,
@@ -148,7 +148,7 @@ router.get("/answers/:question_ref", async (req, res) => {
 	res.status(200).json(answers);
 });
 
-router.post("/sendpolls", (req, res) => {
+router.post('/sendpolls', (req, res) => {
 	// actualiza el numero de answers para una encuesta
 	let answers = req.body.answers; // recibe el numero de respuestas para una encuesta
 	let ref = req.body.ref; // recibe el ref de la encuesta para poder buscarla y actualizarle el numero de respuestas
@@ -160,10 +160,10 @@ router.post("/sendpolls", (req, res) => {
 		len = 0;
 		answers.forEach(element => {
 			//console.log('answer', element.answers[0])
-			if (element.answers && element.answers[0].type === "number") {
+			if (element.answers && element.answers[0].type === 'number') {
 				len++;
 				sum = sum + element.answers[0].number;
-			} else if (element.answers && element.answers[0].type === "boolean") {
+			} else if (element.answers && element.answers[0].type === 'boolean') {
 				// hay que poner que lleve los si y no, y las multiple decisiones
 				len++;
 				sum = element.answers[0].boolean ? sum + 1 : sum;
@@ -177,16 +177,13 @@ router.post("/sendpolls", (req, res) => {
 	//console.log('Average: ', average);
 	Poll.findOne({ where: { ref: ref } })
 		.then(poll =>
-			PollsSend.update(
-				{ answers: len, average: average },
-				{ where: { pollId: poll.id } }
-			)
+			PollsSend.update({ answers: len, average: average }, { where: { pollId: poll.id } })
 		)
-		.then(() => res.status(201).json({ error: false, msg: "updated" }));
+		.then(() => res.status(201).json({ error: false, msg: 'updated' }));
 });
 
 // sends email to a group of emails belonging a one category
-router.post("/send", async (req, res, next) => {
+router.post('/send', async (req, res, next) => {
 	//console.log("Params: ", req.body.array);
 	let params = req.body.array;
 	// aqui va la accion de enviar mail con gmail
@@ -213,7 +210,7 @@ router.post("/send", async (req, res, next) => {
 	//console.log('Clientes : ', names);
 	//console.log('Body listo: ', poll_html);
 	let smtpTransport = null;
-	if (server.service !== "Otro") {
+	if (server.service !== 'Otro') {
 		smtpTransport = nodemailer.createTransport({
 			service: server.service,
 			auth: {
@@ -236,8 +233,8 @@ router.post("/send", async (req, res, next) => {
 		});
 	}
 	//console.log('Server: ', smtpTransport);
-	let poll_html = "";
-	let mail = "";
+	let poll_html = '';
+	let mail = '';
 	let mail_success = [];
 	let mail_unsuccess = [];
 	//console.log("Names : ", names);
@@ -253,33 +250,30 @@ router.post("/send", async (req, res, next) => {
 			mail_success.push({ client: names[i], form: url });
 		});
 	}
-	Poll.update(
-		{ send: true },
-		{ returning: true, where: { ref: question_ref } }
-	).then(([rowsUpdate, [updatedPoll]]) => {
-		if (updatedPoll) {
-			let time = new Date();
-			// aqui cambiar por la selección que haga del tiempo de vida de la encuesta
-			time = time.getTime() + days * (24 * (1000 * 60 * 60));
-			PollsSend.create({
-				ref,
-				sendtime: time,
-				clients: emails.length,
-				answers: 0
-			}).then(sendPoll => {
-				sendPoll.setPoll(updatedPoll);
-				File.findById(file).then(file => {
-					sendPoll.setFile(file);
+	Poll.update({ send: true }, { returning: true, where: { ref: question_ref } }).then(
+		([rowsUpdate, [updatedPoll]]) => {
+			if (updatedPoll) {
+				let time = new Date();
+				// aqui cambiar por la selección que haga del tiempo de vida de la encuesta
+				time = time.getTime() + days * (24 * (1000 * 60 * 60));
+				PollsSend.create({
+					ref,
+					sendtime: time,
+					clients: emails.length,
+					answers: 0
+				}).then(sendPoll => {
+					sendPoll.setPoll(updatedPoll);
+					File.findById(file).then(file => {
+						sendPoll.setFile(file);
+					});
 				});
-			});
+			}
+			res.status(201).json({ error: false, mail_success, mail_unsuccess, msg: 'OK' });
 		}
-		res
-			.status(201)
-			.json({ error: false, mail_success, mail_unsuccess, msg: "OK" });
-	});
+	);
 });
 
-router.post("/new", function(req, res, next) {
+router.post('/new', function(req, res, next) {
 	//console.log('PollData: ', req.body);
 	let question = req.body.poll;
 	let ref = req.body.ref;
@@ -303,79 +297,66 @@ router.post("/new", function(req, res, next) {
 	);
 });
 
-router.get(
-	"/answer/:poll_id/:hcu/data/:value/office/:office/order/:order",
-	(req, res) => {
-		// registrar respuestas
-		let params = req.params;
-		//console.log("Params: ", params);
-		const successFilePath = path.resolve(
-			path.join(`${__dirname}/html/success.html`)
-		);
-		const unsuccessFilePath = path.resolve(
-			path.join(`${__dirname}/html/unsuccess.html`)
-		);
-		const votedFilePath = path.resolve(
-			path.join(`${__dirname}/html/voted.html`)
-		);
-		const errorFilePath = path.resolve(
-			path.join(`${__dirname}/html/error.html`)
-		);
-		// primero verificar si la encuesta aun está activa
-		let today = new Date(); // durante dos días la encuesta esta activa
-		PollsSend.findOne({ where: { ref: params.poll_id } }).then(
-			async pollsend => {
-				if (!pollsend) res.sendFile(errorFilePath);
-				// la encuesta no existe
-				else {
-					if (pollsend.sendtime > today) {
-						// la encuesta está activa
-						//console.log('Encuesta está activa');
-						let client = await Client.findOne({
-							where: { hcu: params.hcu }
-						}).then(client => client);
-						let poll = await Poll.findOne({
-							where: { id: pollsend.pollId }
-						}).then(poll => poll);
-						let question = await Question.findOne({
-							where: { ref: poll.ref }
-						}).then(question => question);
-						//console.log("Question : ", question);
-						Answer.findOrCreate({
-							where: {
-								clientId: client.id,
-								pollsendId: pollsend.id
-								//ref: params.order
-							},
-							defaults: {
-								type: question.type,
-								value: params.value,
-								office: params.office,
-								ref: params.order
-							}
-						}).then(([answer, created]) => {
-							//console.log('Created: ', created);
-							if (!created) res.sendFile(votedFilePath);
-							//Answer.create({ type: question.type, value: params.value }).then(answer => {
-							// client.setAnswers(answer);
-							// pollsend.setResps(answer);
-							else res.sendFile(successFilePath);
-						});
-					} else {
-						// la encuesta ya no está activa
-						//console.log("Encuesta ya no está activa");
-						res.sendFile(unsuccessFilePath);
+router.get('/answer/:poll_id/:hcu/data/:value/office/:office/order/:order', (req, res) => {
+	// registrar respuestas
+	let params = req.params;
+	//console.log("Params: ", params);
+	const successFilePath = path.resolve(path.join(`${__dirname}/html/success.html`));
+	const unsuccessFilePath = path.resolve(path.join(`${__dirname}/html/unsuccess.html`));
+	const votedFilePath = path.resolve(path.join(`${__dirname}/html/voted.html`));
+	const errorFilePath = path.resolve(path.join(`${__dirname}/html/error.html`));
+	// primero verificar si la encuesta aun está activa
+	let today = new Date(); // durante dos días la encuesta esta activa
+	PollsSend.findOne({ where: { ref: params.poll_id } }).then(async pollsend => {
+		if (!pollsend) res.sendFile(errorFilePath);
+		// la encuesta no existe
+		else {
+			if (pollsend.sendtime > today) {
+				// la encuesta está activa
+				//console.log('Encuesta está activa');
+				let client = await Client.findOne({
+					where: { hcu: params.hcu }
+				}).then(client => client);
+				let poll = await Poll.findOne({
+					where: { id: pollsend.pollId }
+				}).then(poll => poll);
+				let question = await Question.findOne({
+					where: { ref: poll.ref }
+				}).then(question => question);
+				//console.log("Question : ", question);
+				Answer.findOrCreate({
+					where: {
+						clientId: client.id,
+						pollsendId: pollsend.id
+						//ref: params.order
+					},
+					defaults: {
+						type: question.type,
+						value: params.value,
+						office: params.office,
+						ref: params.order
 					}
-					//console.log('Poll: ', pollsend);
-				}
+				}).then(([answer, created]) => {
+					//console.log('Created: ', created);
+					if (!created) res.sendFile(votedFilePath);
+					//Answer.create({ type: question.type, value: params.value }).then(answer => {
+					// client.setAnswers(answer);
+					// pollsend.setResps(answer);
+					else res.sendFile(successFilePath);
+				});
+			} else {
+				// la encuesta ya no está activa
+				//console.log("Encuesta ya no está activa");
+				res.sendFile(unsuccessFilePath);
 			}
-		);
-		// logica para registrar la respuesta de la encuesta,
-		//res.status(201).json({ error: false, data: { poll_id: params.poll_id, value: params.value }, msg: 'Respuesta registrada'})
-	}
-); // recibe las respuestas de las encuestas enviadas
+			//console.log('Poll: ', pollsend);
+		}
+	});
+	// logica para registrar la respuesta de la encuesta,
+	//res.status(201).json({ error: false, data: { poll_id: params.poll_id, value: params.value }, msg: 'Respuesta registrada'})
+}); // recibe las respuestas de las encuestas enviadas
 
-router.get("/", function(req, res) {
+router.get('/', function(req, res) {
 	Poll.findAll({ include: [Group] })
 		.then(polls => res.status(200).json(polls))
 		.catch(err => res.status(200).json(err));
