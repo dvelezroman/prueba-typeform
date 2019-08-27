@@ -200,13 +200,16 @@ class PollsResume extends Component {
 			csv: [],
 			sendedPollsResume: [],
 			from: '',
-			to: ''
+			to: '',
+			fetching: true,
+			fetching2: true
 		};
 		this.showResume = this.showResume.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 	}
 
 	handleChange = label => e => {
+		this.setState({ fetching2: true });
 		if (label === 'to' && this.state.from) {
 			const from = this.state.from;
 			const to = e.target.value;
@@ -304,7 +307,7 @@ class PollsResume extends Component {
 	async exportAnswers2Csv() {
 		const { answers } = this.state;
 		const csv = await this.addAttendedDateToAnswers(answers);
-		this.setState({ csv });
+		this.setState({ csv, fetching2: false });
 	}
 
 	showResume = pollsend => e => {
@@ -323,7 +326,7 @@ class PollsResume extends Component {
 		} = await axios.get('/api/polls/sended/answers');
 		const from = formatDate(new Date());
 		const to = formatDate(new Date());
-		this.setState({ from, to, sendedPollsResume: results });
+		this.setState({ from, to, sendedPollsResume: results, fetching: false });
 	}
 
 	render() {
@@ -420,7 +423,7 @@ class PollsResume extends Component {
 									datas={this.state.sendedPollsResume}
 								>
 									<Button
-										//disabled={this.state.answers.length ? false : true}
+										disabled={this.state.fetching}
 										variant='contained'
 										size='small'
 										className={classes.button}
@@ -442,7 +445,7 @@ class PollsResume extends Component {
 									datas={this.state.csv}
 								>
 									<Button
-										disabled={this.state.answers.length ? false : true}
+										disabled={this.state.fetching2}
 										variant='contained'
 										size='small'
 										className={classes.button}
