@@ -209,7 +209,6 @@ class PollsResume extends Component {
 	}
 
 	handleChange = label => e => {
-		this.setState({ fetching2: true });
 		if (label === 'to' && this.state.from) {
 			const from = this.state.from;
 			const to = e.target.value;
@@ -311,6 +310,7 @@ class PollsResume extends Component {
 	}
 
 	showResume = pollsend => e => {
+		this.setState({ fetching2: true, sendedPollsResume: [] });
 		//console.log('Ref: ', pollsendId);
 		axios.get(`/api/polls/answers/${pollsend.ref}`).then(res => {
 			//console.log("Polls answers: ", res.data);
@@ -418,6 +418,7 @@ class PollsResume extends Component {
 						<Grid container>
 							<Grid item xs={4}>
 								<CsvDownloader
+									disabled={this.state.sendedPollsResume}
 									filename={`reporte-encuestas-respuestas`}
 									columns={sendedPollsColumns}
 									datas={this.state.sendedPollsResume}
@@ -440,6 +441,7 @@ class PollsResume extends Component {
 							</Grid>
 							<Grid item xs={4}>
 								<CsvDownloader
+									disabled={this.state.fetching2}
 									filename={`reporte-${this.state.selected}`}
 									columns={columns}
 									datas={this.state.csv}
