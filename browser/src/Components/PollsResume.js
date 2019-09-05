@@ -202,7 +202,8 @@ class PollsResume extends Component {
 			from: '',
 			to: '',
 			fetching: true,
-			fetching2: true
+			fetching2: true,
+			fetching3: false
 		};
 		this.showResume = this.showResume.bind(this);
 		this.handleChange = this.handleChange.bind(this);
@@ -306,11 +307,11 @@ class PollsResume extends Component {
 	async exportAnswers2Csv() {
 		const { answers } = this.state;
 		const csv = await this.addAttendedDateToAnswers(answers);
-		this.setState({ csv, fetching2: false });
+		this.setState({ csv, fetching2: false, fetching3: false });
 	}
 
 	showResume = pollsend => e => {
-		this.setState({ fetching2: true, sendedPollsResume: [] });
+		this.setState({ fetching2: true, fetching3: true, sendedPollsResume: [] });
 		//console.log('Ref: ', pollsendId);
 		axios.get(`/api/polls/answers/${pollsend.ref}`).then(res => {
 			//console.log("Polls answers: ", res.data);
@@ -382,20 +383,14 @@ class PollsResume extends Component {
 									<CustomTableCell>Enviado</CustomTableCell>
 									<CustomTableCell numeric>Clientes Enviados</CustomTableCell>
 									<CustomTableCell>Categorías</CustomTableCell>
+									<CustomTableCell>Acción</CustomTableCell>
 									{/* <CustomTableCell numeric>Por Contestar</CustomTableCell> */}
 								</TableRow>
 							</TableHead>
 							<TableBody>
 								{this.state.polls.map(row => {
 									return (
-										<TableRow
-											className={classes.row}
-											key={row.id}
-											onClick={this.showResume({
-												ref: row.question_ref,
-												id: row.id
-											})}
-										>
+										<TableRow className={classes.row} key={row.id}>
 											<CustomTableCell component='th' scope='row'>
 												{row.question_ref}
 											</CustomTableCell>
@@ -405,6 +400,18 @@ class PollsResume extends Component {
 											<CustomTableCell>{row.date}</CustomTableCell>
 											<CustomTableCell numeric>{row.clients}</CustomTableCell>
 											<CustomTableCell>{row.categories}</CustomTableCell>
+											<CustomTableCell>
+												<Button
+													disabled={this.state.fetching3}
+													style={{ fontSize: 12 }}
+													onClick={this.showResume({
+														ref: row.question_ref,
+														id: row.id
+													})}
+												>
+													Descarga
+												</Button>
+											</CustomTableCell>
 											{/* <CustomTableCell numeric>{row.clients - row.answers}</CustomTableCell> */}
 										</TableRow>
 									);
