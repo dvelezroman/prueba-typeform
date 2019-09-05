@@ -440,27 +440,38 @@ class PollsResume extends Component {
 								</Typography>
 							</Grid>
 							<Grid item xs={4}>
-								<CsvDownloader
-									disabled={this.state.fetching2}
-									filename={`reporte-${this.state.selected}`}
-									columns={columns}
-									datas={this.state.csv}
-								>
-									<Button
+								{!this.state.fetching2 ? (
+									<CsvDownloader
 										disabled={this.state.fetching2}
+										filename={`reporte-${this.state.selected}`}
+										columns={columns}
+										datas={this.state.csv}
+									>
+										<Button
+											disabled={this.state.fetching2}
+											variant='contained'
+											size='small'
+											className={classes.button}
+										>
+											<SaveIcon className={classNames(classes.leftIcon, classes.iconSmall)} />
+											Descargar Respuestas
+										</Button>
+									</CsvDownloader>
+								) : (
+									<Button
+										disabled={true}
 										variant='contained'
 										size='small'
 										className={classes.button}
 									>
-										<SaveIcon className={classNames(classes.leftIcon, classes.iconSmall)} />
-										Descargar Respuestas
+										{this.state.selected === '' ? 'Seleccione un Rango de Fechas' : 'Cargando...'}
 									</Button>
-								</CsvDownloader>
+								)}
 							</Grid>
 						</Grid>
 						<Grid item xs={12}>
 							<Typography variant='subtitle2' gutterBottom>
-								Pregunta :{' '}
+								Pregunta Seleccionada para Descargar :{' '}
 								{this.state.answers.length
 									? this.state.answers[0].pollsend.poll.question.title
 									: ''}
@@ -468,7 +479,7 @@ class PollsResume extends Component {
 						</Grid>
 					</Paper>
 				</Grid>
-				<Grid item xs={12}>
+				{/* <Grid item xs={12}>
 					<Paper className={classes.root}>
 						<Table className={classes.table}>
 							<TableHead>
@@ -480,9 +491,9 @@ class PollsResume extends Component {
 									<CustomTableCell>Respuesta</CustomTableCell>
 									<CustomTableCell>Cliente</CustomTableCell>
 									<CustomTableCell>Fecha Respuesta</CustomTableCell>
-									{/* <CustomTableCell numeric>Clientes Enviados</CustomTableCell>
-                  <CustomTableCell numeric>Contestados</CustomTableCell>
-                  <CustomTableCell numeric>Por Contestar</CustomTableCell> */}
+									<CustomTableCell numeric>Clientes Enviados</CustomTableCell>
+									<CustomTableCell numeric>Contestados</CustomTableCell>
+									<CustomTableCell numeric>Por Contestar</CustomTableCell>
 								</TableRow>
 							</TableHead>
 							<TableBody>
@@ -498,16 +509,16 @@ class PollsResume extends Component {
 											<CustomTableCell>{row.value}</CustomTableCell>
 											<CustomTableCell>{row.client.name}</CustomTableCell>
 											<CustomTableCell>{row.createdAt.split('T')[0]}</CustomTableCell>
-											{/* <CustomTableCell numeric>{row.clients}</CustomTableCell>
-                      <CustomTableCell numeric>{row.answers}</CustomTableCell>
-                      <CustomTableCell numeric>{row.clients - row.answers}</CustomTableCell> */}
+											<CustomTableCell numeric>{row.clients}</CustomTableCell>
+											<CustomTableCell numeric>{row.answers}</CustomTableCell>
+											<CustomTableCell numeric>{row.clients - row.answers}</CustomTableCell>
 										</TableRow>
 									);
 								})}
 							</TableBody>
 						</Table>
 					</Paper>
-				</Grid>
+				</Grid> */}
 			</Grid>
 		);
 	}
