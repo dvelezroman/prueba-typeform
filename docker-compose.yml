@@ -1,7 +1,7 @@
-version: "2"
+version: '2'
 services:
   db:
-    image: postgres:alpine
+    image: postgres:11-alpine
     volumes:
       - /var/lib/postgresql:/var/lib/postgresql/data
     environment:
@@ -9,7 +9,7 @@ services:
       POSTGRES_DB: typeform
       POSTGRES_PASSWORD: password
     ports:
-      - "5432:5432"
+      - '5432:5432'
   web:
     build:
       context: .
@@ -21,6 +21,6 @@ services:
       NODE_ENV: prod
       DATABASE_URL: postgres://postgres:password@db:5432/typeform
     ports:
-      - "80:3001"
+      - '80:3001'
     depends_on:
       - db
