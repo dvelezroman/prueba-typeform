@@ -1,19 +1,20 @@
-import React, { Component } from "react";
-import axios from "axios";
-import classNames from "classnames";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import MenuItem from "@material-ui/core/MenuItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ShowOrders from "../Components/ShowOrders";
-import LinearIndeterminated from "../Components/LinearIndeterminated";
-import _ from "lodash";
+import React, { Component } from 'react';
+import axios from 'axios';
+import classNames from 'classnames';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import List from '@material-ui/core/List';
+import Paper from '@material-ui/core/Paper';
+import ListItem from '@material-ui/core/ListItem';
+import Grid from '@material-ui/core/Grid';
+import TextField from '@material-ui/core/TextField';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ShowOrders from '../Components/ShowOrders';
+import LinearIndeterminated from '../Components/LinearIndeterminated';
+import _ from 'lodash';
 
 const ranges = [
 	{
@@ -57,19 +58,29 @@ const styles = theme => ({
 	extendedIcon: {
 		marginRight: theme.spacing.unit
 	},
+	textField: {
+		width: '100%',
+		marginLeft: theme.spacing.unit,
+		marginRight: theme.spacing.unit
+	},
+	list: {
+		height: 300,
+		overflow: 'auto'
+	},
 	paper: {
 		padding: 16,
-		textAlign: "center",
+		textAlign: 'center',
 		color: theme.palette.text.secondary
 	},
 	list: {
-		overflow: "auto"
+		overflow: 'auto',
+		maxHeight: 500
 	},
 	orders: {
-		width: "100%",
+		width: '100%',
 		backgroundColor: theme.palette.background.paper,
-		position: "relative",
-		overflow: "auto",
+		position: 'relative',
+		overflow: 'auto',
 		maxHeight: 500
 	}
 });
@@ -86,7 +97,8 @@ class UploadedFiles extends Component {
 			selectedQuestions: [],
 			sending: false,
 			loading: true,
-			days: 2
+			days: 2,
+			pollDescription: ''
 		};
 		this.handleListItemClick = this.handleListItemClick.bind(this);
 	}
@@ -106,7 +118,7 @@ class UploadedFiles extends Component {
 					});
 				} else {
 					this.setState({ selectedFile: file });
-					alert("Este archivo no tiene registros o esta corrupto");
+					alert('Este archivo no tiene registros o esta corrupto');
 				}
 			});
 		// let { data } = await axios.get(`/api/files/${file.id}/orders`).then(res => {
@@ -137,16 +149,15 @@ class UploadedFiles extends Component {
 
 	sendEmails = async () => {
 		let file = this.state.selectedFile;
+		const pollDescription = this.state.pollDescription;
 		//let polls = this.state.selectedQuestions;
 		let polls = this.state.questions; // pongo todo no doy para que seleccionen nada
 		let orders = this.state.orders;
 		//console.log('Polls selected: ', polls);
-		if (!file.ref) alert("Debes seleccionar un archivo cargado!");
-		else if (!polls.length) alert("Debes Seleccionar una Encuesta al menos!");
+		if (!file.ref) alert('Debes seleccionar un archivo cargado!');
+		else if (!polls.length) alert('Debes Seleccionar una Encuesta al menos!');
 		else {
-			let server = await axios
-				.get("/api/mailserver/selected")
-				.then(res => res.data.data);
+			let server = await axios.get('/api/mailserver/selected').then(res => res.data.data);
 			//console.log("Server: ", server);
 			if (!server.id) {
 				this.setState({
@@ -154,7 +165,7 @@ class UploadedFiles extends Component {
 					orders: [],
 					selectedQuestions: []
 				});
-				alert("No ha configurado ningún servidor de correos");
+				alert('No ha configurado ningún servidor de correos');
 			} else {
 				this.setState({ sending: true });
 				let grouped_orders = _.groupBy(orders, order => order.groupId);
@@ -189,7 +200,7 @@ class UploadedFiles extends Component {
 				});
 				//console.log("Grouped orders : ", grouped_orders);
 				//console.log("Polls by group: ", n_polls_by_group);
-				console.log("Polls paired : ", polls_paired_with_clients);
+				//console.log("Polls paired : ", polls_paired_with_clients);
 				// primero vemos cuantas encuestas hay seleccionadas del mismo grupo
 				// por cada formulario seleccionado, enviarle ese formulario a los clientes de la misma categoría del formulario
 				let promises_to_send_emails = [];
@@ -228,7 +239,7 @@ class UploadedFiles extends Component {
 						//console.log("envio a /api/polls/send", body);
 						let days = this.state.days;
 						promises_to_send_emails.push(
-							axios.post("/api/polls/send", { array: body, server, days })
+							axios.post('/api/polls/send', { array: body, server, days, pollDescription })
 						);
 					}
 				});
@@ -240,7 +251,7 @@ class UploadedFiles extends Component {
 					for (let i = 0; i < res.length; i++) {
 						if (!res[i].data.error) send_forms--;
 					}
-					if (send_forms) alert("Algunas encuestas no se enviaron");
+					if (send_forms) alert('Algunas encuestas no se enviaron');
 					else {
 						this.setState({
 							selectedFile: {},
@@ -249,12 +260,10 @@ class UploadedFiles extends Component {
 						});
 						if (res.length > 1) {
 							this.setState({ sending: false }, () =>
-								alert("Las encuestas se enviaron exitosamente")
+								alert('Las encuestas se enviaron exitosamente')
 							);
 						} else {
-							this.setState({ sending: false }, () =>
-								alert("La encuesta se envió exitosamente")
-							);
+							this.setState({ sending: false }, () => alert('La encuesta se envió exitosamente'));
 						}
 					}
 				});
@@ -262,11 +271,11 @@ class UploadedFiles extends Component {
 		}
 	};
 
-	fetchPolls = () => axios.get("/api/polls").then(res => res.data);
+	fetchPolls = () => axios.get('/api/polls').then(res => res.data);
 
-	fetchFiles = () => axios.get("/api/files").then(res => res.data);
+	fetchFiles = () => axios.get('/api/files').then(res => res.data);
 
-	fetchQuestions = () => axios.get("/api/questions").then(res => res.data);
+	fetchQuestions = () => axios.get('/api/questions').then(res => res.data);
 
 	async componentDidMount() {
 		//let polls = await this.fetchPolls().then(data => data);
@@ -276,9 +285,7 @@ class UploadedFiles extends Component {
 			id: item.id,
 			ref: item.ref,
 			name: item.name,
-			uploaded: `${item.createdAt.split("T")[0]} - ${
-				item.createdAt.split("T")[1].split(".")[0]
-			} `
+			uploaded: `${item.createdAt.split('T')[0]} - ${item.createdAt.split('T')[1].split('.')[0]} `
 		}));
 		questions = questions.filter(question => question.enabled);
 		this.setState({ files: files, questions: questions, loading: false });
@@ -286,7 +293,6 @@ class UploadedFiles extends Component {
 
 	render() {
 		const { classes, loggedUser } = this.props;
-		//console.log("Dias validez: ", this.state.days);
 		return !loggedUser.logged ? (
 			<div className={classes.root}>
 				<h1>Necesitas loggearte para ver esta informacion</h1>
@@ -296,9 +302,7 @@ class UploadedFiles extends Component {
 				<Grid item xs={2} />
 				<Grid item xs={8}>
 					<LinearIndeterminated
-						msg={
-							"Enviando los correos, por favor espere mientras se completa el envío..."
-						}
+						msg={'Enviando los correos, por favor espere mientras se completa el envío...'}
 					/>
 				</Grid>
 				<Grid item xs={2} />
@@ -307,7 +311,7 @@ class UploadedFiles extends Component {
 			<Grid container>
 				<Grid item xs={2} />
 				<Grid item xs={8}>
-					<LinearIndeterminated msg={"Cargando los archivos ...."} />
+					<LinearIndeterminated msg={'Cargando los archivos ....'} />
 				</Grid>
 				<Grid item xs={2} />
 			</Grid>
@@ -317,9 +321,9 @@ class UploadedFiles extends Component {
 					<Grid item xs={12}>
 						Lista de archivos que han sido cargados
 					</Grid>
-					<Grid item xs={12}>
+					<Grid item xs={12} className={classes.list}>
 						{this.state.files.map(item => (
-							<List key={item.id} component="nav">
+							<List key={item.id} component='nav'>
 								<ListItem
 									button
 									selected={this.state.selectedFile.id === item.id}
@@ -334,21 +338,19 @@ class UploadedFiles extends Component {
 						))}
 					</Grid>
 				</Grid>
-				<Grid item xs={6}>
+				<Grid item xs={6} style={{ paddingLeft: 10, paddingRight: 10 }}>
 					<Grid item xs={12}>
 						Seleccione numero de días de validez que tendrá la encuesta
 					</Grid>
-					<Grid>
+					<Grid style={{ width: 200 }}>
 						<TextField
 							select
-							label="Seleccione"
+							label='Seleccione'
 							className={classNames(classes.margin, classes.textField)}
 							value={this.state.days}
-							onChange={this.handleChange("days")}
+							onChange={this.handleChange('days')}
 							InputProps={{
-								startAdornment: (
-									<InputAdornment position="start">Días</InputAdornment>
-								)
+								startAdornment: <InputAdornment position='start'>Días</InputAdornment>
 							}}
 						>
 							{ranges.map(option => (
@@ -357,6 +359,28 @@ class UploadedFiles extends Component {
 								</MenuItem>
 							))}
 						</TextField>
+					</Grid>
+					<Grid item xs={12} style={{ marginTop: 20 }}>
+						<Paper className={classes.paper}>
+							Ingresa un comentario / observación para la encuesta que vas a enviar
+						</Paper>
+					</Grid>
+					<Grid item xs={12}>
+						<Paper className={classes.paper}>
+							<TextField
+								width={10}
+								multiline
+								rowsMax='5'
+								onChange={this.handleChange('pollDescription')}
+								id='description'
+								value={this.state.pollDescription}
+								placeholder='Escribe alguna observación...'
+								helperText='Opcional'
+								className={classes.textField}
+								margin='normal'
+								variant='outlined'
+							/>
+						</Paper>
 					</Grid>
 				</Grid>
 				<Grid item xs={12}>
