@@ -109,6 +109,7 @@ router.get('/sended/answers', async (req, res) => {
 	const results = pollsSend.map(item => ({
 		pollSendId: item.id,
 		pollSendRef: item.ref,
+		observation: item.description,
 		sendtime: moment(item.sendtime).format('DD/MM/YYYY'),
 		number_of_clients: item.clients,
 		number_answers: item.Resps.length,
@@ -193,6 +194,7 @@ router.post('/sendpolls', (req, res) => {
 router.post('/send', async (req, res, next) => {
 	//console.log("Params: ", req.body.array);
 	let params = req.body.array;
+	const pollDescription = req.body.pollDescription;
 	// aqui va la accion de enviar mail con gmail
 	let ref = uuid(); // genero un ref
 	let question_ref = params.ref;
@@ -204,7 +206,6 @@ router.post('/send', async (req, res, next) => {
 	let names = params.clients.map(item => item);
 	let url = params.url;
 	let subject = params.subject;
-	let greet = params.greet;
 	let question = {
 		title: params.title,
 		description: params.description,
@@ -267,7 +268,8 @@ router.post('/send', async (req, res, next) => {
 					ref,
 					sendtime: time,
 					clients: emails.length,
-					answers: 0
+					answers: 0,
+					description: pollDescription
 				}).then(sendPoll => {
 					sendPoll.setPoll(updatedPoll);
 					File.findById(file).then(file => {

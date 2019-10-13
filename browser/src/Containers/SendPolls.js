@@ -1,20 +1,20 @@
-import React from "react";
-import axios from "axios";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-// import TextField from "@material-ui/core/TextField";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemText from "@material-ui/core/ListItemText";
-import Checkbox from "@material-ui/core/Checkbox";
-import IconButton from "@material-ui/core/IconButton";
-import CommentIcon from "@material-ui/icons/Comment";
-import Button from "@material-ui/core/Button";
-import NavigationIcon from "@material-ui/icons/Navigation";
+import React from 'react';
+import axios from 'axios';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItemText from '@material-ui/core/ListItemText';
+import Checkbox from '@material-ui/core/Checkbox';
+import IconButton from '@material-ui/core/IconButton';
+import CommentIcon from '@material-ui/icons/Comment';
+import Button from '@material-ui/core/Button';
+import NavigationIcon from '@material-ui/icons/Navigation';
 
 const styles = theme => ({
 	root: {
@@ -29,15 +29,15 @@ const styles = theme => ({
 	},
 	paper: {
 		padding: 16,
-		textAlign: "center",
+		textAlign: 'center',
 		color: theme.palette.text.secondary
 	},
 	list: {
-		overflow: "auto",
+		overflow: 'auto',
 		maxHeight: 300
 	},
 	textField: {
-		width: "100%",
+		width: '100%',
 		marginLeft: theme.spacing.unit,
 		marginRight: theme.spacing.unit
 	},
@@ -53,7 +53,7 @@ class SendPolls extends React.Component {
 	state = {
 		checked: [],
 		forms: [],
-		body: ""
+		description: ''
 	};
 
 	handleChange = label => event => {
@@ -73,7 +73,7 @@ class SendPolls extends React.Component {
 		if (this.state.checked.length === 1) {
 			this.setState({
 				checked: newChecked,
-				body: ""
+				body: ''
 			});
 		} else {
 			this.setState({
@@ -84,9 +84,7 @@ class SendPolls extends React.Component {
 
 	handleSendPoll = async e => {
 		e.preventDefault();
-		let server = await axios
-			.get("/api/mailserver/selected")
-			.then(res => res.data.data);
+		let server = await axios.get('/api/mailserver/selected').then(res => res.data.data);
 		//console.log('Server: ', server);
 		let polls = this.state.checked.map(item => ({
 			fileId: item.fileId,
@@ -94,9 +92,7 @@ class SendPolls extends React.Component {
 		}));
 		let urlForm = this.state.checked; // revisar luego para enviar varios formularios a la vez
 		// hacer un arreglo de promesas por cada encuesta seleccionada
-		let promises_of_emails = polls.map(poll =>
-			axios.post("/api/clients/emails", poll)
-		);
+		let promises_of_emails = polls.map(poll => axios.post('/api/clients/emails', poll));
 		Promise.all([...promises_of_emails]).then(res => {
 			let arrays = [];
 			res.forEach((item, i) => {
@@ -124,21 +120,19 @@ class SendPolls extends React.Component {
 
 			arrays.forEach(array => {
 				if (array.clients.length > 0) {
-					promises_for_sending_emails.push(
-						axios.post("/api/polls/send", { array: array, server })
-					);
+					promises_for_sending_emails.push(axios.post('/api/polls/send', { array: array, server }));
 				}
 			});
 			Promise.all([...promises_for_sending_emails]).then(res => {
-				if (res.length > 1) alert("Las encuestas se enviaron exitosamente");
-				else alert("Las encuesta se envió exitosamente");
+				if (res.length > 1) alert('Las encuestas se enviaron exitosamente');
+				else alert('Las encuesta se envió exitosamente');
 			});
 		});
 	};
 
 	componentDidMount() {
 		axios
-			.get("/api/polls")
+			.get('/api/polls')
 			.then(res => res.data)
 			.then(array => {
 				let forms = array.map(item => ({
@@ -148,8 +142,8 @@ class SendPolls extends React.Component {
 					subject: item.subject,
 					greet: item.greet,
 					url: item.url,
-					group: item.group ? item.group.description : "",
-					file: item.file ? item.file.name : "",
+					group: item.group ? item.group.description : '',
+					file: item.file ? item.file.name : '',
 					fileId: item.fileId,
 					groupId: item.groupId
 				}));
@@ -170,8 +164,8 @@ class SendPolls extends React.Component {
 					<Grid item xs={12}>
 						<Paper className={classes.paper}>
 							<Button
-								variant="extendedFab"
-								aria-label="Delete"
+								variant='extendedFab'
+								aria-label='Delete'
 								onClick={this.handleSendPoll}
 								className={classes.button}
 							>
@@ -182,9 +176,7 @@ class SendPolls extends React.Component {
 					</Grid>
 					<Grid item xs={12}>
 						<Grid item xs={12}>
-							<Paper className={classes.paper}>
-								Selecciona los formularios que deseas enviar
-							</Paper>
+							<Paper className={classes.paper}>Selecciona los formularios que deseas enviar</Paper>
 						</Grid>
 						<Grid item xs={12}>
 							<Paper className={classes.paper}>
@@ -205,12 +197,10 @@ class SendPolls extends React.Component {
 											/>
 											<ListItemText
 												primary={`${value.name} -- URL: ${value.url}`}
-												secondary={`GRUPO: ${value.group} -- ARCHIVO: ${
-													value.file
-												}`}
+												secondary={`GRUPO: ${value.group} -- ARCHIVO: ${value.file}`}
 											/>
 											<ListItemSecondaryAction>
-												<IconButton aria-label="Comments">
+												<IconButton aria-label='Comments'>
 													<CommentIcon />
 												</IconButton>
 											</ListItemSecondaryAction>
@@ -220,32 +210,31 @@ class SendPolls extends React.Component {
 							</Paper>
 						</Grid>
 					</Grid>
-					{/* <Grid item xs={6}>
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                Pega aquí el HTML del formulario, para enviarlo como bodo del correo
-                Debes ir a buscar esto a tu cuenta en TypeForm.
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                <TextField
-                  disabled={this.state.checked.length === 1 ? false : true}
-                  multiline
-                  rowsMax="15"
-                  onChange={this.handleChange("body")}
-                  id="body"
-                  value={this.state.body}
-                  label="HTML para enviar la encuesta por correo"
-                  placeholder="Pega aqui el HTML que esta en tu cuenta de TypeForm, que permite embeber el código de la encuesta en un correo"
-                  helperText="Para habilitar esta opción solo debes de seleccionar una encuesta"
-                  className={classes.textField}
-                  margin="normal"
-                  variant="outlined"
-                />
-              </Paper>
-            </Grid>
-          </Grid>         */}
+					<Grid item xs={6}>
+						<Grid item xs={12}>
+							<Paper className={classes.paper}>
+								Ingresa un comentario / observacoón para la encuesta que vas a enviar
+							</Paper>
+						</Grid>
+						<Grid item xs={12}>
+							<Paper className={classes.paper}>
+								<TextField
+									disabled={this.state.checked.length === 1 ? false : true}
+									multiline
+									rowsMax='5'
+									onChange={this.handleChange('description')}
+									id='description'
+									value={this.state.body}
+									label='Descripción'
+									placeholder='Escribe alguna observación...'
+									helperText='Opcional'
+									className={classes.textField}
+									margin='normal'
+									variant='outlined'
+								/>
+							</Paper>
+						</Grid>
+					</Grid>
 				</Grid>
 			</div>
 		);

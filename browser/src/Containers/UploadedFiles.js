@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
+import Paper from '@material-ui/core/Paper';
 import ListItem from '@material-ui/core/ListItem';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
@@ -57,13 +58,23 @@ const styles = theme => ({
 	extendedIcon: {
 		marginRight: theme.spacing.unit
 	},
+	textField: {
+		width: '100%',
+		marginLeft: theme.spacing.unit,
+		marginRight: theme.spacing.unit
+	},
+	list: {
+		height: 300,
+		overflow: 'auto'
+	},
 	paper: {
 		padding: 16,
 		textAlign: 'center',
 		color: theme.palette.text.secondary
 	},
 	list: {
-		overflow: 'auto'
+		overflow: 'auto',
+		maxHeight: 500
 	},
 	orders: {
 		width: '100%',
@@ -86,7 +97,8 @@ class UploadedFiles extends Component {
 			selectedQuestions: [],
 			sending: false,
 			loading: true,
-			days: 2
+			days: 2,
+			pollDescription: ''
 		};
 		this.handleListItemClick = this.handleListItemClick.bind(this);
 	}
@@ -137,6 +149,7 @@ class UploadedFiles extends Component {
 
 	sendEmails = async () => {
 		let file = this.state.selectedFile;
+		const pollDescription = this.state.pollDescription;
 		//let polls = this.state.selectedQuestions;
 		let polls = this.state.questions; // pongo todo no doy para que seleccionen nada
 		let orders = this.state.orders;
@@ -226,7 +239,7 @@ class UploadedFiles extends Component {
 						//console.log("envio a /api/polls/send", body);
 						let days = this.state.days;
 						promises_to_send_emails.push(
-							axios.post('/api/polls/send', { array: body, server, days })
+							axios.post('/api/polls/send', { array: body, server, days, pollDescription })
 						);
 					}
 				});
@@ -280,7 +293,6 @@ class UploadedFiles extends Component {
 
 	render() {
 		const { classes, loggedUser } = this.props;
-		//console.log("Dias validez: ", this.state.days);
 		return !loggedUser.logged ? (
 			<div className={classes.root}>
 				<h1>Necesitas loggearte para ver esta informacion</h1>
@@ -309,7 +321,7 @@ class UploadedFiles extends Component {
 					<Grid item xs={12}>
 						Lista de archivos que han sido cargados
 					</Grid>
-					<Grid item xs={12}>
+					<Grid item xs={12} className={classes.list}>
 						{this.state.files.map(item => (
 							<List key={item.id} component='nav'>
 								<ListItem
@@ -326,11 +338,11 @@ class UploadedFiles extends Component {
 						))}
 					</Grid>
 				</Grid>
-				<Grid item xs={6}>
+				<Grid item xs={6} style={{ paddingLeft: 10, paddingRight: 10 }}>
 					<Grid item xs={12}>
 						Seleccione numero de días de validez que tendrá la encuesta
 					</Grid>
-					<Grid>
+					<Grid style={{ width: 200 }}>
 						<TextField
 							select
 							label='Seleccione'
@@ -347,6 +359,28 @@ class UploadedFiles extends Component {
 								</MenuItem>
 							))}
 						</TextField>
+					</Grid>
+					<Grid item xs={12} style={{ marginTop: 20 }}>
+						<Paper className={classes.paper}>
+							Ingresa un comentario / observación para la encuesta que vas a enviar
+						</Paper>
+					</Grid>
+					<Grid item xs={12}>
+						<Paper className={classes.paper}>
+							<TextField
+								width={10}
+								multiline
+								rowsMax='5'
+								onChange={this.handleChange('pollDescription')}
+								id='description'
+								value={this.state.pollDescription}
+								placeholder='Escribe alguna observación...'
+								helperText='Opcional'
+								className={classes.textField}
+								margin='normal'
+								variant='outlined'
+							/>
+						</Paper>
 					</Grid>
 				</Grid>
 				<Grid item xs={12}>

@@ -91,6 +91,10 @@ const sendedPollsColumns = [
 		displayName: 'Descripcion'
 	},
 	{
+		id: 'observation',
+		displayName: 'Observacion'
+	},
+	{
 		id: 'name',
 		displayName: 'Nombre de la Encuesta'
 	},
@@ -156,6 +160,10 @@ const columns = [
 	{
 		id: 'aclaratoria',
 		displayName: 'Aclaratoria de la Pregunta'
+	},
+	{
+		id: 'observacion',
+		displayName: 'Observación'
 	},
 	{
 		id: 'ref_preg',
@@ -271,7 +279,6 @@ class PollsResume extends Component {
 			const index = findIndex(orders_to_search, o => {
 				return o.clientId === answer.client.id;
 			});
-			console.log(index);
 			answer.attended =
 				index > -1 && orders_to_search[index] ? orders_to_search[index].attended : 'N/D';
 			const parsedAnswer = {
@@ -291,6 +298,7 @@ class PollsResume extends Component {
 						? 'si-no'
 						: 'seleccion',
 				aclaratoria: answer.pollsend.poll.question.description,
+				observacion: answer.pollsend.description,
 				ref_preg: answer.pollsend.poll.question.ref,
 				escala:
 					answer.pollsend.poll.question.type === 'opinion_scale'
