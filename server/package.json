@@ -27,7 +27,7 @@
     "express": "^4.16.3",
     "express-session": "^1.15.6",
     "gmail-api-create-message-body": "^1.0.0",
-    "googleapis": "^34.0.0",
+    "googleapis": "^39.1.0",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.19",
     "moment": "^2.24.0",
