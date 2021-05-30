@@ -1,12 +1,12 @@
 version: '2'
 services:
   db:
-    image: postgres:11-alpine
+    image: postgres:13-alpine
     volumes:
       - /var/lib/postgresql:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_DB: typeform
+      POSTGRES_DB: encuestas
       POSTGRES_PASSWORD: password
     ports:
       - '5432:5432'
@@ -19,7 +19,7 @@ services:
       - .:/usr/app/
     environment:
       NODE_ENV: prod
-      DATABASE_URL: postgres://postgres:password@db:5432/typeform
+      DATABASE_URL: postgres://postgres:password@db:5432/encuestas
     ports:
       - '80:3001'
     depends_on:
